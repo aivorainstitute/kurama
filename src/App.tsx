@@ -13,6 +13,7 @@ import WelcomeScreen from '@/sections/customer/WelcomeScreen';
 import MenuScreen from '@/sections/customer/MenuScreen';
 import CartSheet from '@/sections/customer/CartSheet';
 import OrderDetailScreen from '@/sections/customer/OrderDetailScreen';
+import PaymentMethodScreen from '@/sections/customer/PaymentMethodScreen';
 import PaymentScreen from '@/sections/customer/PaymentScreen';
 import QueueScreen from '@/sections/customer/QueueScreen';
 import OrderHistoryScreen from '@/sections/customer/OrderHistoryScreen';
@@ -559,6 +560,18 @@ function App() {
               <OrderDetailScreen 
                 orders={orders}
               />
+            } 
+          />
+          <Route 
+            path="/payment-method" 
+            element={
+              customerName ? (
+                <PaymentMethodScreen 
+                  activeOrder={activeOrder}
+                />
+              ) : (
+                <Navigate to="/customer" replace />
+              )
             } 
           />
           <Route 

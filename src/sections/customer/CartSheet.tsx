@@ -42,7 +42,8 @@ export default function CartSheet({
     
     try {
       const order = await createOrder(customerName);
-      navigate('/payment', { state: { order } });
+      // Navigate to payment method selection first
+      navigate('/payment-method', { state: { order } });
     } catch (error: any) {
       console.error('Checkout error:', error);
       const message = error?.message || 'Gagal membuat pesanan. Silakan coba lagi.';
