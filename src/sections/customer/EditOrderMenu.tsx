@@ -4,14 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
   Minus, 
-  Trash2, 
   ArrowLeft, 
   Save,
-  ShoppingBag,
-  Loader2,
-  X
+  Loader2
 } from 'lucide-react';
-import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { useMenuItems } from '@/hooks/useMenuItems';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -28,7 +24,7 @@ interface CartItem {
   subtotal: number;
 }
 
-export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
+export default function EditOrderMenu({ customerName: _customerName }: EditOrderMenuProps) {
   const navigate = useNavigate();
   const { menuItems, loading: menuLoading } = useMenuItems();
   

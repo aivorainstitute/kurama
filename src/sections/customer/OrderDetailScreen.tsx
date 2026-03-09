@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, BarChart3, Menu, ImageOff, Clock, Store, ArrowRight, ChevronLeft, Loader2 } from 'lucide-react';
+import { User, BarChart3, Menu, ImageOff, ChevronLeft, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
-import type { Order } from '@/App';
+import type { OrderSummary } from '@/App';
 
 const PLACEHOLDER_IMAGE = 'https://placehold.co/100x100/orange/white?text=Menu';
 
@@ -14,7 +14,7 @@ const button3D = '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)';
 const button3DOrange = '0 4px 0 0 #FED7AA, 0 4px 8px rgba(249, 115, 22, 0.3)';
 
 interface OrderDetailScreenProps {
-  orders: Order[];
+  orders: OrderSummary[];
 }
 
 export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {

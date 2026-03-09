@@ -4,7 +4,6 @@ import {
   ClipboardList, 
   Package, 
   Settings, 
-  DollarSign, 
   User,
   ClipboardCheck,
   Loader2,
@@ -74,7 +73,7 @@ const itemVariants = {
     y: 0,
     opacity: 1,
     transition: {
-      type: 'spring',
+      type: "spring" as const,
       stiffness: 100,
       damping: 12
     }
@@ -87,21 +86,12 @@ const cardHoverVariants = {
     scale: 1.02, 
     y: -4,
     transition: {
-      type: 'spring',
+      type: "spring" as const,
       stiffness: 400,
       damping: 17
     }
   },
   tap: { scale: 0.98 }
-};
-
-const pulseAnimation = {
-  scale: [1, 1.05, 1],
-  transition: {
-    duration: 2,
-    repeat: Infinity,
-    ease: 'easeInOut'
-  }
 };
 
 interface DashboardOverviewProps {
@@ -110,7 +100,7 @@ interface DashboardOverviewProps {
 
 export default function DashboardOverview({ onLogout }: DashboardOverviewProps) {
   const navigate = useNavigate();
-  const { orderSummaries, activeOrders, todayOrders, loading, refetch } = useOrders();
+  const { orderSummaries: _orderSummaries, activeOrders, todayOrders, loading, refetch } = useOrders();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const metrics = useMemo(() => {
@@ -264,7 +254,6 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
                   whileTap="tap"
                   initial="rest"
                   animate="rest"
-                  variants_card={cardHoverVariants}
                   onClick={() => navigate(item.path)}
                   className={`bg-white rounded-2xl p-4 cursor-pointer ${item.shadowColor} transition-shadow duration-300`}
                   style={{

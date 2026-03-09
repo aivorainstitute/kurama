@@ -11,10 +11,8 @@ import {
   Save,
   X,
   AlertCircle,
-  Loader2,
-  ShoppingBag
+  Loader2
 } from 'lucide-react';
-import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import type { OrderItem } from '@/App';
@@ -31,7 +29,7 @@ interface EditOrderData {
     tax_amount: number;
     total_amount: number;
   };
-  items: OrderItem[];
+  items: (OrderItem & { id?: number })[];
 }
 
 export default function EditOrderScreen() {

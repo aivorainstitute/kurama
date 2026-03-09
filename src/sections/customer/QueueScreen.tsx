@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Utensils, Clock, User, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
-import type { Order } from '@/App';
+import type { Order, OrderSummary } from '@/App';
 import type { PaymentMethod } from '@/lib/supabase';
 
 // 3D Shadow style
@@ -26,17 +26,17 @@ const itemVariants = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: 'spring', stiffness: 100, damping: 12 }
+    transition: { type: "spring" as const, stiffness: 100, damping: 12 }
   }
 };
 
 interface QueueScreenProps {
   customerName: string;
   activeOrder: Order | null;
-  orders: Order[];
+  orders: OrderSummary[];
 }
 
-export default function QueueScreen({ customerName, activeOrder: localActiveOrder, orders: localOrders }: QueueScreenProps) {
+export default function QueueScreen({ customerName, activeOrder: _localActiveOrder, orders: localOrders }: QueueScreenProps) {
   const navigate = useNavigate();
   
   // State untuk modal ganti metode pembayaran

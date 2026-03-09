@@ -7,8 +7,7 @@ import {
   Plus,
   Edit2,
   Trash2,
-  GripVertical,
-  Loader2
+  GripVertical
 } from 'lucide-react';
 import { Navbar3D } from '@/components/Navbar3D';
 import { toast } from 'sonner';
@@ -42,7 +41,7 @@ const itemVariants = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: 'spring', stiffness: 100, damping: 12 }
+    transition: { type: "spring" as const, stiffness: 100, damping: 12 }
   }
 };
 

@@ -44,7 +44,7 @@ export function Navbar3D({ title, showBack = true, backTo, showHome = true, righ
         <div className="w-12">
           {showBack && (
             <motion.button 
-              onClick={() => navigate(backTo || -1)}
+              onClick={() => backTo ? navigate(backTo) : navigate(-1)}
               className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
               style={{ boxShadow: '0 3px 0 0 rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.2)' }}
               whileHover={{ scale: 1.1 }}

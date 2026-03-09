@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -7,45 +6,21 @@ import {
   Bell,
   Loader2,
   RefreshCw,
-  Wallet,
   AlertCircle
 } from 'lucide-react';
 import { Navbar3D } from '@/components/Navbar3D';
 import { toast } from 'sonner';
 import { useOrders } from '@/hooks/useOrders';
 import type { OrderItem, OrderStatus } from '@/lib/supabase';
-import type { PaymentStatus } from '@/App';
+
 import { supabase } from '@/lib/supabase';
 
 const tabs = ['Semua', 'Belum Bayar', 'Baru', 'Diproses', 'Siap'];
 
-// Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
-};
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 12
-    }
-  }
-};
 
 export default function OrderManagement() {
-  const navigate = useNavigate();
-  const { orderSummaries, loading, error, getOrderItems, updateOrderStatus, refetch, updatePaymentStatus } = useOrders();
+  const { orderSummaries, loading, error, getOrderItems, updateOrderStatus, refetch } = useOrders();
   const [activeTab, setActiveTab] = useState('Semua');
   const [orderItems, setOrderItems] = useState<Record<number, OrderItem[]>>({});
   const [updatingOrders, setUpdatingOrders] = useState<Record<number, boolean>>({});
@@ -84,7 +59,7 @@ export default function OrderManagement() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  const activeOrdersCount = orderSummaries.filter(o => o.status !== 'SELESAI' && o.status !== 'DIBATALKAN').length;
+
 
   // Fetch items for visible orders
   useEffect(() => {
@@ -294,7 +269,7 @@ export default function OrderManagement() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          {tabs.map((tab, index) => (
+          {tabs.map((tab, _index) => (
             <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}

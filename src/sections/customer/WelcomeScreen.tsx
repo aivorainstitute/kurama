@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Search, User, HelpCircle, Utensils } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import type { Order } from '@/App';
+import type { OrderSummary } from '@/App';
 
 // 3D Shadow styles
 const card3D = '0 4px 0 0 rgba(0,0,0,0.1), 0 8px 16px rgba(249, 115, 22, 0.2)';
@@ -14,7 +14,7 @@ interface WelcomeScreenProps {
   customerName: string;
   setCustomerName: (name: string) => void;
   hasActiveOrder?: boolean;
-  orders?: Order[];
+  orders?: OrderSummary[];
 }
 
 export default function WelcomeScreen({ customerName, setCustomerName, orders = [] }: WelcomeScreenProps) {

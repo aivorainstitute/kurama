@@ -1,34 +1,22 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { Package, Clock, ClipboardList, ArrowRight, Search, User, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Package, Clock, ClipboardList, ArrowRight, Search, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { useOrders } from '@/hooks/useOrders';
 import { supabase } from '@/lib/supabase';
-import type { Order, OrderItem } from '@/App';
+import { toast } from 'sonner';
+import type { OrderSummary, OrderItem } from '@/App';
+import { fadeInUp, staggerContainer } from '@/lib/animations';
 
 interface CheckOrderScreenProps {
-  orders: Order[];
+  orders: OrderSummary[];
   customerName: string;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: 'spring', stiffness: 100, damping: 12 }
-  }
-};
+const containerVariants = staggerContainer;
+const itemVariants = fadeInUp;
 
 export default function CheckOrderScreen({ orders: localOrders, customerName }: CheckOrderScreenProps) {
   const navigate = useNavigate();
@@ -108,15 +96,6 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
       case 'SIAP': return 'SIAP DIAMBIL';
       case 'SELESAI': return 'SELESAI';
       default: return status;
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'BARU': return <Clock className="w-5 h-5" />;
-      case 'DIPROSES': return <Package className="w-5 h-5" />;
-      case 'SIAP': return <ClipboardList className="w-5 h-5" />;
-      default: return <ClipboardList className="w-5 h-5" />;
     }
   };
 

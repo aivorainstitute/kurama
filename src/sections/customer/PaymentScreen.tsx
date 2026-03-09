@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Copy,
   Store,
-  Loader2,
   Wallet,
   QrCode,
   RefreshCw
@@ -28,6 +27,9 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
   // Ambil order dan metode dari state navigasi atau props
   const orderData = (location.state as any)?.order || order;
   const selectedMethod = (location.state as any)?.selectedMethod || orderData?.payment_method || 'CASH';
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _data = orderData;
   
   if (!orderData) {
     return (

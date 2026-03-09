@@ -14,7 +14,7 @@ import {
 import { Navbar3D } from '@/components/Navbar3D';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
-import { autoCompressImage, formatFileSize } from '@/lib/imageCompression';
+import { autoCompressImage } from '@/lib/imageCompression';
 import { clearMenuCache } from '@/hooks/useMenuItems';
 import type { MenuItem } from '@/lib/supabase';
 

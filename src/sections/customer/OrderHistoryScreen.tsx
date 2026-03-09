@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, History } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
-import type { Order } from '@/App';
+import type { OrderSummary } from '@/App';
 
 interface OrderHistoryScreenProps {
   customerName: string;
-  orders: Order[];
+  orders: OrderSummary[];
 }
 
 const containerVariants = {
@@ -23,11 +23,11 @@ const itemVariants = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: 'spring', stiffness: 100, damping: 12 }
+    transition: { type: "spring" as const, stiffness: 100, damping: 12 }
   }
 };
 
-export default function OrderHistoryScreen({ customerName, orders }: OrderHistoryScreenProps) {
+export default function OrderHistoryScreen({ customerName: _customerName, orders }: OrderHistoryScreenProps) {
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -112,7 +112,7 @@ export default function OrderHistoryScreen({ customerName, orders }: OrderHistor
             animate="visible"
             className="space-y-4"
           >
-            {orders.map((order, index) => (
+            {orders.map((order) => (
               <motion.div
                 key={order.id}
                 variants={itemVariants}

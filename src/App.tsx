@@ -63,9 +63,6 @@ export interface Order {
   payment_status: PaymentStatus;
   payment_method?: PaymentMethod;
   customer_name: string;
-  queue_number: number;
-  status: OrderStatus;
-  customer_name: string;
   table_number?: string;
   items: OrderItem[];
   subtotal: number;
@@ -75,6 +72,7 @@ export interface Order {
 }
 
 export interface OrderItem {
+  id?: number;
   menu_item_id: number;
   name: string;
   quantity: number;
@@ -192,6 +190,7 @@ export const mockOrders: Order[] = [
     order_number: 'CZ-20240115-0003',
     queue_number: 3,
     status: 'DIPROSES',
+    payment_status: 'BELUM_BAYAR',
     customer_name: 'Budi',
     table_number: '04',
     items: [
@@ -208,6 +207,7 @@ export const mockOrders: Order[] = [
     order_number: 'CZ-20240115-0002',
     queue_number: 2,
     status: 'SIAP',
+    payment_status: 'SUDAH_BAYAR',
     customer_name: 'Budi',
     table_number: '12',
     items: [
@@ -223,6 +223,7 @@ export const mockOrders: Order[] = [
     order_number: 'CZ-20240114-0001',
     queue_number: 1,
     status: 'SELESAI',
+    payment_status: 'SUDAH_BAYAR',
     customer_name: 'Budi',
     table_number: '07',
     items: [
@@ -479,7 +480,7 @@ function App() {
     }
   };
 
-  const updateOrderStatus = (orderId: number, status: OrderStatus) => {
+  const _updateOrderStatus = (orderId: number, status: OrderStatus) => {
     // Status diupdate via Supabase realtime, tidak perlu update manual
     // Tapi update activeOrder jika ini pesanan customer
     if (activeOrder?.id === orderId) {
@@ -492,7 +493,7 @@ function App() {
   };
 
   // Clear customer session (for testing)
-  const clearCustomerSession = () => {
+  const _clearCustomerSession = () => {
     setCustomerName('');
     setActiveOrder(null);
     setCartItems([]);

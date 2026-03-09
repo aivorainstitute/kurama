@@ -52,7 +52,7 @@ export default function StockManagementSupabase() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-500">Error: {error}</p>
+          <p className="text-red-500">Error: {error ?? 'Unknown error'}</p>
           <button 
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-[#0D7377] text-white rounded-lg"
