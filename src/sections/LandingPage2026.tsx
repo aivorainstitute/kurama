@@ -1,101 +1,60 @@
-import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
-  Sparkles, 
-  Zap, 
-  Clock, 
-  Shield, 
-  Smartphone,
-  ChevronRight,
+  Coffee, 
+  Clock,
+  MapPin,
   Star,
-  Users,
-  TrendingUp,
-  Coffee,
-  UtensilsCrossed,
-  ChefHat
+  Instagram,
+  Phone,
+  ChevronRight,
+  Bean,
+  CupSoda,
+  Croissant,
+  Sparkles
 } from 'lucide-react';
 
-// Gradient Mesh Background
-function GradientMesh() {
+// Gradient Background - Warm Coffee Tones
+function GradientBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-slate-950" />
+      {/* Base */}
+      <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-orange-50 to-amber-100" />
       
-      {/* Animated gradient orbs */}
+      {/* Animated gradient orbs - Coffee colors only */}
       <motion.div 
-        className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange-500/30 rounded-full blur-[120px]"
+        className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-amber-200/40 rounded-full blur-[100px]"
         animate={{ 
-          x: [0, 50, 0], 
-          y: [0, 30, 0],
-          scale: [1, 1.1, 1]
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3]
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[100px]"
+        className="absolute top-1/2 -left-20 w-[400px] h-[400px] bg-orange-200/30 rounded-full blur-[80px]"
         animate={{ 
-          x: [0, -40, 0], 
-          y: [0, -50, 0],
-          scale: [1, 1.2, 1]
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.4, 0.2]
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-500/10 rounded-full blur-[150px]"
+        className="absolute -bottom-40 right-1/3 w-[500px] h-[500px] bg-amber-300/20 rounded-full blur-[90px]"
         animate={{ 
-          rotate: [0, 180, 360],
-          scale: [1, 1.1, 1]
+          scale: [1, 1.15, 1],
+          opacity: [0.2, 0.35, 0.2]
         }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
       
-      {/* Noise texture overlay */}
+      {/* Subtle pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.015]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C6B3C' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       />
-    </div>
-  );
-}
-
-// Floating Elements
-function FloatingElements() {
-  const elements = [
-    { icon: Coffee, delay: 0, x: '10%', y: '20%' },
-    { icon: UtensilsCrossed, delay: 0.5, x: '85%', y: '15%' },
-    { icon: ChefHat, delay: 1, x: '15%', y: '70%' },
-    { icon: Star, delay: 1.5, x: '80%', y: '75%' },
-  ];
-
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {elements.map((item, index) => (
-        <motion.div
-          key={index}
-          className="absolute"
-          style={{ left: item.x, top: item.y }}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ 
-            opacity: [0.3, 0.6, 0.3],
-            scale: 1,
-            y: [0, -20, 0]
-          }}
-          transition={{ 
-            delay: item.delay,
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          <div className="w-16 h-16 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center">
-            <item.icon className="w-8 h-8 text-orange-400" />
-          </div>
-        </motion.div>
-      ))}
     </div>
   );
 }
@@ -104,14 +63,13 @@ function FloatingElements() {
 function GlassCard({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay, duration: 0.6 }}
-      className={`relative group ${className}`}
+      transition={{ delay, duration: 0.5 }}
+      className={`group ${className}`}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500" />
-      <div className="relative bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 hover:bg-white/10 transition-all duration-500 hover:border-white/20">
+      <div className="relative bg-white/60 backdrop-blur-xl border border-white/40 rounded-3xl p-6 shadow-[0_8px_32px_rgba(251,146,60,0.08)] hover:shadow-[0_12px_40px_rgba(251,146,60,0.15)] transition-all duration-500">
         {children}
       </div>
     </motion.div>
@@ -124,161 +82,153 @@ function HeroSection() {
   
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <GradientMesh />
-      <FloatingElements />
+      <GradientBackground />
       
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-8"
-        >
-          <Sparkles className="w-4 h-4 text-orange-400" />
-          <span className="text-sm text-white/80">Next-Gen Food Ordering 2026</span>
-        </motion.div>
-        
-        {/* Logo & Title */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, type: "spring" }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-center gap-4 mb-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 lg:py-32">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center lg:text-left"
+          >
+            {/* Badge */}
             <motion.div
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 6, repeat: Infinity }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 border border-orange-200/50 backdrop-blur-sm mb-6"
             >
-              <img 
-                src="/logo.png" 
-                alt="KURAMA" 
-                className="w-24 h-24 object-contain drop-shadow-2xl"
-              />
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <span className="text-sm font-medium text-amber-800">Since 2024</span>
             </motion.div>
-          </div>
-          <h1 className="text-7xl md:text-9xl font-black text-white tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">
-              KURAMA
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-white/60 mt-4 font-light tracking-wide">
-            Experience the Future of Dining
-          </p>
-        </motion.div>
-        
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
-        >
-          <motion.button
-            onClick={() => navigate('/customer')}
-            className="group relative px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full text-white font-bold text-lg overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              Pesan Sekarang
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </motion.button>
+            
+            {/* Logo & Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-6"
+            >
+              <h1 className="text-5xl md:text-7xl font-black text-amber-950 tracking-tight mb-4">
+                KURAMA
+              </h1>
+              <p className="text-xl md:text-2xl text-amber-700/80 font-light">
+                Coffee & Cozy Space
+              </p>
+            </motion.div>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-amber-800/70 text-lg mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed"
+            >
+              Tempat nyaman untuk menikmati kopi specialty, 
+              makanan lezat, dan suasana hangat bersama teman.
+            </motion.p>
+            
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+            >
+              <motion.button
+                onClick={() => navigate('/customer')}
+                className="group px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300 transition-all"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  Pesan Sekarang
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </motion.button>
+              
+              <motion.button
+                onClick={() => navigate('/login')}
+                className="px-8 py-4 bg-white/70 backdrop-blur text-amber-800 font-semibold rounded-2xl border border-orange-200/50 hover:bg-white/90 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Admin Login
+              </motion.button>
+            </motion.div>
+          </motion.div>
           
-          <motion.button
-            onClick={() => navigate('/login')}
-            className="px-8 py-4 rounded-full text-white font-semibold text-lg border border-white/20 backdrop-blur-xl hover:bg-white/10 transition-all"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          {/* Right Content - Logo Display */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="relative flex items-center justify-center"
           >
-            Admin Login
-          </motion.button>
-        </motion.div>
-        
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="flex flex-wrap items-center justify-center gap-8 mt-20"
-        >
-          {[
-            { value: '10K+', label: 'Happy Customers' },
-            { value: '500+', label: 'Menu Items' },
-            { value: '4.9', label: 'App Rating' },
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
-              <div className="text-sm text-white/50">{stat.label}</div>
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-300/30 to-orange-300/30 rounded-full blur-3xl scale-110" />
+              
+              {/* Logo Container */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative"
+              >
+                <img 
+                  src="/logokurama.png" 
+                  alt="KURAMA Coffee" 
+                  className="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl"
+                />
+              </motion.div>
+              
+              {/* Floating elements */}
+              <motion.div
+                className="absolute -top-4 -right-4 w-16 h-16 bg-white/80 backdrop-blur rounded-2xl shadow-lg flex items-center justify-center"
+                animate={{ y: [0, -5, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+              >
+                <Coffee className="w-8 h-8 text-amber-600" />
+              </motion.div>
+              
+              <motion.div
+                className="absolute -bottom-4 -left-4 w-14 h-14 bg-white/80 backdrop-blur rounded-2xl shadow-lg flex items-center justify-center"
+                animate={{ y: [0, 5, 0], rotate: [0, -5, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, delay: 1 }}
+              >
+                <Bean className="w-7 h-7 text-amber-700" />
+              </motion.div>
             </div>
-          ))}
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
-      
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-2"
-        >
-          <motion.div className="w-1.5 h-1.5 rounded-full bg-white/60" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
 
-// Features Bento Grid
+// Features Section
 function FeaturesSection() {
   const features = [
     {
-      icon: Zap,
-      title: 'Lightning Fast',
-      description: 'Order in seconds with our optimized workflow. No more waiting in long queues.',
-      size: 'large',
-      color: 'from-orange-500/20 to-amber-500/20'
+      icon: Coffee,
+      title: 'Kopi Specialty',
+      description: 'Biji kopi pilihan dari petani lokal, diolah dengan teknik roasting terbaik.',
     },
     {
-      icon: Clock,
-      title: 'Real-time Tracking',
-      description: 'Track your order status live from kitchen to pickup.',
-      size: 'small',
-      color: 'from-blue-500/20 to-cyan-500/20'
+      icon: Croissant,
+      title: 'Pastry Fresh',
+      description: 'Roti dan kue segar setiap hari, dipanggang dengan bahan berkualitas.',
     },
     {
-      icon: Shield,
-      title: 'Secure Payments',
-      description: 'Multiple payment options with end-to-end encryption.',
-      size: 'small',
-      color: 'from-green-500/20 to-emerald-500/20'
+      icon: CupSoda,
+      title: 'Minuman Segar',
+      description: 'Berbagai pilihan minuman non-kopi yang menyegarkan untuk semua selera.',
     },
-    {
-      icon: Smartphone,
-      title: 'Mobile Optimized',
-      description: 'Seamless experience across all devices. Native-like performance.',
-      size: 'medium',
-      color: 'from-purple-500/20 to-pink-500/20'
-    },
-    {
-      icon: Users,
-      title: 'Group Orders',
-      description: 'Split bills and order together with friends and colleagues effortlessly.',
-      size: 'medium',
-      color: 'from-rose-500/20 to-orange-500/20'
-    }
   ];
 
   return (
-    <section className="relative py-32 bg-slate-950">
+    <section className="relative py-24 bg-white/50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -286,27 +236,20 @@ function FeaturesSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-orange-400 font-semibold tracking-wider uppercase text-sm">Features</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mt-4">
-            Why Choose <span className="text-orange-400">KURAMA</span>?
+          <span className="text-amber-600 font-semibold tracking-wider uppercase text-sm">Our Menu</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-amber-950 mt-3">
+            Nikmati Kelezatan
           </h2>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <GlassCard 
-              key={index}
-              delay={index * 0.1}
-              className={feature.size === 'large' ? 'md:col-span-2 md:row-span-2' : ''}
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`} />
-              <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-4">
-                  <feature.icon className="w-7 h-7 text-orange-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/60 leading-relaxed">{feature.description}</p>
+            <GlassCard key={index} delay={index * 0.1}>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4">
+                <feature.icon className="w-7 h-7 text-amber-700" />
               </div>
+              <h3 className="text-xl font-bold text-amber-900 mb-2">{feature.title}</h3>
+              <p className="text-amber-700/70 leading-relaxed">{feature.description}</p>
             </GlassCard>
           ))}
         </div>
@@ -315,52 +258,115 @@ function FeaturesSection() {
   );
 }
 
-// Menu Preview Section
-function MenuPreviewSection() {
-  const categories = [
-    { name: 'Signatures', items: '12 items', image: 'bg-gradient-to-br from-orange-400 to-red-500' },
-    { name: 'Coffee', items: '8 items', image: 'bg-gradient-to-br from-amber-600 to-orange-700' },
-    { name: 'Food', items: '20 items', image: 'bg-gradient-to-br from-green-500 to-emerald-600' },
-    { name: 'Desserts', items: '15 items', image: 'bg-gradient-to-br from-pink-500 to-rose-600' },
+// Info Section
+function InfoSection() {
+  const navigate = useNavigate();
+  
+  return (
+    <section className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-orange-50/50" />
+      
+      <div className="relative max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left - Image Placeholder with Logo */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-amber-200 to-orange-200 flex items-center justify-center">
+              <img 
+                src="/logokurama.png" 
+                alt="KURAMA" 
+                className="w-48 h-48 object-contain opacity-50"
+              />
+              {/* Decorative elements */}
+              <div className="absolute top-6 left-6 w-20 h-20 bg-white/40 rounded-full blur-xl" />
+              <div className="absolute bottom-6 right-6 w-32 h-32 bg-orange-300/30 rounded-full blur-2xl" />
+            </div>
+          </motion.div>
+          
+          {/* Right - Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-amber-600 font-semibold tracking-wider uppercase text-sm">Tentang Kami</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-amber-950 mt-3 mb-6">
+              Ruang Nyaman <br/> untuk Berbagi Cerita
+            </h2>
+            <p className="text-amber-800/70 text-lg mb-8 leading-relaxed">
+              KURAMA hadir sebagai tempat berkumpul yang nyaman, dengan kopi berkualitas 
+              dan makanan lezat. Kami percaya setiap cangkir kopi punya cerita, 
+              dan kami ingin menjadi bagian dari cerita Anda.
+            </p>
+            
+            <div className="space-y-4 mb-8">
+              {[
+                { icon: Clock, text: 'Buka Setiap Hari: 08.00 - 22.00' },
+                { icon: MapPin, text: 'Jl. Raya No. 123, Jakarta' },
+                { icon: Phone, text: '+62 812-3456-7890' },
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-3 text-amber-800">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                    <item.icon className="w-5 h-5 text-amber-700" />
+                  </div>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            
+            <motion.button
+              onClick={() => navigate('/customer')}
+              className="group flex items-center gap-2 text-amber-700 font-semibold hover:text-amber-800 transition-colors"
+              whileHover={{ x: 5 }}
+            >
+              Lihat Menu Lengkap
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Testimonials Section
+function TestimonialsSection() {
+  const testimonials = [
+    { name: 'Andi', text: 'Kopinya enak banget, tempatnya juga nyaman buat kerja.', rating: 5 },
+    { name: 'Sarah', text: 'Pastry-nya fresh dan kopi-nya selalu konsisten.', rating: 5 },
+    { name: 'Budi', text: 'Pelayanan ramah, suasananya cozy. Recommended!', rating: 5 },
   ];
 
   return (
-    <section className="relative py-32 bg-slate-900 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-500/10 via-slate-900 to-slate-900" />
-      
-      <div className="relative max-w-7xl mx-auto px-6">
+    <section className="relative py-24 bg-white/50">
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-orange-400 font-semibold tracking-wider uppercase text-sm">Menu</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mt-4">
-            Delicious <span className="text-orange-400">Choices</span>
+          <span className="text-amber-600 font-semibold tracking-wider uppercase text-sm">Testimoni</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-amber-950 mt-3">
+            Apa Kata Mereka
           </h2>
         </motion.div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((cat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -10 }}
-              className="group cursor-pointer"
-            >
-              <div className="relative aspect-square rounded-3xl overflow-hidden mb-4">
-                <div className={`absolute inset-0 ${cat.image} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl font-bold text-white">{cat.name}</h3>
-                  <p className="text-white/70 text-sm">{cat.items}</p>
-                </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((item, index) => (
+            <GlassCard key={index} delay={index * 0.1}>
+              <div className="flex gap-1 mb-4">
+                {[...Array(item.rating)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                ))}
               </div>
-            </motion.div>
+              <p className="text-amber-800/80 mb-4 leading-relaxed">"{item.text}"</p>
+              <p className="font-semibold text-amber-900">- {item.name}</p>
+            </GlassCard>
           ))}
         </div>
       </div>
@@ -373,18 +379,16 @@ function CTASection() {
   const navigate = useNavigate();
   
   return (
-    <section className="relative py-32 bg-slate-950 overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-purple-500/20" />
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.1) 0%, transparent 50%)`,
-          }}
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-      </div>
+    <section className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-600 to-orange-600" />
+      
+      {/* Pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
       
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <motion.div
@@ -392,21 +396,20 @@ function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Ready to <span className="text-orange-400">Order</span>?
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Kunjungi KURAMA Hari Ini
           </h2>
-          <p className="text-xl text-white/60 mb-12 max-w-2xl mx-auto">
-            Join thousands of satisfied customers and experience the future of food ordering today.
+          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+            Rasakan kopi terbaik dan suasana nyaman bersama orang tersayang.
           </p>
           
           <motion.button
             onClick={() => navigate('/customer')}
-            className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full text-white font-bold text-xl"
+            className="px-10 py-5 bg-white text-amber-700 font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Get Started Now
-            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            Pesan Sekarang
           </motion.button>
         </motion.div>
       </div>
@@ -417,25 +420,29 @@ function CTASection() {
 // Footer
 function Footer() {
   return (
-    <footer className="relative py-12 bg-slate-950 border-t border-white/5">
+    <footer className="relative py-12 bg-amber-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="KURAMA" className="w-10 h-10 object-contain" />
-            <span className="text-xl font-bold text-white">KURAMA</span>
+            <img src="/logokurama.png" alt="KURAMA" className="w-10 h-10 object-contain" />
+            <div>
+              <span className="text-xl font-bold text-white block">KURAMA</span>
+              <span className="text-xs text-amber-400">Coffee & Cozy Space</span>
+            </div>
           </div>
-          
-          <p className="text-white/40 text-sm">
-            2026 KURAMA Food Ordering. All rights reserved.
-          </p>
           
           <div className="flex items-center gap-6">
-            {['About', 'Contact', 'Privacy'].map((link) => (
-              <a key={link} href="#" className="text-white/40 hover:text-white transition-colors text-sm">
-                {link}
-              </a>
-            ))}
+            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+              <Instagram className="w-5 h-5 text-white" />
+            </a>
+            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+              <Phone className="w-5 h-5 text-white" />
+            </a>
           </div>
+          
+          <p className="text-amber-400/60 text-sm">
+            2024 KURAMA Coffee. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
@@ -445,10 +452,11 @@ function Footer() {
 // Main Landing Page Component
 export default function LandingPage2026() {
   return (
-    <div className="bg-slate-950 min-h-screen">
+    <div className="min-h-screen bg-amber-50">
       <HeroSection />
       <FeaturesSection />
-      <MenuPreviewSection />
+      <InfoSection />
+      <TestimonialsSection />
       <CTASection />
       <Footer />
     </div>
