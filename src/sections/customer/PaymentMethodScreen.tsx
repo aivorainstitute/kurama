@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Wallet, 
   QrCode, 
-  ArrowRight, 
   ChevronLeft,
   Store,
-  Smartphone,
-  CheckCircle2
+  ArrowRight
 } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import type { Order } from '@/App';
@@ -20,7 +17,6 @@ interface PaymentMethodScreenProps {
 export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreenProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedMethod, setSelectedMethod] = useState<'CASH' | 'QRIS' | null>(null);
   
   // Get order from location state (passed from CartSheet) or use activeOrder
   const order = location.state?.order || activeOrder;
@@ -41,14 +37,12 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
     );
   }
 
-  const handleContinue = () => {
-    if (!selectedMethod) return;
-    
-    // Navigate to payment detail page with selected method
+  // Langsung navigate saat metode dipilih
+  const handleSelectMethod = (method: 'CASH' | 'QRIS') => {
     navigate('/payment', { 
       state: { 
         order,
-        paymentMethod: selectedMethod 
+        paymentMethod: method 
       } 
     });
   };
@@ -90,7 +84,7 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
         backTo="/cart"
       />
 
-      <main className="px-5 py-6 pb-40">
+      <main className="px-5 py-6">
         {/* Order Summary Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -122,7 +116,7 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
           </div>
         </motion.div>
 
-        {/* Payment Method Selection */}
+        {/* Payment Method Selection - Klik langsung pindah halaman */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -131,26 +125,25 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
           <h2 className="text-lg font-bold text-gray-800 mb-4">Pilih Metode Pembayaran</h2>
           
           <div className="space-y-4">
-            {paymentMethods.map((method) => {
-              const isSelected = selectedMethod === method.id;
+            {paymentMethods.map((method, index) => {
               const Icon = method.icon;
               
               return (
                 <motion.button
                   key={method.id}
-                  onClick={() => setSelectedMethod(method.id)}
-                  className={`w-full p-5 rounded-2xl border-2 text-left transition-all ${
-                    isSelected 
-                      ? `${method.bgColor} ${method.borderColor} border-2` 
-                      : 'bg-white border-gray-200 hover:border-orange-200'
-                  }`}
+                  onClick={() => handleSelectMethod(method.id)}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + index * 0.1 }}
+                  className="w-full p-5 rounded-2xl border-2 bg-white border-gray-200 hover:border-orange-300 text-left transition-all group"
                   style={{
-                    boxShadow: isSelected 
-                      ? `0 4px 0 0 ${method.id === 'CASH' ? '#FED7AA' : '#BFDBFE'}, 0 8px 16px rgba(0,0,0,0.1)`
-                      : '0 4px 0 0 #E5E7EB, 0 4px 12px rgba(0,0,0,0.05)'
+                    boxShadow: '0 4px 0 0 #E5E7EB, 0 4px 12px rgba(0,0,0,0.05)'
                   }}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  whileHover={{ 
+                    scale: 1.02, 
+                    boxShadow: '0 6px 0 0 #FED7AA, 0 8px 20px rgba(249, 115, 22, 0.15)'
+                  }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${method.color} flex items-center justify-center`}>
@@ -163,10 +156,8 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
                       <p className="text-xs text-gray-400 mt-1">{method.description}</p>
                     </div>
                     
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      isSelected ? 'bg-green-500' : 'bg-gray-200'
-                    }`}>
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-white" />}
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors">
+                      <ArrowRight className="w-5 h-5 text-orange-500 group-hover:text-white transition-colors" />
                     </div>
                   </div>
                 </motion.button>
@@ -174,51 +165,7 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
             })}
           </div>
         </motion.div>
-
-        {/* Info Note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100"
-        >
-          <div className="flex items-start gap-3">
-            <Smartphone className="w-5 h-5 text-blue-500 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-blue-800">Tips Pembayaran</p>
-              <p className="text-xs text-blue-600 mt-1">
-                Pilih QRIS untuk pembayaran yang lebih cepat, atau bayar di kasir jika ingin menggunakan tunai.
-              </p>
-            </div>
-          </div>
-        </motion.div>
       </main>
-
-      {/* Continue Button */}
-      <motion.div 
-        className="fixed bottom-0 left-0 right-0 bg-white border-t border-orange-100 p-5"
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <motion.button
-          onClick={handleContinue}
-          disabled={!selectedMethod}
-          className={`w-full h-14 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${
-            selectedMethod
-              ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-          style={{
-            boxShadow: selectedMethod ? '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)' : 'none'
-          }}
-          whileHover={selectedMethod ? { scale: 1.02 } : {}}
-          whileTap={selectedMethod ? { scale: 0.98, y: 4 } : {}}
-        >
-          Lanjutkan Pembayaran
-          <ArrowRight className="w-5 h-5" />
-        </motion.button>
-      </motion.div>
     </motion.div>
   );
 }

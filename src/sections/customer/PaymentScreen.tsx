@@ -27,7 +27,7 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
   
   // Ambil order dan metode dari state navigasi atau props
   const orderData = (location.state as any)?.order || order;
-  const selectedMethod = (location.state as any)?.selectedMethod || orderData?.payment_method || 'CASH';
+  const selectedMethod = (location.state as any)?.paymentMethod || orderData?.payment_method || 'CASH';
   
   // data variable for future use
   const data = orderData;
