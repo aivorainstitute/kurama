@@ -125,7 +125,7 @@ export default function StockManagementSupabase() {
                 {/* Image */}
                 <div className="relative">
                   <img 
-                    src={item.image_url} 
+                    src={item.image_url || undefined} 
                     alt={item.name}
                     className="w-14 h-14 object-cover rounded-xl"
                   />

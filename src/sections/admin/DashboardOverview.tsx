@@ -12,7 +12,8 @@ import {
   ArrowRight,
   Power,
   LogOut,
-  RefreshCw
+  RefreshCw,
+  DollarSign
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { useMemo, useState } from 'react';
@@ -100,7 +101,7 @@ interface DashboardOverviewProps {
 
 export default function DashboardOverview({ onLogout }: DashboardOverviewProps) {
   const navigate = useNavigate();
-  const { orderSummaries: _orderSummaries, activeOrders, todayOrders, loading, refetch } = useOrders();
+  const { orderSummaries, activeOrders, todayOrders, loading, refetch } = useOrders();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const metrics = useMemo(() => {
@@ -119,6 +120,10 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
   }, [todayOrders, activeOrders]);
 
   const recentOrders = useMemo(() => todayOrders.slice(0, 3), [todayOrders]);
+  const pulseAnimation = {
+    scale: [1, 1.2, 1],
+    opacity: [0.3, 0.1, 0.3]
+  };
 
   const handleLogout = () => {
     if (onLogout) {

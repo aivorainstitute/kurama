@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, History } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
@@ -27,7 +27,7 @@ const itemVariants = {
   }
 };
 
-export default function OrderHistoryScreen({ customerName: _customerName, orders }: OrderHistoryScreenProps) {
+export default function OrderHistoryScreen({ customerName, orders }: OrderHistoryScreenProps) {
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -112,7 +112,7 @@ export default function OrderHistoryScreen({ customerName: _customerName, orders
             animate="visible"
             className="space-y-4"
           >
-            {orders.map((order) => (
+            {orders.map((order, _index) => (
               <motion.div
                 key={order.id}
                 variants={itemVariants}
@@ -133,7 +133,7 @@ export default function OrderHistoryScreen({ customerName: _customerName, orders
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">{order.items.length} item</span>
+                    <span className="text-sm text-gray-500">{order.items?.length || 0} item</span>
                     <span className="text-gray-300">•</span>
                     <span className="font-semibold text-orange-600">
                       Rp {order.total_amount.toLocaleString('id-ID')}

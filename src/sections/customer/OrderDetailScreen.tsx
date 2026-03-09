@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, BarChart3, Menu, ImageOff, ChevronLeft, Loader2 } from 'lucide-react';
+import { User, BarChart3, Menu, ImageOff, ChevronLeft, Loader2, Clock, Store, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
-import type { OrderSummary } from '@/App';
+import type { OrderSummary, Order } from '@/App';
 
 const PLACEHOLDER_IMAGE = 'https://placehold.co/100x100/orange/white?text=Menu';
 
@@ -21,7 +21,7 @@ export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<import('@/App').Order | null>(null);
   
   // Fetch order detail dari Supabase
   useEffect(() => {
@@ -160,7 +160,7 @@ export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {
           </h3>
           
           <div className="space-y-4">
-            {order.items?.map((item, index) => (
+            {order.items?.map((item: import('@/App').OrderItem, index: number) => (
               <motion.div 
                 key={index} 
                 className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0"

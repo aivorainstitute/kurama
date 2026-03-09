@@ -17,6 +17,24 @@ import { supabase } from '@/lib/supabase';
 
 const tabs = ['Semua', 'Belum Bayar', 'Baru', 'Diproses', 'Siap'];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring" as const, stiffness: 100, damping: 12 }
+  }
+};
+
 
 
 export default function OrderManagement() {
@@ -269,7 +287,7 @@ export default function OrderManagement() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          {tabs.map((tab, _index) => (
+          {tabs.map((tab) => (
             <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -282,7 +300,7 @@ export default function OrderManagement() {
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * index }}
+              transition={{ delay: 0.1 * tabs.indexOf(tab) }}
             >
               {tab}
             </motion.button>

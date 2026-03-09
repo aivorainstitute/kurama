@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2, Utensils, User } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
@@ -41,7 +41,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
   
   // State untuk modal ganti metode pembayaran
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<import('@/lib/supabase').OrderSummary | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   
   // Ambil data real-time dari Supabase
@@ -75,7 +75,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
   }, [orderSummaries]);
 
   // Gunakan data dari Supabase (real-time), fallback ke localOrders
-  const orders = orderSummaries.length > 0 
+  const orders: import('@/App').Order[] = orderSummaries.length > 0 
     ? orderSummaries.map(summary => ({
         id: summary.id,
         order_number: summary.order_number,
@@ -84,13 +84,13 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
         customer_name: summary.customer_name,
         payment_status: summary.payment_status,
         payment_method: summary.payment_method,
-        items: [],
+        items: (summary as any).items || [],
         subtotal: summary.subtotal,
         tax_amount: summary.tax_amount,
         total_amount: summary.total_amount,
         created_at: summary.created_at
-      })) as Order[]
-    : localOrders;
+      })) as import('@/App').Order[]
+    : (localOrders as import('@/App').Order[]);
 
   // Normalize status untuk comparison (handle case sensitivity dan whitespace)
   const normalizeStatus = (status: string) => status?.toString().toUpperCase().trim();

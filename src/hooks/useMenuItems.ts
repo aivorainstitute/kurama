@@ -11,8 +11,7 @@ export function useMenuItems() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(globalCache || []);
   const [loading, setLoading] = useState(!globalCache);
   const [error, setError] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _subscriptionRef = useRef<any>(null);
+  const subscriptionRef = useRef<any>(null);
   const isInitialMount = useRef(true);
   const timeoutRef = useRef<any>(null);
 

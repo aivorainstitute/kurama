@@ -11,8 +11,10 @@ import {
   Save,
   X,
   AlertCircle,
-  Loader2
+  Loader2,
+  ShoppingBag
 } from 'lucide-react';
+import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import type { OrderItem } from '@/App';
@@ -35,7 +37,7 @@ interface EditOrderData {
 export default function EditOrderScreen() {
   const navigate = useNavigate();
   const [orderData, setOrderData] = useState<EditOrderData | null>(null);
-  const [items, setItems] = useState<OrderItem[]>([]);
+  const [items, setItems] = useState<(OrderItem & { id?: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -90,7 +92,8 @@ export default function EditOrderScreen() {
     };
   }, [items]);
 
-  const handleQuantityChange = (itemId: number, delta: number) => {
+  const handleQuantityChange = (itemId: number | undefined, delta: number) => {
+    if (itemId === undefined) return;
     setItems(prev => prev.map(item => {
       if (item.id === itemId) {
         const newQty = Math.max(1, item.quantity + delta);
@@ -104,11 +107,13 @@ export default function EditOrderScreen() {
     }));
   };
 
-  const handleRemoveItem = (itemId: number) => {
+  const handleRemoveItem = (itemId: number | undefined) => {
+    if (itemId === undefined) return;
     setItems(prev => prev.filter(item => item.id !== itemId));
   };
 
-  const handleNotesChange = (itemId: number, notes: string) => {
+  const handleNotesChange = (itemId: number | undefined, notes: string) => {
+    if (itemId === undefined) return;
     setItems(prev => prev.map(item => 
       item.id === itemId ? { ...item, notes } : item
     ));

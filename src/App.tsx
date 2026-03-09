@@ -17,7 +17,7 @@ import PaymentScreen from '@/sections/customer/PaymentScreen';
 import QueueScreen from '@/sections/customer/QueueScreen';
 import OrderHistoryScreen from '@/sections/customer/OrderHistoryScreen';
 import CheckOrderScreen from '@/sections/customer/CheckOrderScreen';
-import EditOrderScreen from '@/sections/customer/EditOrderScreen';
+
 import EditOrderMenu from '@/sections/customer/EditOrderMenu';
 
 // Admin Dashboard Screens
@@ -37,11 +37,11 @@ export type PaymentMethod = 'CASH' | 'QRIS';
 export interface MenuItem {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   price: number;
-  image_url: string;
-  category_id: number;
-  category_name: string;
+  image_url: string | null;
+  category_id: number | null;
+  category_name: string | null;
   stock: number;
   is_available: boolean;
   is_popular?: boolean;
@@ -55,22 +55,6 @@ export interface CartItem {
   subtotal: number;
 }
 
-export interface Order {
-  id: number;
-  order_number: string;
-  queue_number: number;
-  status: OrderStatus;
-  payment_status: PaymentStatus;
-  payment_method?: PaymentMethod;
-  customer_name: string;
-  table_number?: string;
-  items: OrderItem[];
-  subtotal: number;
-  tax_amount: number;
-  total_amount: number;
-  created_at: string;
-}
-
 export interface OrderItem {
   id?: number;
   menu_item_id: number;
@@ -82,6 +66,9 @@ export interface OrderItem {
   image_url?: string;
 }
 
+// Re-export OrderSummary as Order for component compatibility
+export type Order = OrderSummary;
+
 // Types for Supabase
 export interface OrderSummary {
   id: number;
@@ -89,13 +76,15 @@ export interface OrderSummary {
   queue_number: number;
   customer_name: string;
   status: OrderStatus;
-  payment_status: PaymentStatus;
-  payment_method?: PaymentMethod;
+  payment_status: PaymentStatus | null;
+  payment_method?: PaymentMethod | null;
   subtotal: number;
   tax_amount: number;
   total_amount: number;
   created_at: string;
-  item_count: number;
+  item_count?: number;
+  items?: OrderItem[];
+  table_number?: string | null;
 }
 
 export interface Category {
@@ -466,7 +455,8 @@ function App() {
         tax_amount: taxAmount,
         total_amount: totalAmount,
         created_at: orderData.created_at,
-      };
+        item_count: cartItems.length,
+      } as Order;
       
       // 4. Refresh orders dari Supabase
       refetchOrders();
@@ -480,7 +470,7 @@ function App() {
     }
   };
 
-  const _updateOrderStatus = (orderId: number, status: OrderStatus) => {
+  const updateOrderStatus = (orderId: number, status: OrderStatus) => {
     // Status diupdate via Supabase realtime, tidak perlu update manual
     // Tapi update activeOrder jika ini pesanan customer
     if (activeOrder?.id === orderId) {
@@ -493,7 +483,7 @@ function App() {
   };
 
   // Clear customer session (for testing)
-  const _clearCustomerSession = () => {
+  const clearCustomerSession = () => {
     setCustomerName('');
     setActiveOrder(null);
     setCartItems([]);

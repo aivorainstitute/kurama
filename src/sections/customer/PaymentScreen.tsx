@@ -8,7 +8,8 @@ import {
   Store,
   Wallet,
   QrCode,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
@@ -28,8 +29,8 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
   const orderData = (location.state as any)?.order || order;
   const selectedMethod = (location.state as any)?.selectedMethod || orderData?.payment_method || 'CASH';
   
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _data = orderData;
+  // data variable for future use
+  const data = orderData;
   
   if (!orderData) {
     return (

@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,8 @@ import {
   Minus, 
   Edit2,
   Package,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { useMenuItems, clearMenuCache } from '@/hooks/useMenuItems';
 import { Navbar3D } from '@/components/Navbar3D';
@@ -25,7 +26,7 @@ const getCategories = (menuItems: any[]) => {
 
 
 
-const StockItem = memo(({ 
+const StockItem = ({ 
   item, 
   onEdit, 
   onStockChange 
@@ -132,22 +133,7 @@ const StockItem = memo(({
       </div>
     </motion.div>
   );
-});
-
-StockItem.displayName = 'StockItem';
-
-// Custom comparison untuk memo - re-render jika stock atau is_available berubah
-const areEqual = (prevProps: any, nextProps: any) => {
-  return (
-    prevProps.item.id === nextProps.item.id &&
-    prevProps.item.stock === nextProps.item.stock &&
-    prevProps.item.is_available === nextProps.item.is_available &&
-    prevProps.item.name === nextProps.item.name &&
-    prevProps.item.price === nextProps.item.price
-  );
 };
-
-const StockItemMemo = memo(StockItem, areEqual);
 
 export default function StockManagement() {
   const navigate = useNavigate();
@@ -275,7 +261,7 @@ export default function StockManagement() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          {categories.map((category, index) => (
+          {categories.map((category, _index) => (
             <motion.button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -308,7 +294,7 @@ export default function StockManagement() {
         {/* Items List */}
         <div className="space-y-3">
           {filteredItems.map((item) => (
-            <StockItemMemo
+            <StockItem
               key={item.id}
               item={item}
               onEdit={handleEdit}

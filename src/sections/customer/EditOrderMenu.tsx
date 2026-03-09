@@ -6,7 +6,8 @@ import {
   Minus, 
   ArrowLeft, 
   Save,
-  Loader2
+  Loader2,
+  Trash2
 } from 'lucide-react';
 import { useMenuItems } from '@/hooks/useMenuItems';
 import { supabase } from '@/lib/supabase';
@@ -24,13 +25,13 @@ interface CartItem {
   subtotal: number;
 }
 
-export default function EditOrderMenu({ customerName: _customerName }: EditOrderMenuProps) {
+export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
   const navigate = useNavigate();
   const { menuItems, loading: menuLoading } = useMenuItems();
   
   const [editData, setEditData] = useState<any>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [saving, setSaving] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -71,7 +72,7 @@ export default function EditOrderMenu({ customerName: _customerName }: EditOrder
   }, [navigate]);
 
   const categories = useMemo(() => {
-    const unique = [...new Set(menuItems.map(i => i.category_name).filter(Boolean))];
+    const unique = [...new Set(menuItems.map(i => i.category_name).filter((c): c is string => !!c))];
     return ['Semua', ...unique];
   }, [menuItems]);
 
@@ -148,8 +149,9 @@ export default function EditOrderMenu({ customerName: _customerName }: EditOrder
       await supabase.from('orders').update({
         subtotal,
         tax_amount: tax,
-        total_amount: total
-      }).eq('id', editData.orderId);
+        total_amount: total,
+        customer_name: customerName || editData.customerName || ''
+      } as Record<string, unknown>).eq('id', editData.orderId);
 
       localStorage.removeItem('editModeOrder');
       toast.success('Pesanan berhasil diupdate!');

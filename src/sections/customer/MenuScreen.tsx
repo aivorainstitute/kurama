@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, ChevronRight, ClipboardList, ShoppingBag, User, Loader2, RefreshCw } from 'lucide-react';
+import { Plus, Minus, ChevronRight, ClipboardList, ShoppingBag, User, Loader2, RefreshCw, Clock, AlertCircle } from 'lucide-react';
 import { useMenuItems, clearMenuCache } from '@/hooks/useMenuItems';
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
@@ -11,6 +11,7 @@ interface MenuScreenProps {
   customerName: string;
   cartItems: CartItem[];
   addToCart: (menuItem: MenuItem, quantity: number, notes: string) => void;
+  activeOrder?: import('@/App').Order | null;
 }
 
 // 3D Shadow style
@@ -22,8 +23,9 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [loadingTimeout, setLoadingTimeout] = useState(false);
   
-  const { menuItems, loading, error } = useMenuItems();
+  const { menuItems, loading, error, refetch: _refetch } = useMenuItems();
   const { orderSummaries } = useOrders();
+  const _activeOrder = activeOrder;
   
   // Timeout - kalau loading lebih dari 8 detik, anggap timeout
   useEffect(() => {
@@ -36,6 +38,20 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
       setLoadingTimeout(false);
     }
   }, [loading]);
+
+  // Format relative time helper function
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'Baru saja';
+    if (diffMins < 60) return `${diffMins} menit lalu`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    return date.toLocaleDateString('id-ID');
+  };
   
   // Filter pesanan customer yang masih aktif (tidak SELESAI/DIBATALKAN)
   const customerOrders = useMemo(() => {
@@ -69,7 +85,7 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
     return cartItem?.quantity || 0;
   };
 
-  const handleQuantityChange = (item: MenuItem, delta: number) => {
+  const handleQuantityChange = (item: import('@/App').MenuItem, delta: number) => {
     const currentQty = getItemQuantity(item.id);
     const newQty = Math.max(0, currentQty + delta);
     
@@ -227,7 +243,7 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
         <p className="text-xs text-gray-400 mb-3">{filteredItems.length} menu tersedia</p>
         
         <div className="space-y-3">
-          {filteredItems.map((item) => {
+          {filteredItems.map((item: import('@/App').MenuItem) => {
             const quantity = getItemQuantity(item.id);
             return (
               <motion.div 

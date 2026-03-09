@@ -27,9 +27,9 @@ export default function CartSheet({
   const [editingNotes, setEditingNotes] = useState<number | null>(null);
   const [noteText, setNoteText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [_errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const _totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
   const taxAmount = Math.round(subtotal * 0.1);
   const total = subtotal + taxAmount;

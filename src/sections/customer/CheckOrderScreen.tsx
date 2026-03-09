@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { Package, Clock, ClipboardList, ArrowRight, Search, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Package, Clock, ClipboardList, ArrowRight, Search, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw, User } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { useOrders } from '@/hooks/useOrders';
 import { supabase } from '@/lib/supabase';
@@ -31,7 +31,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
   const [showDetailModal, setShowDetailModal] = useState(false);
   
   // Ambil data dari Supabase (real-time)
-  const { orderSummaries, loading, error, refetch } = useOrders();
+  const { orderSummaries, loading, error: _error, refetch } = useOrders();
   
   // Ambil nama dari state navigasi atau gunakan customerName
   const searchCustomerName = (location.state as any)?.searchName || customerName;
