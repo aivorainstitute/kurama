@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 24 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    /* Orange Primary Theme */
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 20% 96%;
+    --secondary-foreground: 24 10% 10%;
+    --muted: 30 20% 96%;
+    --muted-foreground: 24 10% 40%;
+    --accent: 30 100% 95%;
+    --accent-foreground: 24 95% 40%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 20% 90%;
+    --input: 30 20% 90%;
+    --ring: 24 95% 53%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+/* 3D Button Effects */
+@layer components {
+  .btn-3d {
+    @apply relative transition-all duration-150;
+    box-shadow: 0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4);
+    transform: translateY(0);
+  }
+  
+  .btn-3d:hover {
+    @apply brightness-110;
+    box-shadow: 0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4);
+    transform: translateY(2px);
+  }
+  
+  .btn-3d:active {
+    box-shadow: 0 0 0 0 #C2410C, 0 2px 4px rgba(249, 115, 22, 0.4);
+    transform: translateY(6px);
+  }
+
+  .btn-3d-secondary {
+    @apply relative transition-all duration-150;
+    box-shadow: 0 6px 0 0 #9CA3AF, 0 8px 16px rgba(156, 163, 175, 0.4);
+    transform: translateY(0);
+  }
+  
+  .btn-3d-secondary:hover {
+    box-shadow: 0 4px 0 0 #9CA3AF, 0 6px 12px rgba(156, 163, 175, 0.4);
+    transform: translateY(2px);
+  }
+  
+  .btn-3d-secondary:active {
+    box-shadow: 0 0 0 0 #9CA3AF, 0 2px 4px rgba(156, 163, 175, 0.4);
+    transform: translateY(6px);
+  }
+
+  .btn-3d-success {
+    @apply relative transition-all duration-150;
+    box-shadow: 0 6px 0 0 #15803D, 0 8px 16px rgba(34, 197, 94, 0.4);
+    transform: translateY(0);
+  }
+  
+  .btn-3d-success:hover {
+    box-shadow: 0 4px 0 0 #15803D, 0 6px 12px rgba(34, 197, 94, 0.4);
+    transform: translateY(2px);
+  }
+  
+  .btn-3d-success:active {
+    box-shadow: 0 0 0 0 #15803D, 0 2px 4px rgba(34, 197, 94, 0.4);
+    transform: translateY(6px);
+  }
+
+  /* Card 3D Effect */
+  .card-3d {
+    @apply transition-all duration-300;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -2px rgba(0, 0, 0, 0.1),
+      0 8px 16px -4px rgba(249, 115, 22, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  
+  .card-3d:hover {
+    @apply -translate-y-1;
+    box-shadow: 
+      0 12px 24px -4px rgba(0, 0, 0, 0.15),
+      0 8px 16px -4px rgba(249, 115, 22, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* Floating Animation */
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Glow Effect */
+  .glow-orange {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-orange {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(249, 115, 22, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Orange Theme Colors - Updated */
+@layer utilities {
+  .text-orange-primary {
+    color: #F97316;
+  }
+  .bg-orange-primary {
+    background-color: #F97316;
+  }
+  .bg-orange-dark {
+    background-color: #EA580C;
+  }
+  .bg-orange-light {
+    background-color: #FFF7ED;
+  }
+  .border-orange-primary {
+    border-color: #F97316;
+  }
+  
+  /* Shadow utilities */
+  .shadow-orange-glow {
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.4);
+  }
+  
+  .shadow-3d-orange {
+    box-shadow: 0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4);
+  }
+
+  /* Status Colors */
+  .bg-blue-500 {
+    background-color: #3B82F6;
+  }
+  .text-blue-600 {
+    color: #2563EB;
+  }
+  .bg-blue-100 {
+    background-color: #DBEAFE;
+  }
+  .bg-yellow-500 {
+    background-color: #F59E0B;
+  }
+  .text-yellow-600 {
+    color: #D97706;
+  }
+  .bg-yellow-100 {
+    background-color: #FEF3C7;
+  }
+  .bg-green-500 {
+    background-color: #22C55E;
+  }
+  .text-green-600 {
+    color: #16A34A;
+  }
+  .bg-green-100 {
+    background-color: #DCFCE7;
+  }
+  
+  /* Soft shadows */
+  .shadow-soft {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+  }
+  .shadow-card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Gradient backgrounds */
+  .bg-gradient-orange {
+    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+  }
+  
+  .bg-gradient-orange-light {
+    background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+  }
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* GPU acceleration untuk animations */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Prevent layout shift */
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+/* Optimize paint */
+.optimize-paint {
+  contain: layout style paint;
+}
+
+/* Reduce motion untuk accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
