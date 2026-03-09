@@ -152,7 +152,7 @@ function HeroSection() {
                 className="relative"
               >
                 <img 
-                  src="/logokurama.png" 
+                  src="/kuramalogo.png" 
                   alt="KURAMA Coffee" 
                   className="w-72 h-72 md:w-96 md:h-96 object-contain drop-shadow-2xl"
                 />
@@ -233,7 +233,7 @@ function InfoSection() {
           >
             <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-100 flex items-center justify-center">
               <img 
-                src="/logokurama.png" 
+                src="/kuramalogo.png" 
                 alt="KURAMA" 
                 className="w-48 h-48 object-contain opacity-80"
               />
@@ -367,7 +367,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <img src="/logokurama.png" alt="KURAMA" className="w-10 h-10 object-contain invert" />
+            <img src="/kuramalogo.png" alt="KURAMA" className="w-10 h-10 object-contain invert" />
             <div>
               <span className="text-xl font-bold text-white block">KURAMA</span>
               <span className="text-xs text-gray-500">Coffee & Cozy Space</span>

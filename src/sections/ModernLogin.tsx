@@ -145,7 +145,7 @@ export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
                 transition={{ duration: 4, repeat: Infinity }}
               >
                 <img 
-                  src="/logokurama.png" 
+                  src="/kuramalogo.png" 
                   alt="KURAMA" 
                   className="w-16 h-16 object-contain"
                 />
