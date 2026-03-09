@@ -59,7 +59,7 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
           className="mb-4"
         >
           <img 
-            src="/logo.png" 
+            src="/kuramalogo.png" 
             alt="KURAMA" 
             className="w-20 h-20 object-contain drop-shadow-lg"
           />
