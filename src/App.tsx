@@ -4,6 +4,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { supabase } from '@/lib/supabase';
 
+// Landing & Auth
+import LandingPage2026 from '@/sections/LandingPage2026';
+import ModernLogin from '@/sections/ModernLogin';
+
 // Customer App Screens
 import WelcomeScreen from '@/sections/customer/WelcomeScreen';
 import MenuScreen from '@/sections/customer/MenuScreen';
@@ -501,9 +505,22 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50">
         <Routes>
+          {/* Landing Page & Auth */}
+          <Route path="/" element={<LandingPage2026 />} />
+          <Route 
+            path="/login" 
+            element={
+              isAdmin ? (
+                <Navigate to="/admin/dashboard" replace />
+              ) : (
+                <ModernLogin setIsAdmin={setIsAdmin} />
+              )
+            } 
+          />
+          
           {/* Customer Routes */}
           <Route 
-            path="/" 
+            path="/customer" 
             element={
               <WelcomeScreen 
                 customerName={customerName} 
@@ -524,7 +541,7 @@ function App() {
                   activeOrder={activeOrder}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -541,7 +558,7 @@ function App() {
                   createOrder={createOrder}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -561,7 +578,7 @@ function App() {
                   order={activeOrder}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -575,7 +592,7 @@ function App() {
                   orders={orders}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -588,7 +605,7 @@ function App() {
                   orders={orders}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -607,7 +624,7 @@ function App() {
               customerName ? (
                 <EditOrderMenu customerName={customerName} />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/customer" replace />
               )
             } 
           />
@@ -615,11 +632,7 @@ function App() {
           {/* Admin Routes */}
           <Route 
             path="/admin/login" 
-            element={
-              <AdminLogin 
-                setIsAdmin={setIsAdmin}
-              />
-            } 
+            element={<Navigate to="/login" replace />}
           />
           <Route 
             path="/admin/dashboard" 
@@ -627,7 +640,7 @@ function App() {
               isAdmin ? (
                 <DashboardOverview onLogout={handleLogout} />
               ) : (
-                <Navigate to="/admin/login" />
+                <Navigate to="/login" />
               )
             } 
           />
@@ -637,7 +650,7 @@ function App() {
               isAdmin ? (
                 <OrderManagement />
               ) : (
-                <Navigate to="/admin/login" />
+                <Navigate to="/login" />
               )
             } 
           />
@@ -647,7 +660,7 @@ function App() {
               isAdmin ? (
                 <StockManagement />
               ) : (
-                <Navigate to="/admin/login" />
+                <Navigate to="/login" />
               )
             } 
           />
@@ -657,7 +670,7 @@ function App() {
               isAdmin ? (
                 <EditItem />
               ) : (
-                <Navigate to="/admin/login" />
+                <Navigate to="/login" />
               )
             } 
           />
@@ -667,7 +680,7 @@ function App() {
               isAdmin ? (
                 <CategoryManagement />
               ) : (
-                <Navigate to="/admin/login" />
+                <Navigate to="/login" />
               )
             } 
           />

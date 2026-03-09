@@ -1,0 +1,458 @@
+﻿[
+    {
+        "path":  ".gitignore",
+        "size":  21
+    },
+    {
+        "path":  "DATABASE_SETUP_GUIDE.md",
+        "size":  5660
+    },
+    {
+        "path":  "README.md",
+        "size":  2555
+    },
+    {
+        "path":  "SUPABASE-TROUBLESHOOTING.md",
+        "size":  3418
+    },
+    {
+        "path":  "components.json",
+        "size":  461
+    },
+    {
+        "path":  "dist/assets/index-BY9_ie2G.js",
+        "size":  405406
+    },
+    {
+        "path":  "dist/assets/index-C6TZHnAQ.css",
+        "size":  86707
+    },
+    {
+        "path":  "dist/index.html",
+        "size":  410
+    },
+    {
+        "path":  "eslint.config.js",
+        "size":  616
+    },
+    {
+        "path":  "index.html",
+        "size":  653
+    },
+    {
+        "path":  "info.md",
+        "size":  1389
+    },
+    {
+        "path":  "logo.jpg",
+        "size":  5125
+    },
+    {
+        "path":  "logo.png",
+        "size":  17083
+    },
+    {
+        "path":  "package-lock.json",
+        "size":  309293
+    },
+    {
+        "path":  "package.json",
+        "size":  2646
+    },
+    {
+        "path":  "postcss.config.js",
+        "size":  80
+    },
+    {
+        "path":  "public/logo.png",
+        "size":  17083
+    },
+    {
+        "path":  "src/App.css",
+        "size":  606
+    },
+    {
+        "path":  "src/App.tsx",
+        "size":  20583
+    },
+    {
+        "path":  "src/assets/logo.png",
+        "size":  17083
+    },
+    {
+        "path":  "src/components/Navbar3D.tsx",
+        "size":  4895
+    },
+    {
+        "path":  "src/components/SupabaseTest.tsx",
+        "size":  12531
+    },
+    {
+        "path":  "src/components/ui/accordion.tsx",
+        "size":  2039
+    },
+    {
+        "path":  "src/components/ui/alert-dialog.tsx",
+        "size":  3850
+    },
+    {
+        "path":  "src/components/ui/alert.tsx",
+        "size":  1614
+    },
+    {
+        "path":  "src/components/ui/aspect-ratio.tsx",
+        "size":  280
+    },
+    {
+        "path":  "src/components/ui/avatar.tsx",
+        "size":  1083
+    },
+    {
+        "path":  "src/components/ui/badge.tsx",
+        "size":  1633
+    },
+    {
+        "path":  "src/components/ui/breadcrumb.tsx",
+        "size":  2357
+    },
+    {
+        "path":  "src/components/ui/button-group.tsx",
+        "size":  2209
+    },
+    {
+        "path":  "src/components/ui/button.tsx",
+        "size":  2218
+    },
+    {
+        "path":  "src/components/ui/calendar.tsx",
+        "size":  7793
+    },
+    {
+        "path":  "src/components/ui/card.tsx",
+        "size":  1987
+    },
+    {
+        "path":  "src/components/ui/carousel.tsx",
+        "size":  5542
+    },
+    {
+        "path":  "src/components/ui/chart.tsx",
+        "size":  10069
+    },
+    {
+        "path":  "src/components/ui/checkbox.tsx",
+        "size":  1219
+    },
+    {
+        "path":  "src/components/ui/collapsible.tsx",
+        "size":  786
+    },
+    {
+        "path":  "src/components/ui/command.tsx",
+        "size":  4804
+    },
+    {
+        "path":  "src/components/ui/context-menu.tsx",
+        "size":  8274
+    },
+    {
+        "path":  "src/components/ui/dialog.tsx",
+        "size":  3981
+    },
+    {
+        "path":  "src/components/ui/drawer.tsx",
+        "size":  4255
+    },
+    {
+        "path":  "src/components/ui/dropdown-menu.tsx",
+        "size":  8410
+    },
+    {
+        "path":  "src/components/ui/empty.tsx",
+        "size":  2396
+    },
+    {
+        "path":  "src/components/ui/field.tsx",
+        "size":  6145
+    },
+    {
+        "path":  "src/components/ui/form.tsx",
+        "size":  3764
+    },
+    {
+        "path":  "src/components/ui/hover-card.tsx",
+        "size":  1532
+    },
+    {
+        "path":  "src/components/ui/input-group.tsx",
+        "size":  5065
+    },
+    {
+        "path":  "src/components/ui/input-otp.tsx",
+        "size":  2240
+    },
+    {
+        "path":  "src/components/ui/input.tsx",
+        "size":  962
+    },
+    {
+        "path":  "src/components/ui/item.tsx",
+        "size":  4494
+    },
+    {
+        "path":  "src/components/ui/kbd.tsx",
+        "size":  862
+    },
+    {
+        "path":  "src/components/ui/label.tsx",
+        "size":  611
+    },
+    {
+        "path":  "src/components/ui/menubar.tsx",
+        "size":  8380
+    },
+    {
+        "path":  "src/components/ui/navigation-menu.tsx",
+        "size":  6664
+    },
+    {
+        "path":  "src/components/ui/pagination.tsx",
+        "size":  2717
+    },
+    {
+        "path":  "src/components/ui/popover.tsx",
+        "size":  1635
+    },
+    {
+        "path":  "src/components/ui/progress.tsx",
+        "size":  726
+    },
+    {
+        "path":  "src/components/ui/radio-group.tsx",
+        "size":  1466
+    },
+    {
+        "path":  "src/components/ui/resizable.tsx",
+        "size":  1980
+    },
+    {
+        "path":  "src/components/ui/scroll-area.tsx",
+        "size":  1645
+    },
+    {
+        "path":  "src/components/ui/select.tsx",
+        "size":  6344
+    },
+    {
+        "path":  "src/components/ui/separator.tsx",
+        "size":  699
+    },
+    {
+        "path":  "src/components/ui/sheet.tsx",
+        "size":  4076
+    },
+    {
+        "path":  "src/components/ui/sidebar.tsx",
+        "size":  21638
+    },
+    {
+        "path":  "src/components/ui/skeleton.tsx",
+        "size":  276
+    },
+    {
+        "path":  "src/components/ui/slider.tsx",
+        "size":  1996
+    },
+    {
+        "path":  "src/components/ui/sonner.tsx",
+        "size":  1020
+    },
+    {
+        "path":  "src/components/ui/spinner.tsx",
+        "size":  331
+    },
+    {
+        "path":  "src/components/ui/switch.tsx",
+        "size":  1177
+    },
+    {
+        "path":  "src/components/ui/table.tsx",
+        "size":  2434
+    },
+    {
+        "path":  "src/components/ui/tabs.tsx",
+        "size":  1969
+    },
+    {
+        "path":  "src/components/ui/textarea.tsx",
+        "size":  759
+    },
+    {
+        "path":  "src/components/ui/toggle-group.tsx",
+        "size":  2300
+    },
+    {
+        "path":  "src/components/ui/toggle.tsx",
+        "size":  1556
+    },
+    {
+        "path":  "src/components/ui/tooltip.tsx",
+        "size":  1892
+    },
+    {
+        "path":  "src/hooks/use-mobile.ts",
+        "size":  565
+    },
+    {
+        "path":  "src/hooks/useLocalStorage.ts",
+        "size":  1532
+    },
+    {
+        "path":  "src/hooks/useMenuItems.ts",
+        "size":  5084
+    },
+    {
+        "path":  "src/hooks/useOrders.ts",
+        "size":  8907
+    },
+    {
+        "path":  "src/index.css",
+        "size":  6357
+    },
+    {
+        "path":  "src/lib/imageCompression.ts",
+        "size":  4738
+    },
+    {
+        "path":  "src/lib/supabase.ts",
+        "size":  1918
+    },
+    {
+        "path":  "src/lib/utils.ts",
+        "size":  166
+    },
+    {
+        "path":  "src/main.tsx",
+        "size":  230
+    },
+    {
+        "path":  "src/sections/admin/AdminLogin.tsx",
+        "size":  8661
+    },
+    {
+        "path":  "src/sections/admin/CategoryManagement.tsx",
+        "size":  9500
+    },
+    {
+        "path":  "src/sections/admin/DashboardOverview.tsx",
+        "size":  22026
+    },
+    {
+        "path":  "src/sections/admin/EditItem.tsx",
+        "size":  18559
+    },
+    {
+        "path":  "src/sections/admin/OrderManagement.tsx",
+        "size":  21061
+    },
+    {
+        "path":  "src/sections/admin/StockManagement.example.tsx",
+        "size":  9785
+    },
+    {
+        "path":  "src/sections/admin/StockManagement.tsx",
+        "size":  13740
+    },
+    {
+        "path":  "src/sections/customer/CartSheet.tsx",
+        "size":  13081
+    },
+    {
+        "path":  "src/sections/customer/CheckOrderScreen.tsx",
+        "size":  28230
+    },
+    {
+        "path":  "src/sections/customer/EditOrderMenu.tsx",
+        "size":  14899
+    },
+    {
+        "path":  "src/sections/customer/EditOrderScreen.tsx",
+        "size":  20471
+    },
+    {
+        "path":  "src/sections/customer/MenuScreen.tsx",
+        "size":  15647
+    },
+    {
+        "path":  "src/sections/customer/OrderDetailScreen.tsx",
+        "size":  11770
+    },
+    {
+        "path":  "src/sections/customer/OrderHistoryScreen.tsx",
+        "size":  7002
+    },
+    {
+        "path":  "src/sections/customer/PaymentScreen.tsx",
+        "size":  11811
+    },
+    {
+        "path":  "src/sections/customer/QueueScreen.tsx",
+        "size":  39269
+    },
+    {
+        "path":  "src/sections/customer/WelcomeScreen.tsx",
+        "size":  21022
+    },
+    {
+        "path":  "supabase-add-image-url.sql",
+        "size":  385
+    },
+    {
+        "path":  "supabase-add-payment-status.sql",
+        "size":  1200
+    },
+    {
+        "path":  "supabase-complete-setup.sql",
+        "size":  10631
+    },
+    {
+        "path":  "supabase-fix-categories.sql",
+        "size":  1105
+    },
+    {
+        "path":  "supabase-fix-category.sql",
+        "size":  1198
+    },
+    {
+        "path":  "supabase-fix-checkout.sql",
+        "size":  1351
+    },
+    {
+        "path":  "supabase-fix-orders.sql",
+        "size":  3086
+    },
+    {
+        "path":  "supabase-fix-queue-numbers.sql",
+        "size":  686
+    },
+    {
+        "path":  "tailwind.config.js",
+        "size":  5207
+    },
+    {
+        "path":  "tsconfig.app.json",
+        "size":  815
+    },
+    {
+        "path":  "tsconfig.json",
+        "size":  232
+    },
+    {
+        "path":  "tsconfig.node.json",
+        "size":  653
+    },
+    {
+        "path":  "vite.config.ts",
+        "size":  467
+    }
+]
