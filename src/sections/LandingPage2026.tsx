@@ -100,7 +100,7 @@ function HeroSection() {
               className="mb-6"
             >
               <h1 className="text-6xl md:text-8xl font-black text-black tracking-tighter mb-4">
-                KURAMA
+                kur𝛂ma
               </h1>
               <p className="text-xl md:text-2xl text-gray-500 font-light tracking-wide">
                 Coffee & Cozy Space
@@ -153,7 +153,7 @@ function HeroSection() {
               >
                 <img 
                   src="/kuramalogo.png" 
-                  alt="KURAMA Coffee" 
+                  alt="kur𝛂ma Coffee" 
                   className="w-72 h-72 md:w-96 md:h-96 object-contain drop-shadow-2xl"
                 />
               </motion.div>
@@ -234,7 +234,7 @@ function InfoSection() {
             <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-100 flex items-center justify-center">
               <img 
                 src="/kuramalogo.png" 
-                alt="KURAMA" 
+                alt="kur𝛂ma" 
                 className="w-48 h-48 object-contain opacity-80"
               />
             </div>
@@ -251,7 +251,7 @@ function InfoSection() {
               A Cozy Space <br/> to Share Stories
             </h2>
             <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-              KURAMA is a comfortable gathering place with quality coffee 
+              kur𝛂ma is a comfortable gathering place with quality coffee 
               and delicious food. We believe every cup of coffee has a story, 
               and we want to be part of yours.
             </p>
@@ -340,7 +340,7 @@ function CTASection() {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Visit KURAMA Today
+            Visit kur𝛂ma Today
           </h2>
           <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
             Experience the best coffee and comfortable atmosphere with your loved ones.
@@ -367,9 +367,9 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <img src="/kuramalogo.png" alt="KURAMA" className="w-10 h-10 object-contain invert" />
+            <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-10 h-10 object-contain invert" />
             <div>
-              <span className="text-xl font-bold text-white block">KURAMA</span>
+              <span className="text-xl font-bold text-white block">kur𝛂ma</span>
               <span className="text-xs text-gray-500">Coffee & Cozy Space</span>
             </div>
           </div>
@@ -384,7 +384,7 @@ function Footer() {
           </div>
           
           <p className="text-gray-600 text-sm">
-            2024 KURAMA Coffee. All rights reserved.
+            2024 kur𝛂ma Coffee. All rights reserved.
           </p>
         </div>
       </div>

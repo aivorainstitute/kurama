@@ -60,7 +60,7 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
         >
           <img 
             src="/kuramalogo.png" 
-            alt="KURAMA" 
+            alt="kur𝛂ma" 
             className="w-20 h-20 object-contain drop-shadow-lg"
           />
         </motion.div>
@@ -68,7 +68,7 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
         {/* Brand Name */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
-            KURAMA
+            kur𝛂ma
           </h1>
           <p className="text-xs font-medium text-orange-400/80 tracking-[0.3em] uppercase">
             Admin Portal

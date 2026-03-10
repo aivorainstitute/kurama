@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, ChevronRight, ClipboardList, ShoppingBag, User, Loader2, RefreshCw, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Minus, ChevronRight, ClipboardList, ShoppingBag, User, Loader2, RefreshCw, Clock, AlertCircle, Users, X, ChevronLeft } from 'lucide-react';
 import { useMenuItems, clearMenuCache } from '@/hooks/useMenuItems';
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
@@ -22,6 +22,7 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [loadingTimeout, setLoadingTimeout] = useState(false);
+  const [showQueueModal, setShowQueueModal] = useState(false);
   
   const { menuItems, loading, error, refetch: _refetch } = useMenuItems();
   const { orderSummaries } = useOrders();
@@ -184,17 +185,28 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
             <p className="text-sm text-gray-500">Hai {customerName || 'Guest'},</p>
             <h1 className="text-lg font-bold text-gray-800">mau pesan apa?</h1>
           </div>
-          <motion.button 
-            onClick={() => {
-              clearMenuCache();
-              window.location.reload();
-            }}
-            className="ml-auto w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center"
-            whileHover={{ scale: 1.1, rotate: 180 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <RefreshCw className="w-5 h-5 text-orange-600" />
-          </motion.button>
+          <div className="ml-auto flex items-center gap-2">
+            {/* Tombol Cek Antrian */}
+            <motion.button 
+              onClick={() => setShowQueueModal(true)}
+              className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Users className="w-5 h-5 text-blue-600" />
+            </motion.button>
+            <motion.button 
+              onClick={() => {
+                clearMenuCache();
+                window.location.reload();
+              }}
+              className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center"
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <RefreshCw className="w-5 h-5 text-orange-600" />
+            </motion.button>
+          </div>
         </div>
 
         {/* Tombol Cek Pesanan */}
@@ -358,6 +370,233 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
               </div>
               <ChevronRight className="w-6 h-6" />
             </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Cek Antrian */}
+      <AnimatePresence>
+        {showQueueModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setShowQueueModal(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            
+            {/* Modal Content */}
+            <motion.div
+              className="relative bg-white w-full max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden"
+              style={{ maxHeight: '80vh' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <motion.button
+                    onClick={() => setShowQueueModal(false)}
+                    className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronLeft className="w-5 h-5 text-white" />
+                  </motion.button>
+                  <div>
+                    <h2 className="text-lg font-bold text-white">Antrian Live</h2>
+                    <p className="text-xs text-orange-100">
+                      {orderSummaries.filter(o => o.status !== 'SELESAI' && o.status !== 'DIBATALKAN').length} pesanan aktif
+                    </p>
+                  </div>
+                </div>
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+              </div>
+
+              {/* Queue List */}
+              <div className="overflow-y-auto p-5" style={{ maxHeight: 'calc(80vh - 80px)' }}>
+                {(() => {
+                  // Filter semua pesanan yang belum selesai/dibatalkan
+                  const activeOrders = orderSummaries
+                    .filter(o => o.status !== 'SELESAI' && o.status !== 'DIBATALKAN')
+                    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+                  
+                  // Pisahkan berdasarkan status pembayaran
+                  const paidOrders = activeOrders.filter(o => o.payment_status === 'SUDAH_BAYAR');
+                  const unpaidOrders = activeOrders.filter(o => o.payment_status !== 'SUDAH_BAYAR');
+                  
+                  // Paid orders: dikelompokkan berdasarkan status pesanan
+                  const paidReady = paidOrders.filter(o => o.status === 'SIAP');
+                  const paidProcessing = paidOrders.filter(o => o.status === 'DIPROSES');
+                  const paidPending = paidOrders.filter(o => o.status === 'BARU');
+                  
+                  // Unpaid orders: dikelompokkan berdasarkan status pesanan
+                  const unpaidReady = unpaidOrders.filter(o => o.status === 'SIAP');
+                  const unpaidProcessing = unpaidOrders.filter(o => o.status === 'DIPROSES');
+                  const unpaidPending = unpaidOrders.filter(o => o.status === 'BARU');
+
+                  if (activeOrders.length === 0) {
+                    return (
+                      <div className="text-center py-12">
+                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Clock className="w-10 h-10 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500">Tidak ada antrian saat ini</p>
+                      </div>
+                    );
+                  }
+
+                  // Helper function untuk render order item
+                  const renderOrderItem = (order: typeof activeOrders[0], idx: number, isPaid: boolean) => {
+                    const isReady = order.status === 'SIAP';
+                    const isProcessing = order.status === 'DIPROSES';
+                    
+                    // Warna berdasarkan status pesanan
+                    const bgColor = isReady ? 'bg-green-50' : isProcessing ? 'bg-orange-50' : 'bg-blue-50';
+                    const borderColor = isReady ? 'border-green-200' : isProcessing ? 'border-orange-200' : 'border-blue-200';
+                    const numberBg = isReady ? 'bg-green-500' : isProcessing ? 'bg-orange-500' : 'bg-blue-500';
+                    const numberShadow = isReady ? '#16A34A' : isProcessing ? '#C2410C' : '#1E40AF';
+                    const textColor = isReady ? 'text-green-600' : isProcessing ? 'text-orange-600' : 'text-blue-600';
+                    
+                    return (
+                      <motion.div
+                        key={order.id}
+                        className={`${bgColor} border ${borderColor} rounded-2xl p-4`}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-12 h-12 ${numberBg} rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}
+                               style={{ boxShadow: `0 4px 0 0 ${numberShadow}` }}>
+                            {order.queue_number}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-gray-800 truncate">{order.customer_name}</p>
+                            <p className={`text-xs ${textColor} font-medium`}>
+                              {order.item_count || 0} item • Rp {order.total_amount?.toLocaleString('id-ID')}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1.5">
+                            {/* Status Pesanan - GEDE */}
+                            <span className={`px-3 py-1.5 text-xs font-bold rounded-full ${
+                              isReady 
+                                ? 'bg-green-500 text-white' 
+                                : isProcessing 
+                                  ? 'bg-orange-500 text-white' 
+                                  : 'bg-blue-500 text-white'
+                            }`}>
+                              {isReady ? 'SIAP DIAMBIL' : isProcessing ? 'DIPROSES' : 'MENUNGGU'}
+                            </span>
+                            {/* Status Pembayaran - KECIL */}
+                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${
+                              isPaid 
+                                ? 'bg-green-100 text-green-700' 
+                                : 'bg-red-100 text-red-600'
+                            }`}>
+                              {isPaid ? '✓ Sudah Bayar' : 'Belum Bayar'}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  };
+
+                  return (
+                    <div className="space-y-6">
+                      {/* === SUDAH BAYAR === */}
+                      {paidOrders.length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-bold text-green-700 uppercase tracking-wider mb-3 flex items-center gap-2 bg-green-100 px-3 py-2 rounded-lg">
+                            <span className="w-2 h-2 bg-green-500 rounded-full" />
+                            SUDAH BAYAR ({paidOrders.length})
+                          </h3>
+                          <div className="space-y-2">
+                            {/* Siap Diambil */}
+                            {paidReady.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-[10px] font-medium text-green-600 uppercase mb-2 ml-1">Siap Diambil ({paidReady.length})</p>
+                                <div className="space-y-2">
+                                  {paidReady.map((order, idx) => renderOrderItem(order, idx, true))}
+                                </div>
+                              </div>
+                            )}
+                            {/* Diproses */}
+                            {paidProcessing.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-[10px] font-medium text-orange-600 uppercase mb-2 ml-1">Diproses ({paidProcessing.length})</p>
+                                <div className="space-y-2">
+                                  {paidProcessing.map((order, idx) => renderOrderItem(order, idx, true))}
+                                </div>
+                              </div>
+                            )}
+                            {/* Menunggu */}
+                            {paidPending.length > 0 && (
+                              <div>
+                                <p className="text-[10px] font-medium text-blue-600 uppercase mb-2 ml-1">Menunggu ({paidPending.length})</p>
+                                <div className="space-y-2">
+                                  {paidPending.map((order, idx) => renderOrderItem(order, idx, true))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* === BELUM BAYAR === */}
+                      {unpaidOrders.length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-bold text-red-700 uppercase tracking-wider mb-3 flex items-center gap-2 bg-red-100 px-3 py-2 rounded-lg">
+                            <span className="w-2 h-2 bg-red-500 rounded-full" />
+                            BELUM BAYAR ({unpaidOrders.length})
+                          </h3>
+                          <div className="space-y-2">
+                            {/* Siap Diambil */}
+                            {unpaidReady.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-[10px] font-medium text-green-600 uppercase mb-2 ml-1">Siap Diambil ({unpaidReady.length})</p>
+                                <div className="space-y-2">
+                                  {unpaidReady.map((order, idx) => renderOrderItem(order, idx, false))}
+                                </div>
+                              </div>
+                            )}
+                            {/* Diproses */}
+                            {unpaidProcessing.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-[10px] font-medium text-orange-600 uppercase mb-2 ml-1">Diproses ({unpaidProcessing.length})</p>
+                                <div className="space-y-2">
+                                  {unpaidProcessing.map((order, idx) => renderOrderItem(order, idx, false))}
+                                </div>
+                              </div>
+                            )}
+                            {/* Menunggu */}
+                            {unpaidPending.length > 0 && (
+                              <div>
+                                <p className="text-[10px] font-medium text-blue-600 uppercase mb-2 ml-1">Menunggu ({unpaidPending.length})</p>
+                                <div className="space-y-2">
+                                  {unpaidPending.map((order, idx) => renderOrderItem(order, idx, false))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

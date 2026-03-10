@@ -136,7 +136,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
         >
           <img 
             src="/kuramalogo.png" 
-            alt="KURAMA Logo" 
+            alt="kur𝛂ma Logo" 
             className="w-28 h-28 object-contain drop-shadow-xl"
           />
           {/* Glow effect */}
@@ -151,7 +151,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
           className="mt-4 text-center"
         >
           <h1 className="text-4xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 drop-shadow-sm">
-            KURAMA
+            kur𝛂ma
           </h1>
           <p className="text-xs font-medium text-orange-400/80 tracking-[0.3em] uppercase mt-1">
             Food & Beverage
@@ -485,8 +485,8 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
         transition={{ delay: 0.8 }}
       >
         <div className="flex items-center gap-2 opacity-40">
-          <img src="/kuramalogo.png" alt="KURAMA" className="w-5 h-5 object-contain" />
-          <span className="text-xs font-bold tracking-wider text-gray-400">KURAMA</span>
+          <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-5 h-5 object-contain" />
+          <span className="text-xs font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
         <p className="text-[10px] text-gray-300 mt-1">Food & Beverage</p>
       </motion.div>

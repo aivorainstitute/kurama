@@ -217,6 +217,10 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
       
       if (error) throw error;
       
+      // Simpan ke localStorage untuk recovery
+      localStorage.setItem('lastOrderId', selectedOrder.id);
+      localStorage.setItem('lastPaymentMethod', method);
+      
       // Tutup modal dan navigate ke halaman payment dengan metode yang dipilih
       setShowPaymentModal(false);
       setSelectedOrder(null);
@@ -224,14 +228,34 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
       // Navigate ke payment screen dengan order dan metode yang dipilih
       navigate('/payment', { 
         state: { 
-          order: selectedOrder,
-          selectedMethod: method
+          order: { ...selectedOrder, payment_method: method },
+          paymentMethod: method
         } 
       });
     } catch (err) {
       console.error('Error updating payment method:', err);
       alert('Gagal mengubah metode pembayaran');
       setIsUpdating(false);
+    }
+  };
+  
+  // Fungsi untuk langsung ke halaman payment jika sudah punya metode
+  const handleGoToPayment = (order: import('@/lib/supabase').OrderSummary) => {
+    if (order.payment_method) {
+      // Sudah punya metode, langsung ke payment screen
+      localStorage.setItem('lastOrderId', order.id);
+      localStorage.setItem('lastPaymentMethod', order.payment_method);
+      
+      navigate('/payment', { 
+        state: { 
+          order,
+          paymentMethod: order.payment_method
+        } 
+      });
+    } else {
+      // Belum punya metode, buka modal pilih metode
+      setSelectedOrder(order);
+      setShowPaymentModal(true);
     }
   };
 
@@ -280,10 +304,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
               exit={{ opacity: 0, y: -20 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98, y: 2 }}
-              onClick={() => {
-                setSelectedOrder(customerPendingPayment);
-                setShowPaymentModal(true);
-              }}
+              onClick={() => handleGoToPayment(customerPendingPayment)}
             >
               {/* Credit Card Style Header */}
               <div className="flex items-start justify-between mb-4">

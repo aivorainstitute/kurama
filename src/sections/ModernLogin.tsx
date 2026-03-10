@@ -146,7 +146,7 @@ export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
               >
                 <img 
                   src="/kuramalogo.png" 
-                  alt="KURAMA" 
+                  alt="kur𝛂ma" 
                   className="w-16 h-16 object-contain"
                 />
               </motion.div>
@@ -161,7 +161,7 @@ export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
                 Admin Login
               </h1>
               <p className="text-amber-700/60">
-                KURAMA Coffee & Cozy Space
+                kur𝛂ma Coffee & Cozy Space
               </p>
             </motion.div>
           </div>

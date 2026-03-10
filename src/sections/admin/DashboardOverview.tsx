@@ -163,8 +163,8 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
           transition={{ delay: 0.1 }}
         >
           <div className="flex items-center gap-2">
-            <img src="/kuramalogo.png" alt="KURAMA" className="w-8 h-8 object-contain drop-shadow-md" />
-            <span className="font-black text-xl tracking-wider">KURAMA</span>
+            <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-8 h-8 object-contain drop-shadow-md" />
+            <span className="font-black text-xl tracking-wider">kur𝛂ma</span>
             <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Admin</span>
           </div>
         </motion.div>

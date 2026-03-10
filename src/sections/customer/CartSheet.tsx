@@ -295,8 +295,8 @@ export default function CartSheet({
         transition={{ delay: 0.3 }}
       >
         <div className="flex items-center gap-2 opacity-40">
-          <img src="/kuramalogo.png" alt="KURAMA" className="w-5 h-5 object-contain" />
-          <span className="text-xs font-bold tracking-wider text-gray-400">KURAMA</span>
+          <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-5 h-5 object-contain" />
+          <span className="text-xs font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
       </motion.div>
     </motion.div>

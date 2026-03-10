@@ -8,11 +8,11 @@ function BrandLogo({ small = false }: { small?: boolean }) {
     <div className="flex items-center gap-2">
       <img 
         src="/kuramalogo.png" 
-        alt="KURAMA" 
+        alt="kur𝛂ma" 
         className={`object-contain drop-shadow-md ${small ? 'w-8 h-8' : 'w-10 h-10'}`}
       />
       <span className={`font-black tracking-wider text-white ${small ? 'text-lg' : 'text-xl'}`}>
-        KURAMA
+        kur𝛂ma
       </span>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -24,13 +24,66 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
   const location = useLocation();
   const [copied, setCopied] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [orderData, setOrderData] = useState<Order | null>((location.state as any)?.order || order);
+  const [selectedMethod, setSelectedMethod] = useState<string>((location.state as any)?.paymentMethod || orderData?.payment_method || 'CASH');
+  const [isLoading, setIsLoading] = useState(!orderData);
   
-  // Ambil order dan metode dari state navigasi atau props
-  const orderData = (location.state as any)?.order || order;
-  const selectedMethod = (location.state as any)?.paymentMethod || orderData?.payment_method || 'CASH';
+  // Recover data dari localStorage atau fetch dari database saat refresh
+  useEffect(() => {
+    const recoverOrderData = async () => {
+      // Jika sudah ada data dari navigation state, gunakan itu
+      if (orderData) {
+        setIsLoading(false);
+        return;
+      }
+      
+      // Coba recover dari localStorage
+      const lastOrderId = localStorage.getItem('lastOrderId');
+      const lastPaymentMethod = localStorage.getItem('lastPaymentMethod');
+      
+      if (lastOrderId) {
+        try {
+          setIsLoading(true);
+          const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('id', lastOrderId)
+            .single();
+          
+          if (error) throw error;
+          
+          if (data) {
+            setOrderData(data as Order);
+            // Prioritaskan payment_method dari database, fallback ke localStorage
+            setSelectedMethod(data.payment_method || lastPaymentMethod || 'CASH');
+          }
+        } catch (err) {
+          console.error('Error recovering order:', err);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+    
+    recoverOrderData();
+  }, []);
   
-  // data variable for future use
-  const data = orderData;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex flex-col items-center justify-center p-4">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center"
+        >
+          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Memuat data pesanan...</p>
+        </motion.div>
+      </div>
+    );
+  }
   
   if (!orderData) {
     return (

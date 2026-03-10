@@ -180,8 +180,8 @@ export default function OrderHistoryScreen({ customerName, orders }: OrderHistor
         transition={{ delay: 0.5 }}
       >
         <div className="flex items-center gap-2 opacity-50">
-          <img src="/kuramalogo.png" alt="KURAMA" className="w-6 h-6 object-contain" />
-          <span className="text-sm font-bold tracking-wider text-gray-400">KURAMA</span>
+          <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-6 h-6 object-contain" />
+          <span className="text-sm font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
         <p className="text-xs text-gray-300 mt-1">Terima kasih telah memesan</p>
       </motion.div>

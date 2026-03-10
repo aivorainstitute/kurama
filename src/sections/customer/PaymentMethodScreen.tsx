@@ -1,13 +1,16 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Wallet, 
   QrCode, 
   ChevronLeft,
   Store,
-  ArrowRight
+  ArrowRight,
+  Loader2
 } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
+import { supabase } from '@/lib/supabase';
 import type { Order } from '@/App';
 
 interface PaymentMethodScreenProps {
@@ -17,6 +20,7 @@ interface PaymentMethodScreenProps {
 export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreenProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSaving, setIsSaving] = useState(false);
   
   // Get order from location state (passed from CartSheet) or use activeOrder
   const order = location.state?.order || activeOrder;
@@ -37,14 +41,45 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
     );
   }
 
-  // Langsung navigate saat metode dipilih
-  const handleSelectMethod = (method: 'CASH' | 'QRIS') => {
-    navigate('/payment', { 
-      state: { 
-        order,
-        paymentMethod: method 
-      } 
-    });
+  // Simpan metode pembayaran ke database dan navigate
+  const handleSelectMethod = async (method: 'CASH' | 'QRIS') => {
+    setIsSaving(true);
+    
+    try {
+      // Update payment_method di database
+      const { error } = await supabase
+        .from('orders')
+        .update({ payment_method: method })
+        .eq('id', order.id);
+      
+      if (error) {
+        console.error('Error saving payment method:', error);
+        // Tetap lanjut meski error, kita bisa retry nanti
+      }
+      
+      // Simpan order ID ke localStorage untuk recovery saat refresh
+      localStorage.setItem('lastOrderId', order.id);
+      localStorage.setItem('lastPaymentMethod', method);
+      
+      // Navigate ke payment screen
+      navigate('/payment', { 
+        state: { 
+          order: { ...order, payment_method: method },
+          paymentMethod: method 
+        } 
+      });
+    } catch (err) {
+      console.error('Error in handleSelectMethod:', err);
+      // Tetap navigate meski error
+      navigate('/payment', { 
+        state: { 
+          order,
+          paymentMethod: method 
+        } 
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const paymentMethods = [
@@ -132,18 +167,19 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
                 <motion.button
                   key={method.id}
                   onClick={() => handleSelectMethod(method.id)}
+                  disabled={isSaving}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + index * 0.1 }}
-                  className="w-full p-5 rounded-2xl border-2 bg-white border-gray-200 hover:border-orange-300 text-left transition-all group"
+                  className="w-full p-5 rounded-2xl border-2 bg-white border-gray-200 hover:border-orange-300 text-left transition-all group disabled:opacity-50"
                   style={{
-                    boxShadow: '0 4px 0 0 #E5E7EB, 0 4px 12px rgba(0,0,0,0.05)'
+                    boxShadow: isSaving ? '0 2px 0 0 #E5E7EB' : '0 4px 0 0 #E5E7EB, 0 4px 12px rgba(0,0,0,0.05)'
                   }}
-                  whileHover={{ 
+                  whileHover={!isSaving ? { 
                     scale: 1.02, 
                     boxShadow: '0 6px 0 0 #FED7AA, 0 8px 20px rgba(249, 115, 22, 0.15)'
-                  }}
-                  whileTap={{ scale: 0.98 }}
+                  } : {}}
+                  whileTap={!isSaving ? { scale: 0.98 } : {}}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${method.color} flex items-center justify-center`}>
@@ -157,7 +193,11 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
                     </div>
                     
                     <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors">
-                      <ArrowRight className="w-5 h-5 text-orange-500 group-hover:text-white transition-colors" />
+                      {isSaving ? (
+                        <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-5 h-5 text-orange-500 group-hover:text-white transition-colors" />
+                      )}
                     </div>
                   </div>
                 </motion.button>
