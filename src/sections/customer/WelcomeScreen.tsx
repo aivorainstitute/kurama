@@ -156,6 +156,9 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
           <p className="text-xs font-medium text-orange-400/80 tracking-[0.3em] uppercase mt-1">
             Coffee
           </p>
+          <p className="text-[10px] text-gray-400 mt-2 tracking-wide">
+            Brewed with passion, served with love
+          </p>
         </motion.div>
       </motion.div>
 
