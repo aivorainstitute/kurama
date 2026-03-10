@@ -6,12 +6,12 @@ import { supabase } from '@/lib/supabase';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import type { OrderSummary, Order } from '@/App';
 
-const PLACEHOLDER_IMAGE = 'https://placehold.co/100x100/e4e4e7/111827?text=Menu';
+const PLACEHOLDER_IMAGE = 'https://placehold.co/100x100/orange/white?text=Menu';
 
 // 3D Shadow styles
-const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.1)';
-const button3D = '0 6px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)';
-const button3DOrange = '0 4px 0 0 #E4E4E7, 0 4px 8px rgba(0, 0, 0, 0.18)';
+const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.15)';
+const button3D = '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)';
+const button3DOrange = '0 4px 0 0 #FED7AA, 0 4px 8px rgba(249, 115, 22, 0.3)';
 
 interface OrderDetailScreenProps {
   orders: OrderSummary[];
@@ -133,7 +133,7 @@ export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {
           <div className="flex items-center gap-4">
             <motion.div 
               className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center"
-              style={{ boxShadow: '0 4px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)' }}
+              style={{ boxShadow: '0 4px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)' }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95, y: 2 }}
             >
@@ -222,7 +222,7 @@ export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {
         {/* Payment Summary - Green Gradient */}
         <motion.div 
           className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white"
-          style={{ boxShadow: '0 6px 0 0 #3F3F46, 0 8px 16px rgba(0, 0, 0, 0.22)' }}
+          style={{ boxShadow: '0 6px 0 0 #059669, 0 8px 16px rgba(16, 185, 129, 0.4)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -289,4 +289,3 @@ export default function OrderDetailScreen({ orders }: OrderDetailScreenProps) {
     </motion.div>
   );
 }
-

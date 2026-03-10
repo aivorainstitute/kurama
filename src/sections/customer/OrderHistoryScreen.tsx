@@ -97,7 +97,7 @@ export default function OrderHistoryScreen({ customerName, orders }: OrderHistor
               onClick={() => navigate('/menu')}
               className="mt-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-2xl font-medium"
               style={{
-                boxShadow: '0 6px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)'
+                boxShadow: '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)'
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95, y: 4 }}
@@ -157,7 +157,7 @@ export default function OrderHistoryScreen({ customerName, orders }: OrderHistor
           onClick={() => navigate('/menu')}
           className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
           style={{
-            boxShadow: '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)'
           }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98, y: 4 }}
@@ -188,4 +188,3 @@ export default function OrderHistoryScreen({ customerName, orders }: OrderHistor
     </motion.div>
   );
 }
-

@@ -143,7 +143,7 @@ export default function CategoryManagement() {
               <motion.div 
                 key={category.id} 
                 className="bg-white rounded-2xl p-4"
-                style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }}
+                style={{ boxShadow: '0 2px 8px rgba(249, 115, 22, 0.08)' }}
                 variants={itemVariants}
                 layout
                 whileHover={{ scale: 1.01, y: -2 }}
@@ -232,16 +232,16 @@ export default function CategoryManagement() {
           onClick={handleAddCategory}
           className="w-full h-14 mt-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
           style={{
-            boxShadow: '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)'
           }}
           whileHover={{ 
             scale: 1.02,
-            boxShadow: '0 4px 0 0 #18181B, 0 6px 16px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 4px 0 0 #C2410C, 0 6px 16px rgba(249, 115, 22, 0.4)'
           }}
           whileTap={{ 
             scale: 0.98,
             y: 4,
-            boxShadow: '0 0 0 0 #18181B, 0 2px 8px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 0 0 0 #C2410C, 0 2px 8px rgba(249, 115, 22, 0.4)'
           }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -259,5 +259,3 @@ export default function CategoryManagement() {
     </motion.div>
   );
 }
-
-

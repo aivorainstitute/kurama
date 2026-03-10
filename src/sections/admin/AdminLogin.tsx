@@ -77,7 +77,7 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
 
         <motion.div 
           className="w-16 h-16 bg-gradient-to-br from-orange-100 to-white rounded-2xl flex items-center justify-center"
-          style={{ boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)' }}
+          style={{ boxShadow: '0 8px 32px rgba(249, 115, 22, 0.2)' }}
           whileHover={{ scale: 1.05, rotate: 5 }}
         >
           <div className="relative">
@@ -169,16 +169,16 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
           disabled={isLoading}
           className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           style={{
-            boxShadow: isLoading ? 'none' : '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)'
+            boxShadow: isLoading ? 'none' : '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)'
           }}
           whileHover={!isLoading ? { 
             scale: 1.02,
-            boxShadow: '0 4px 0 0 #18181B, 0 6px 16px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 4px 0 0 #C2410C, 0 6px 16px rgba(249, 115, 22, 0.4)'
           } : {}}
           whileTap={!isLoading ? { 
             scale: 0.98,
             y: 4,
-            boxShadow: '0 0 0 0 #18181B, 0 2px 8px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0 0 0 0 #C2410C, 0 2px 8px rgba(249, 115, 22, 0.4)'
           } : {}}
         >
           {isLoading ? (
@@ -236,4 +236,3 @@ export default function AdminLogin({ setIsAdmin }: AdminLoginProps) {
     </motion.div>
   );
 }
-

@@ -374,7 +374,7 @@ export default function AccountingScreen() {
           {/* Total Revenue */}
           <motion.div 
             className="bg-white rounded-2xl p-4 border border-orange-100"
-            style={{ boxShadow: '0 4px 0 0 #E4E4E7, 0 4px 12px rgba(0, 0, 0, 0.06)' }}
+            style={{ boxShadow: '0 4px 0 0 #FED7AA, 0 4px 12px rgba(249, 115, 22, 0.1)' }}
             whileHover={{ scale: 1.02, y: -2 }}
           >
             <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-3">
@@ -389,7 +389,7 @@ export default function AccountingScreen() {
           {/* Total Orders */}
           <motion.div 
             className="bg-white rounded-2xl p-4 border border-blue-100"
-            style={{ boxShadow: '0 4px 0 0 #E4E4E7, 0 4px 12px rgba(0, 0, 0, 0.1)' }}
+            style={{ boxShadow: '0 4px 0 0 #BFDBFE, 0 4px 12px rgba(59, 130, 246, 0.1)' }}
             whileHover={{ scale: 1.02, y: -2 }}
           >
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
@@ -402,7 +402,7 @@ export default function AccountingScreen() {
           {/* Total Items */}
           <motion.div 
             className="bg-white rounded-2xl p-4 border border-green-100"
-            style={{ boxShadow: '0 4px 0 0 #E4E4E7, 0 4px 12px rgba(0, 0, 0, 0.1)' }}
+            style={{ boxShadow: '0 4px 0 0 #BBF7D0, 0 4px 12px rgba(34, 197, 94, 0.1)' }}
             whileHover={{ scale: 1.02, y: -2 }}
           >
             <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mb-3">
@@ -415,7 +415,7 @@ export default function AccountingScreen() {
           {/* Average Order */}
           <motion.div 
             className="bg-white rounded-2xl p-4 border border-purple-100"
-            style={{ boxShadow: '0 4px 0 0 #E4E4E7, 0 4px 12px rgba(0, 0, 0, 0.06)' }}
+            style={{ boxShadow: '0 4px 0 0 #E9D5FF, 0 4px 12px rgba(168, 85, 247, 0.1)' }}
             whileHover={{ scale: 1.02, y: -2 }}
           >
             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-3">
@@ -624,5 +624,3 @@ export default function AccountingScreen() {
     </div>
   );
 }
-
-

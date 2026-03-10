@@ -6,12 +6,12 @@ import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2,
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
-import type { Order, OrderSummary } from '@/App';
+import type { Order, OrderSummary, OrderItem } from '@/App';
 import type { PaymentMethod } from '@/lib/supabase';
 
 // 3D Shadow style
-const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.1)';
-const button3D = '0 4px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.24)';
+const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.15)';
+const button3D = '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.4)';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,6 +43,11 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<import('@/lib/supabase').OrderSummary | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  // State untuk modal detail pesanan (tanpa pindah halaman)
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [detailOrder, setDetailOrder] = useState<import('@/lib/supabase').OrderSummary | null>(null);
+  const [detailItems, setDetailItems] = useState<OrderItem[]>([]);
+  const [loadingDetailItems, setLoadingDetailItems] = useState(false);
   
   // Ambil data real-time dari Supabase
   const { orderSummaries, loading, refetch } = useOrders();
@@ -164,6 +169,22 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     }
   };
 
+  const getStatusBadgeClass = (status: string) => {
+    const normalizedStatus = normalizeStatus(status);
+    if (normalizedStatus === 'BARU') return 'bg-blue-500';
+    if (normalizedStatus === 'DIPROSES') return 'bg-orange-500';
+    if (normalizedStatus === 'SIAP') return 'bg-green-500';
+    return 'bg-gray-400';
+  };
+
+  const getStatusLabel = (status: string) => {
+    const normalizedStatus = normalizeStatus(status);
+    if (normalizedStatus === 'BARU') return 'MENUNGGU';
+    if (normalizedStatus === 'DIPROSES') return 'DIPROSES';
+    if (normalizedStatus === 'SIAP') return 'SIAP DIAMBIL';
+    return normalizedStatus;
+  };
+
   // Warna card berdasarkan status
   const getStatusColors = (status: string) => {
     // Normalize status - handle "SIAP" or "SIAP DIAMBIL"
@@ -172,7 +193,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     if (normalizedStatus === 'BARU') {
       return {
         bg: 'bg-gradient-to-br from-blue-500 to-blue-600',
-        shadow: '0 6px 0 0 #27272A',
+        shadow: '0 6px 0 0 #1E40AF',
         badge: 'bg-blue-400/30 border-blue-300/50',
         text: 'text-blue-100',
         progress: 'bg-white'
@@ -180,7 +201,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     } else if (normalizedStatus === 'DIPROSES') {
       return {
         bg: 'bg-gradient-to-br from-orange-500 to-orange-600',
-        shadow: '0 6px 0 0 #18181B',
+        shadow: '0 6px 0 0 #C2410C',
         badge: 'bg-orange-400/30 border-orange-300/50',
         text: 'text-orange-100',
         progress: 'bg-white'
@@ -188,7 +209,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     } else if (normalizedStatus === 'SIAP' || normalizedStatus?.includes('SIAP')) {
       return {
         bg: 'bg-gradient-to-br from-green-500 to-green-600',
-        shadow: '0 6px 0 0 #3F3F46',
+        shadow: '0 6px 0 0 #15803D',
         badge: 'bg-green-400/30 border-green-300/50',
         text: 'text-green-100',
         progress: 'bg-white'
@@ -259,6 +280,33 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     }
   };
 
+  const handleOpenOrderDetail = async (order: import('@/lib/supabase').OrderSummary) => {
+    setDetailOrder(order);
+    setShowDetailModal(true);
+    setLoadingDetailItems(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id);
+
+      if (error) throw error;
+      setDetailItems((data as OrderItem[]) || []);
+    } catch (err) {
+      console.error('Error fetching order detail items:', err);
+      setDetailItems([]);
+    } finally {
+      setLoadingDetailItems(false);
+    }
+  };
+
+  const handleCloseOrderDetail = () => {
+    setShowDetailModal(false);
+    setDetailOrder(null);
+    setDetailItems([]);
+  };
+
   if (loading && orders.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
@@ -298,7 +346,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
           {customerPendingPayment && (
             <motion.div 
               className="bg-gradient-to-br from-red-500 to-red-600 rounded-3xl p-6 text-white mb-6 cursor-pointer"
-              style={{ boxShadow: '0 4px 0 0 #27272A, 0 8px 24px rgba(0, 0, 0, 0.24)' }}
+              style={{ boxShadow: '0 4px 0 0 #DC2626, 0 8px 24px rgba(239, 68, 68, 0.4)' }}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20 }}
@@ -378,7 +426,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate('/check-order');
+                  handleOpenOrderDetail(customerPendingPayment);
                 }}
                 className="w-full py-3 bg-white rounded-xl flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 mb-3"
                 style={{ boxShadow: '0 4px 0 0 rgba(0,0,0,0.1)' }}
@@ -387,20 +435,6 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
               >
                 <ClipboardList className="w-4 h-4" />
                 Cek Detail Pesanan
-              </motion.button>
-              
-              {/* Tombol Refresh */}
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  refetch();
-                }}
-                className="w-full py-2 bg-white/20 rounded-xl flex items-center justify-center gap-2 text-sm"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <RefreshCw className="w-4 h-4" />
-                Cek Status Pembayaran
               </motion.button>
             </motion.div>
           )}
@@ -586,7 +620,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center font-bold text-green-600"
-                        style={{ boxShadow: '0 2px 0 0 #3F3F46' }}
+                        style={{ boxShadow: '0 2px 0 0 #16A34A' }}
                       >
                         {order.queue_number}
                       </div>
@@ -594,7 +628,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                         <span className="font-medium text-gray-800">{order.customer_name}</span>
                       </div>
                     </div>
-                    <Badge className="bg-green-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #3F3F46' }}>
+                    <Badge className="bg-green-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #16A34A' }}>
                       READY
                     </Badge>
                   </motion.div>
@@ -631,7 +665,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                               className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                                 order.id === customerActiveOrder?.id ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600'
                               }`}
-                              style={order.id === customerActiveOrder?.id ? { boxShadow: '0 2px 0 0 #18181B' } : {}}
+                              style={order.id === customerActiveOrder?.id ? { boxShadow: '0 2px 0 0 #C2410C' } : {}}
                             >
                               {order.queue_number}
                             </div>
@@ -639,14 +673,14 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                               <div className="flex items-center gap-2">
                                 <span className="font-medium text-gray-800">{order.customer_name}</span>
                                 {order.id === customerActiveOrder?.id && (
-                                  <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
+                                  <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
                                     PESANAN KAMU
                                   </Badge>
                                 )}
                               </div>
                             </div>
                           </div>
-                          <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
+                          <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
                             DIPROSES
                           </Badge>
                         </div>
@@ -679,21 +713,21 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                         <div className="flex items-center gap-3">
                           <div 
                             className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-white"
-                            style={{ boxShadow: '0 2px 0 0 #18181B' }}
+                            style={{ boxShadow: '0 2px 0 0 #C2410C' }}
                           >
                             {customerPendingOrder.queue_number}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-gray-800">{customerPendingOrder.customer_name}</span>
-                              <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
+                              <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
                                 KAMU
                               </Badge>
                             </div>
                             <p className="text-xs text-orange-600 font-medium">Posisi #{pendingOrders.findIndex(o => o.id === customerPendingOrder.id) + 1}</p>
                           </div>
                         </div>
-                        <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
+                        <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
                           MENUNGGU
                         </Badge>
                       </motion.div>
@@ -747,6 +781,135 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
             )}
           </div>
       </main>
+
+      {/* Modal Detail Pesanan (langsung di halaman antrian) */}
+      <AnimatePresence>
+        {showDetailModal && detailOrder && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-black/50"
+              onClick={handleCloseOrderDetail}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            <motion.div
+              className="relative bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[85vh] overflow-y-auto"
+              style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              <div className="sticky top-0 bg-white border-b border-gray-100 p-5 flex items-center justify-between z-10">
+                <div>
+                  <p className="text-xs text-orange-500 font-medium">ORDER #{detailOrder.order_number}</p>
+                  <h3 className="text-lg font-bold text-gray-800">Detail Pesanan</h3>
+                </div>
+                <button
+                  onClick={handleCloseOrderDetail}
+                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <Badge className={`${getStatusBadgeClass(detailOrder.status)} text-white px-3 py-1`}>
+                    {getStatusLabel(detailOrder.status)}
+                  </Badge>
+                  <span className="text-sm text-gray-500">Antrian #{detailOrder.queue_number}</span>
+                </div>
+
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Item Dipesan</h4>
+                  {loadingDetailItems ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+                    </div>
+                  ) : detailItems.length === 0 ? (
+                    <p className="text-center text-gray-400 py-4">Tidak ada detail item</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {detailItems.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+                          <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="text-orange-600 font-bold text-sm">{item.quantity}x</span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-800">{item.name}</p>
+                            {item.notes && <p className="text-xs text-gray-500">Catatan: {item.notes}</p>}
+                          </div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Rp {item.subtotal.toLocaleString('id-ID')}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div
+                  className={`rounded-xl p-4 mb-4 ${
+                    detailOrder.payment_status === 'SUDAH_BAYAR'
+                      ? 'bg-green-50 border border-green-200'
+                      : 'bg-red-50 border border-red-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    {detailOrder.payment_status === 'SUDAH_BAYAR' ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <Clock className="w-5 h-5 text-red-600" />
+                    )}
+                    <span
+                      className={`font-medium ${
+                        detailOrder.payment_status === 'SUDAH_BAYAR' ? 'text-green-800' : 'text-red-800'
+                      }`}
+                    >
+                      {detailOrder.payment_status === 'SUDAH_BAYAR' ? 'SUDAH BAYAR' : 'BELUM BAYAR'}
+                    </span>
+                  </div>
+                  {detailOrder.payment_method && (
+                    <p className="text-sm text-gray-600 ml-7">Metode: {detailOrder.payment_method}</p>
+                  )}
+                </div>
+
+                <div className="border-t border-gray-100 pt-4 mb-4">
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-500">Subtotal</span>
+                    <span>Rp {(detailOrder.subtotal || 0).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-500">Pajak (10%)</span>
+                    <span>Rp {(detailOrder.tax_amount || 0).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-100">
+                    <span className="font-semibold text-gray-800">Total</span>
+                    <span className="font-bold text-xl text-orange-600">
+                      Rp {detailOrder.total_amount.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCloseOrderDetail}
+                  className="w-full h-12 bg-gray-100 text-gray-700 rounded-xl font-medium"
+                >
+                  Tutup
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modal Ganti Metode Pembayaran */}
       <AnimatePresence>
@@ -882,4 +1045,3 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     </motion.div>
   );
 }
-

@@ -43,7 +43,7 @@ export default function StockManagementSupabase() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#27272A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#0D7377]" />
       </div>
     );
   }
@@ -55,7 +55,7 @@ export default function StockManagementSupabase() {
           <p className="text-red-500">Error: {error ?? 'Unknown error'}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-[#27272A] text-white rounded-lg"
+            className="mt-4 px-4 py-2 bg-[#0D7377] text-white rounded-lg"
           >
             Coba Lagi
           </button>
@@ -81,7 +81,7 @@ export default function StockManagementSupabase() {
           </div>
           <button 
             onClick={() => navigate('/admin/dashboard')}
-            className="ml-auto w-10 h-10 bg-[#27272A] rounded-xl flex items-center justify-center"
+            className="ml-auto w-10 h-10 bg-[#0D7377] rounded-xl flex items-center justify-center"
           >
             <Grid3X3 className="w-5 h-5 text-white" />
           </button>
@@ -107,7 +107,7 @@ export default function StockManagementSupabase() {
               onClick={() => setSelectedCategory(category)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                 selectedCategory === category
-                  ? 'bg-[#27272A] text-white shadow-lg shadow-teal-900/20'
+                  ? 'bg-[#0D7377] text-white shadow-lg shadow-teal-900/20'
                   : 'bg-white text-gray-600 border border-gray-100'
               }`}
             >
@@ -144,7 +144,7 @@ export default function StockManagementSupabase() {
                         {item.name}
                       </h3>
                       <p className={`text-xs uppercase ${
-                        item.category_name === 'Minuman' ? 'text-[#27272A]' : 
+                        item.category_name === 'Minuman' ? 'text-[#0D7377]' : 
                         item.category_name === 'Camilan' ? 'text-orange-500' : 
                         item.category_name === 'Makanan' ? 'text-red-500' : 'text-gray-400'
                       }`}>
@@ -167,7 +167,7 @@ export default function StockManagementSupabase() {
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                       item.stock === 0 
                         ? 'bg-gray-200 text-gray-400' 
-                        : 'bg-[#27272A] text-white hover:bg-[#111827]'
+                        : 'bg-[#0D7377] text-white hover:bg-[#095C5F]'
                     }`}
                     disabled={item.stock === 0}
                   >
@@ -178,7 +178,7 @@ export default function StockManagementSupabase() {
                   </span>
                   <button
                     onClick={() => handleStockChange(item.id, 1)}
-                    className="w-10 h-10 bg-[#27272A] rounded-full flex items-center justify-center text-white hover:bg-[#111827] transition-all"
+                    className="w-10 h-10 bg-[#0D7377] rounded-full flex items-center justify-center text-white hover:bg-[#095C5F] transition-all"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -193,7 +193,7 @@ export default function StockManagementSupabase() {
       <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50">
         <button
           onClick={() => navigate('/admin/orders')}
-          className="bg-[#27272A] hover:bg-[#111827] active:scale-95 transition-all text-white rounded-full px-6 py-4 shadow-xl shadow-teal-900/30 flex items-center gap-3"
+          className="bg-[#0D7377] hover:bg-[#095C5F] active:scale-95 transition-all text-white rounded-full px-6 py-4 shadow-xl shadow-teal-900/30 flex items-center gap-3"
         >
           <span className="font-medium">PUSAT PESANAN</span>
           <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -207,30 +207,30 @@ export default function StockManagementSupabase() {
         <div className="flex items-center justify-around">
           <button 
             onClick={() => navigate('/admin/dashboard')}
-            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#27272A]"
+            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#0D7377]"
           >
             <ClipboardList className="w-6 h-6" />
             <span className="text-xs font-medium">PESANAN</span>
           </button>
           <button 
             onClick={() => navigate('/admin/orders')}
-            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#27272A]"
+            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#0D7377]"
           >
             <LayoutDashboard className="w-6 h-6" />
             <span className="text-xs font-medium">RIWAYAT</span>
           </button>
           <button 
             onClick={() => navigate('/admin/stock')}
-            className="flex flex-col items-center gap-1 p-2 text-[#27272A]"
+            className="flex flex-col items-center gap-1 p-2 text-[#0D7377]"
           >
-            <div className="w-10 h-10 bg-[#27272A] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#0D7377] rounded-xl flex items-center justify-center">
               <Package className="w-5 h-5 text-white" />
             </div>
             <span className="text-xs font-medium">STOK</span>
           </button>
           <button 
             onClick={() => navigate('/admin/categories')}
-            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#27272A]"
+            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-[#0D7377]"
           >
             <Settings className="w-6 h-6" />
             <span className="text-xs font-medium">ADMIN</span>
@@ -240,4 +240,3 @@ export default function StockManagementSupabase() {
     </div>
   );
 }
-

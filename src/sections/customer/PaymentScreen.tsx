@@ -100,7 +100,7 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
           <motion.button 
             onClick={() => navigate('/menu')}
             className="mt-4 bg-orange-500 text-white px-6 py-3 rounded-2xl font-medium"
-            style={{ boxShadow: '0 6px 0 0 #18181B' }}
+            style={{ boxShadow: '0 6px 0 0 #C2410C' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95, y: 4 }}
           >
@@ -159,7 +159,7 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
         {/* Order Info Card */}
         <motion.div 
           className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white"
-          style={{ boxShadow: '0 8px 0 0 #18181B, 0 12px 32px rgba(0, 0, 0, 0.24)' }}
+          style={{ boxShadow: '0 8px 0 0 #C2410C, 0 12px 32px rgba(249, 115, 22, 0.4)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -212,8 +212,8 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
           }`}
           style={{ 
             boxShadow: isCash 
-              ? '0 4px 0 0 #52525B, 0 4px 12px rgba(0, 0, 0, 0.12)' 
-              : '0 4px 0 0 #52525B, 0 4px 12px rgba(0, 0, 0, 0.12)' 
+              ? '0 4px 0 0 #F59E0B, 0 4px 12px rgba(245, 158, 11, 0.2)' 
+              : '0 4px 0 0 #3B82F6, 0 4px 12px rgba(59, 130, 246, 0.2)' 
           }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -316,8 +316,8 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
           className="w-full h-14 bg-gradient-to-r from-green-500 to-green-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50"
           style={{ 
             boxShadow: !isChecking
-              ? '0 6px 0 0 #3F3F46, 0 8px 24px rgba(0, 0, 0, 0.24)' 
-              : '0 2px 0 0 #3F3F46' 
+              ? '0 6px 0 0 #16A34A, 0 8px 24px rgba(34, 197, 94, 0.4)' 
+              : '0 2px 0 0 #16A34A' 
           }}
           whileHover={!isChecking ? { scale: 1.02 } : {}}
           whileTap={!isChecking ? { scale: 0.98, y: 4 } : {}}
@@ -345,4 +345,3 @@ export default function PaymentScreen({ order }: PaymentScreenProps) {
     </motion.div>
   );
 }
-

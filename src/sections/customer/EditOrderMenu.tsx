@@ -246,7 +246,7 @@ export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              style={selectedCategory === cat ? { boxShadow: '0 4px 0 0 #18181B' } : {}}
+              style={selectedCategory === cat ? { boxShadow: '0 4px 0 0 #C2410C' } : {}}
             >
               {cat}
             </motion.button>
@@ -268,7 +268,7 @@ export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
               >
                 <div className="flex gap-4">
                   <img 
-                    src={item.image_url || 'https://placehold.co/100x100/e4e4e7/111827?text=No+Image'} 
+                    src={item.image_url || 'https://placehold.co/100x100/orange/white?text=No+Image'} 
                     alt={item.name}
                     className="w-24 h-24 object-cover rounded-xl"
                   />
@@ -300,7 +300,7 @@ export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
                           className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          style={{ boxShadow: '0 2px 0 0 #18181B' }}
+                          style={{ boxShadow: '0 2px 0 0 #C2410C' }}
                         >
                           <Plus className="w-4 h-4" />
                         </motion.button>
@@ -337,7 +337,7 @@ export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
             onClick={() => setShowConfirm(true)}
             disabled={saving || cartItems.length === 0}
             className="flex-1 h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50"
-            style={{ boxShadow: '0 6px 0 0 #18181B' }}
+            style={{ boxShadow: '0 6px 0 0 #C2410C' }}
             whileHover={{ scale: saving ? 1 : 1.02 }}
             whileTap={{ scale: saving ? 1 : 0.98, y: 2 }}
           >
@@ -398,4 +398,3 @@ export default function EditOrderMenu({ customerName }: EditOrderMenuProps) {
     </div>
   );
 }
-

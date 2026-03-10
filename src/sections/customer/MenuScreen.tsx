@@ -15,8 +15,8 @@ interface MenuScreenProps {
 }
 
 // 3D Shadow style
-const cardShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)';
-const button3D = '0 4px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.24)';
+const cardShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)';
+const button3D = '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.4)';
 
 export default function MenuScreen({ customerName, cartItems, addToCart, activeOrder }: MenuScreenProps) {
   const navigate = useNavigate();
@@ -178,21 +178,12 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
       <div className="px-5 pt-2 pb-2">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center"
-               style={{ boxShadow: '0 4px 0 0 #18181B, 0 6px 12px rgba(0, 0, 0, 0.24)' }}>
+               style={{ boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4)' }}>
             <span className="text-white font-bold text-lg">AN</span>
           </div>
           <div className="flex-1">
             <p className="text-sm text-gray-500">Hai {customerName || 'Guest'},</p>
             <h1 className="text-lg font-bold text-gray-800">mau pesan apa?</h1>
-            {/* Tombol Riwayat Pesanan */}
-            <motion.button
-              onClick={() => navigate('/check-order')}
-              className="mt-1 text-xs text-orange-600 font-medium flex items-center gap-1 hover:text-orange-700"
-              whileHover={{ x: 2 }}
-            >
-              <ClipboardList className="w-3 h-3" />
-              Riwayat Pesanan
-            </motion.button>
           </div>
           <div className="ml-auto flex items-center gap-2">
             {/* Tombol Cek Antrian */}
@@ -218,27 +209,25 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
           </div>
         </div>
 
-        {/* Tombol Cek Pesanan */}
-        {customerOrders.length > 0 && (
-          <motion.button 
-            onClick={() => navigate('/check-order')}
-            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-4 flex items-center justify-between mb-4 text-white"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98, y: 2 }}
-            style={{ boxShadow: button3D }}
-          >
-            <div className="flex items-center gap-3">
-              <ClipboardList className="w-5 h-5" />
-              <div className="text-left">
-                <p className="text-xs text-orange-100">
-                  {customerOrders.length} PESANAN AKTIF
-                </p>
-                <p className="text-sm font-semibold">Cek Pesanan</p>
-              </div>
+        {/* Tombol Gabungan Riwayat + Cek Pesanan */}
+        <motion.button 
+          onClick={() => navigate('/check-order')}
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-4 flex items-center justify-between mb-4 text-white"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98, y: 2 }}
+          style={{ boxShadow: button3D }}
+        >
+          <div className="flex items-center gap-3">
+            <ClipboardList className="w-5 h-5" />
+            <div className="text-left">
+              <p className="text-xs text-orange-100">
+                {customerOrders.length} PESANAN AKTIF
+              </p>
+              <p className="text-sm font-semibold">Riwayat & Cek Pesanan</p>
             </div>
-            <ChevronRight className="w-5 h-5" />
-          </motion.button>
-        )}
+          </div>
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
 
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
           {categories.map((category) => (
@@ -277,17 +266,17 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
                 <div className="flex gap-4">
                   <div className="relative flex-shrink-0">
                     <motion.img 
-                      src={item.image_url || 'https://placehold.co/100x100/e4e4e7/111827?text=No+Image'} 
+                      src={item.image_url || 'https://placehold.co/100x100/orange/white?text=No+Image'} 
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded-xl"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/100x100/e4e4e7/111827?text=No+Image';
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/100x100/orange/white?text=No+Image';
                       }}
                       whileHover={{ scale: 1.05 }}
                     />
                     {item.is_popular && (
                       <span className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-1 rounded-full font-medium"
-                            style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.24)' }}>
+                            style={{ boxShadow: '0 2px 4px rgba(249, 115, 22, 0.4)' }}>
                         Popular
                       </span>
                     )}
@@ -331,7 +320,7 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
                       <motion.span 
                         className="w-10 text-center font-bold text-lg"
                         key={quantity}
-                        initial={{ scale: 1.3, color: '#3F3F46' }}
+                        initial={{ scale: 1.3, color: '#F97316' }}
                         animate={{ scale: 1, color: '#1F2937' }}
                       >
                         {quantity}
@@ -475,7 +464,7 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
                     const bgColor = isReady ? 'bg-green-50' : isProcessing ? 'bg-orange-50' : 'bg-blue-50';
                     const borderColor = isReady ? 'border-green-200' : isProcessing ? 'border-orange-200' : 'border-blue-200';
                     const numberBg = isReady ? 'bg-green-500' : isProcessing ? 'bg-orange-500' : 'bg-blue-500';
-                    const numberShadow = isReady ? '#3F3F46' : isProcessing ? '#18181B' : '#27272A';
+                    const numberShadow = isReady ? '#16A34A' : isProcessing ? '#C2410C' : '#1E40AF';
                     const textColor = isReady ? 'text-green-600' : isProcessing ? 'text-orange-600' : 'text-blue-600';
                     
                     return (
@@ -612,4 +601,3 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
     </div>
   );
 }
-

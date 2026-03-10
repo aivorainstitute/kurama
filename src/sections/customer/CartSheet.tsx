@@ -6,7 +6,7 @@ import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
 import type { CartItem, Order } from '@/App';
 
-const PLACEHOLDER_IMAGE = 'https://placehold.co/400x400/e4e4e7/111827?text=No+Image';
+const PLACEHOLDER_IMAGE = 'https://placehold.co/400x400/orange/white?text=No+Image';
 
 interface CartSheetProps {
   cartItems: CartItem[];
@@ -87,11 +87,10 @@ export default function CartSheet({
       localStorage.setItem('lastOrderId', String(createdOrder.id));
       localStorage.setItem('lastPaymentMethod', method);
       
-      // Clear cart dan tutup modal
-      clearCart();
+      // Tutup modal dan navigate ke payment screen
       setShowPaymentModal(false);
+      clearCart();
       
-      // Navigate ke payment screen
       navigate('/payment', { 
         state: { 
           order: { ...createdOrder, payment_method: method },
@@ -150,7 +149,7 @@ export default function CartSheet({
               className="w-24 h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mb-4"
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              style={{ boxShadow: '0 8px 0 0 #E4E4E7, 0 12px 24px rgba(0, 0, 0, 0.12)' }}
+              style={{ boxShadow: '0 8px 0 0 #FED7AA, 0 12px 24px rgba(249, 115, 22, 0.2)' }}
             >
               <span className="text-4xl">🛒</span>
             </motion.div>
@@ -158,7 +157,7 @@ export default function CartSheet({
             <motion.button 
               onClick={handleClose}
               className="mt-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-2xl font-medium"
-              style={{ boxShadow: '0 6px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)' }}
+              style={{ boxShadow: '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95, y: 4 }}
             >
@@ -172,7 +171,7 @@ export default function CartSheet({
                 <motion.div 
                   key={item.id} 
                   className="bg-white rounded-2xl border border-orange-100 p-4"
-                  style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
+                  style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
@@ -232,7 +231,7 @@ export default function CartSheet({
                           <motion.button
                             onClick={() => updateCartItem(item.id, Math.max(0, item.quantity - 1))}
                             className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-orange-600 hover:bg-orange-100"
-                            style={{ boxShadow: '0 2px 0 0 #E4E4E7' }}
+                            style={{ boxShadow: '0 2px 0 0 #FED7AA' }}
                             whileTap={{ scale: 0.9, y: 2 }}
                           >
                             <Minus className="w-4 h-4" />
@@ -240,7 +239,7 @@ export default function CartSheet({
                           <motion.span 
                             className="text-sm font-medium w-6 text-center"
                             key={item.quantity}
-                            initial={{ scale: 1.5, color: '#3F3F46' }}
+                            initial={{ scale: 1.5, color: '#F97316' }}
                             animate={{ scale: 1, color: '#374151' }}
                           >
                             {item.quantity}
@@ -248,7 +247,7 @@ export default function CartSheet({
                           <motion.button
                             onClick={() => updateCartItem(item.id, item.quantity + 1)}
                             className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"
-                            style={{ boxShadow: '0 2px 0 0 #18181B' }}
+                            style={{ boxShadow: '0 2px 0 0 #C2410C' }}
                             whileTap={{ scale: 0.9, y: 2 }}
                           >
                             <Plus className="w-4 h-4" />
@@ -313,7 +312,7 @@ export default function CartSheet({
               disabled={isProcessing}
               className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-70"
               style={{
-                boxShadow: isProcessing ? 'none' : '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)'
+                boxShadow: isProcessing ? 'none' : '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)'
               }}
               whileHover={isProcessing ? {} : { scale: 1.02, y: -2 }}
               whileTap={isProcessing ? {} : { scale: 0.98, y: 4 }}
@@ -471,4 +470,3 @@ export default function CartSheet({
     </motion.div>
   );
 }
-

@@ -340,7 +340,7 @@ export default function OrderManagement() {
               key={order.id}
               className="bg-white rounded-2xl overflow-hidden shadow-card"
               style={{
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)'
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)'
               }}
               whileHover={{ scale: 1.01 }}
               >
@@ -439,8 +439,8 @@ export default function OrderManagement() {
                       whileTap={{ scale: confirmingPayment[order.id] ? 1 : 0.98 }}
                       style={{
                         boxShadow: confirmingPayment[order.id]
-                          ? '0 2px 0 0 #27272A'
-                          : '0 6px 0 0 #27272A, 0 8px 16px rgba(0, 0, 0, 0.24)'
+                          ? '0 2px 0 0 #DC2626'
+                          : '0 6px 0 0 #DC2626, 0 8px 16px rgba(239, 68, 68, 0.4)'
                       }}
                     >
                       {confirmingPayment[order.id] ? (
@@ -467,15 +467,15 @@ export default function OrderManagement() {
                       style={{
                         boxShadow: updatingOrders[order.id]
                           ? order.status === 'DIPROSES' 
-                            ? '0 2px 0 0 #18181B'
+                            ? '0 2px 0 0 #C2410C'
                             : order.status === 'BARU'
-                            ? '0 2px 0 0 #27272A'
-                            : '0 2px 0 0 #3F3F46'
+                            ? '0 2px 0 0 #1D4ED8'
+                            : '0 2px 0 0 #15803D'
                           : order.status === 'DIPROSES' 
-                            ? '0 6px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)'
+                            ? '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)'
                             : order.status === 'BARU'
-                            ? '0 6px 0 0 #27272A, 0 8px 16px rgba(0, 0, 0, 0.24)'
-                            : '0 6px 0 0 #3F3F46, 0 8px 16px rgba(0, 0, 0, 0.24)'
+                            ? '0 6px 0 0 #1D4ED8, 0 8px 16px rgba(59, 130, 246, 0.4)'
+                            : '0 6px 0 0 #15803D, 0 8px 16px rgba(34, 197, 94, 0.4)'
                       }}
                     >
                       {updatingOrders[order.id] ? (
@@ -517,4 +517,3 @@ export default function OrderManagement() {
     </div>
   );
 }
-

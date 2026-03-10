@@ -6,9 +6,9 @@ import { supabase } from '@/lib/supabase';
 import type { OrderSummary } from '@/App';
 
 // 3D Shadow styles
-const card3D = '0 4px 0 0 rgba(0,0,0,0.1), 0 8px 16px rgba(0, 0, 0, 0.12)';
-const button3D = '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)';
-const button3DOrange = '0 4px 0 0 #D4D4D8, 0 4px 12px rgba(0, 0, 0, 0.14)';
+const card3D = '0 4px 0 0 rgba(0,0,0,0.1), 0 8px 16px rgba(249, 115, 22, 0.2)';
+const button3D = '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)';
+const button3DOrange = '0 4px 0 0 #FDBA74, 0 4px 12px rgba(249, 115, 22, 0.25)';
 
 interface WelcomeScreenProps {
   customerName: string;
@@ -200,7 +200,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
                 onChange={(e) => setName(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))}
                 onKeyDown={(e) => e.key === 'Enter' && !isChecking && handleStart()}
                 className="w-full h-14 text-lg text-center bg-white border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 text-gray-700 placeholder:text-orange-300 transition-all font-medium"
-                style={{ boxShadow: '0 4px 0 0 #E4E4E7' }}
+                style={{ boxShadow: '0 4px 0 0 #FED7AA' }}
                 disabled={isChecking}
                 autoComplete="off"
                 autoCorrect="off"
@@ -211,7 +211,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
                 {name.length >= 2 && !isChecking && (
                   <motion.div
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center"
-                    style={{ boxShadow: '0 2px 0 0 #D4D4D8' }}
+                    style={{ boxShadow: '0 2px 0 0 #FDBA74' }}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
@@ -228,7 +228,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
               disabled={name.trim().length < 2 || isChecking}
               className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
               style={{
-                boxShadow: name.trim().length >= 2 && !isChecking ? button3D : '0 2px 0 0 #18181B'
+                boxShadow: name.trim().length >= 2 && !isChecking ? button3D : '0 2px 0 0 #C2410C'
               }}
               whileHover={name.trim().length >= 2 && !isChecking ? { scale: 1.02 } : {}}
               whileTap={name.trim().length >= 2 && !isChecking ? { scale: 0.98, y: 4 } : {}}
@@ -286,7 +286,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
                 onChange={(e) => setCheckName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCheckOrder()}
                 className="w-full h-14 text-lg text-center bg-white border-2 border-blue-200 rounded-2xl focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 text-gray-700 placeholder:text-blue-300 transition-all"
-                style={{ boxShadow: '0 4px 0 0 #E4E4E7' }}
+                style={{ boxShadow: '0 4px 0 0 #BFDBFE' }}
                 autoFocus
               />
             </motion.div>
@@ -297,8 +297,8 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
               className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
               style={{
                 boxShadow: checkName.trim().length >= 2 
-                  ? '0 6px 0 0 #27272A, 0 8px 24px rgba(0, 0, 0, 0.24)'
-                  : '0 2px 0 0 #27272A'
+                  ? '0 6px 0 0 #1E40AF, 0 8px 24px rgba(59, 130, 246, 0.4)'
+                  : '0 2px 0 0 #1E40AF'
               }}
               whileHover={checkName.trim().length >= 2 ? { scale: 1.02 } : {}}
               whileTap={checkName.trim().length >= 2 ? { scale: 0.98, y: 4 } : {}}
@@ -352,7 +352,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
             >
               <motion.div 
                 className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ boxShadow: '0 4px 0 0 #E4E4E7' }}
+                style={{ boxShadow: '0 4px 0 0 #FED7AA' }}
                 animate={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
               >
@@ -412,7 +412,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
             >
               <motion.div 
                 className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ boxShadow: '0 4px 0 0 #E4E4E7' }}
+                style={{ boxShadow: '0 4px 0 0 #BFDBFE' }}
                 animate={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
               >
@@ -434,7 +434,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
                   onChange={(e) => setDifferentName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && differentName.trim().length >= 2 && handleDifferentNameSubmit()}
                   className="w-full h-14 text-lg text-center bg-white border-2 border-blue-200 rounded-2xl focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 text-gray-700 placeholder:text-blue-300 transition-all"
-                  style={{ boxShadow: '0 4px 0 0 #E4E4E7' }}
+                  style={{ boxShadow: '0 4px 0 0 #BFDBFE' }}
                   autoFocus
                 />
               </div>
@@ -446,8 +446,8 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
                   className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-2xl disabled:opacity-50"
                   style={{ 
                     boxShadow: differentName.trim().length >= 2 && !isChecking
-                      ? '0 6px 0 0 #27272A, 0 8px 16px rgba(0, 0, 0, 0.24)' 
-                      : '0 2px 0 0 #27272A' 
+                      ? '0 6px 0 0 #1E40AF, 0 8px 16px rgba(59, 130, 246, 0.4)' 
+                      : '0 2px 0 0 #1E40AF' 
                   }}
                   whileHover={differentName.trim().length >= 2 && !isChecking ? { scale: 1.02 } : {}}
                   whileTap={differentName.trim().length >= 2 && !isChecking ? { scale: 0.98, y: 4 } : {}}
@@ -508,4 +508,3 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
     </motion.div>
   );
 }
-
