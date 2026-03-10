@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { Package, Clock, ClipboardList, ArrowRight, Search, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw, User } from 'lucide-react';
+import { Package, Clock, ClipboardList, ArrowRight, Search, X, Loader2, Edit3, ChevronRight, AlertCircle, CheckCircle2, RefreshCw, User, Printer } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { useOrders } from '@/hooks/useOrders';
 import { supabase } from '@/lib/supabase';
@@ -55,6 +55,8 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
         order_number: summary.order_number,
         queue_number: summary.queue_number,
         status: summary.status,
+        payment_status: summary.payment_status,
+        payment_method: summary.payment_method,
         customer_name: summary.customer_name,
         items: [], // Items akan diisi terpisah jika perlu
         item_count: summary.item_count || 0, // Gunakan item_count dari summary
@@ -170,6 +172,135 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
     } catch (err) {
       console.error('Error saving edit mode data:', err);
       toast.error('Gagal menyimpan data');
+    }
+  };
+
+  // Fungsi untuk cetak struk sebagai PNG
+  const handlePrintReceipt = async () => {
+    if (!selectedOrder || orderItems.length === 0) {
+      toast.error('Tidak ada data untuk dicetak');
+      return;
+    }
+
+    try {
+      // Buat canvas untuk generate struk
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Ukuran struk (thermal printer style)
+      const width = 400;
+      const lineHeight = 24;
+      const headerHeight = 120;
+      const itemHeight = orderItems.length * lineHeight;
+      const footerHeight = 150;
+      const height = headerHeight + itemHeight + footerHeight;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Background putih
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      // Header
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 20px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('kur𝛂ma', width / 2, 40);
+      
+      ctx.font = '14px Arial';
+      ctx.fillText('Coffee', width / 2, 65);
+      
+      ctx.font = '12px Arial';
+      ctx.fillText('Brewed with passion, served with love', width / 2, 85);
+      
+      ctx.font = '10px Arial';
+      ctx.fillText('----------------------------------------', width / 2, 105);
+
+      // Info Order
+      let y = 130;
+      ctx.textAlign = 'left';
+      ctx.font = '12px Arial';
+      ctx.fillText(`Order: #${selectedOrder.order_number}`, 20, y);
+      y += lineHeight;
+      ctx.fillText(`Antrian: #${selectedOrder.queue_number}`, 20, y);
+      y += lineHeight;
+      ctx.fillText(`Nama: ${selectedOrder.customer_name}`, 20, y);
+      y += lineHeight;
+      ctx.fillText(`Tanggal: ${new Date(selectedOrder.created_at).toLocaleString('id-ID')}`, 20, y);
+      y += lineHeight;
+      
+      ctx.textAlign = 'center';
+      ctx.fillText('----------------------------------------', width / 2, y);
+      y += lineHeight;
+
+      // Items
+      ctx.textAlign = 'left';
+      orderItems.forEach((item) => {
+        ctx.font = 'bold 12px Arial';
+        ctx.fillText(`${item.quantity}x ${item.name}`, 20, y);
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Rp ${item.subtotal.toLocaleString('id-ID')}`, width - 20, y);
+        ctx.textAlign = 'left';
+        y += lineHeight;
+      });
+
+      y += 10;
+      ctx.textAlign = 'center';
+      ctx.fillText('----------------------------------------', width / 2, y);
+      y += lineHeight + 10;
+
+      // Total
+      ctx.textAlign = 'left';
+      ctx.font = '12px Arial';
+      ctx.fillText('Subtotal:', 20, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(`Rp ${(selectedOrder.subtotal || 0).toLocaleString('id-ID')}`, width - 20, y);
+      y += lineHeight;
+
+      ctx.textAlign = 'left';
+      ctx.fillText('Pajak (10%):', 20, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(`Rp ${(selectedOrder.tax_amount || 0).toLocaleString('id-ID')}`, width - 20, y);
+      y += lineHeight + 5;
+
+      ctx.font = 'bold 14px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('TOTAL:', 20, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(`Rp ${selectedOrder.total_amount.toLocaleString('id-ID')}`, width - 20, y);
+      y += lineHeight + 10;
+
+      // Payment Status
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      const paymentText = selectedOrder.payment_status === 'SUDAH_BAYAR' ? 'SUDAH BAYAR' : 'BELUM BAYAR';
+      ctx.fillText(`Status: ${paymentText}`, width / 2, y);
+      y += lineHeight;
+
+      if (selectedOrder.payment_method) {
+        ctx.fillText(`Metode: ${selectedOrder.payment_method}`, width / 2, y);
+        y += lineHeight;
+      }
+
+      y += 20;
+      ctx.font = '10px Arial';
+      ctx.fillText('Terima kasih telah berkunjung!', width / 2, y);
+      y += lineHeight;
+      ctx.fillText('Sampai jumpa lagi!', width / 2, y);
+
+      // Download PNG
+      const link = document.createElement('a');
+      link.download = `struk-${selectedOrder.order_number}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      toast.success('Struk berhasil dicetak!');
+    } catch (err) {
+      console.error('Error printing receipt:', err);
+      toast.error('Gagal mencetak struk');
     }
   };
 
@@ -595,6 +726,20 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                     >
                       <Edit3 className="w-5 h-5" />
                       Edit Pesanan
+                    </motion.button>
+                  )}
+                  
+                  {/* Tombol Cetak Struk - hanya untuk SUDAH_BAYAR */}
+                  {selectedOrder.payment_status === 'SUDAH_BAYAR' && (
+                    <motion.button
+                      onClick={handlePrintReceipt}
+                      className="w-full h-12 bg-green-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
+                      style={{ boxShadow: '0 4px 0 0 #16A34A' }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98, y: 2 }}
+                    >
+                      <Printer className="w-5 h-5" />
+                      Cetak Struk
                     </motion.button>
                   )}
                   
