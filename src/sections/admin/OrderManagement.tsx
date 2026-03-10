@@ -92,6 +92,32 @@ export default function OrderManagement() {
     fetchItems();
   }, [orderSummaries, activeTab]);
 
+  // Realtime subscription untuk refresh otomatis
+  useEffect(() => {
+    // Subscribe ke perubahan orders
+    const subscription = supabase
+      .channel('orders-admin')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'orders' },
+        (payload) => {
+          console.log('Order change received:', payload);
+          // Refresh data
+          refetch();
+          // Notifikasi jika pesanan baru
+          if (payload.eventType === 'INSERT') {
+            toast.info('Pesanan baru masuk!', {
+              icon: <Bell className="w-4 h-4" />
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [refetch]);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'BARU': return 'bg-blue-500';
