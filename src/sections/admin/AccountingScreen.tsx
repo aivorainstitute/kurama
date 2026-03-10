@@ -50,6 +50,7 @@ interface OrderItemData {
   subtotal: number;
   order_id: number;
   created_at: string;
+  order_status: string;
 }
 
 export default function AccountingScreen() {
@@ -60,18 +61,37 @@ export default function AccountingScreen() {
   const [loadingItems, setLoadingItems] = useState(true);
   const { orderSummaries, loading: loadingOrders } = useOrders();
 
-  // Fetch order items dari database
+  // Fetch order items dengan join ke orders untuk dapat status
   useEffect(() => {
     const fetchOrderItems = async () => {
       setLoadingItems(true);
       try {
+        // Ambil order_items dengan join ke orders
         const { data, error } = await supabase
           .from('order_items')
-          .select('name, quantity, subtotal, order_id, created_at')
+          .select(`
+            name, 
+            quantity, 
+            subtotal, 
+            order_id, 
+            created_at,
+            orders!inner(status)
+          `)
           .order('created_at', { ascending: false });
         
         if (error) throw error;
-        setOrderItems(data || []);
+        
+        // Transform data untuk mendapatkan order_status
+        const transformedData = (data || []).map((item: any) => ({
+          name: item.name,
+          quantity: item.quantity,
+          subtotal: item.subtotal,
+          order_id: item.order_id,
+          created_at: item.created_at,
+          order_status: item.orders?.status || 'BARU'
+        }));
+        
+        setOrderItems(transformedData);
       } catch (err) {
         console.error('Error fetching order items:', err);
       } finally {
@@ -107,12 +127,15 @@ export default function AccountingScreen() {
     });
   }, [orderSummaries, period]);
 
-  // Filter order items berdasarkan periode
+  // Filter order items berdasarkan periode DAN hanya yang SELESAI
   const filteredOrderItems = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
     return orderItems.filter(item => {
+      // Hanya ambil item dari order yang SELESAI
+      if (item.order_status !== 'SELESAI') return false;
+      
       const itemDate = new Date(item.created_at);
       
       switch (period) {
