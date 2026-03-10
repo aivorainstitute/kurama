@@ -217,7 +217,7 @@ export default function AccountingScreen() {
       }))
       .sort((a, b) => b.revenue - a.revenue);
 
-    // Hourly sales - hitung dari data real
+    // Hourly sales - hitung dari data real (hanya jam yang ada penjualan)
     const hourMap = new Map<string, { orders: Set<number>; revenue: number }>();
     
     completedOrders.forEach(order => {
@@ -234,15 +234,9 @@ export default function AccountingScreen() {
       }
     });
 
-    // Isi jam yang kosong
-    for (let i = 8; i <= 22; i++) {
-      const hourKey = `${i.toString().padStart(2, '0')}:00`;
-      if (!hourMap.has(hourKey)) {
-        hourMap.set(hourKey, { orders: new Set(), revenue: 0 });
-      }
-    }
-
+    // Hanya tampilkan jam yang ada penjualannya (tidak diisi jam kosong)
     const hourlySales = Array.from(hourMap.entries())
+      .filter(([_, data]) => data.orders.size > 0) // Filter hanya yang ada order
       .map(([hour, data]) => ({ hour, orders: data.orders.size, revenue: data.revenue }))
       .sort((a, b) => a.hour.localeCompare(b.hour));
 
@@ -565,42 +559,53 @@ export default function AccountingScreen() {
             </div>
             <div>
               <h2 className="font-bold text-gray-800">Penjualan per Jam</h2>
-              <p className="text-xs text-gray-500">Grafik penjualan berdasarkan waktu</p>
+              <p className="text-xs text-gray-500">
+                {salesData.hourlySales.length > 0 
+                  ? `${salesData.hourlySales.length} jam aktif` 
+                  : 'Belum ada data'}
+              </p>
             </div>
           </div>
 
-          {salesData.hourlySales.some(h => h.orders > 0) ? (
-            <div className="space-y-3">
-              {salesData.hourlySales.map((hour, index) => (
-                <motion.div
-                  key={hour.hour}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + index * 0.03 }}
-                  className="flex items-center gap-3"
-                >
-                  <span className="text-xs font-medium text-gray-500 w-12">{hour.hour}</span>
-                  <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden relative">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.max((hour.revenue / (salesData.totalRevenue || 1)) * 100 * 5, hour.orders > 0 ? 5 : 0)}%` }}
-                      transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-                    />
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-700">
-                      {hour.orders} order
+          {salesData.hourlySales.length > 0 ? (
+            <div className="space-y-2">
+              {salesData.hourlySales.map((hour, index) => {
+                const maxRevenue = Math.max(...salesData.hourlySales.map(h => h.revenue));
+                const percentage = maxRevenue > 0 ? (hour.revenue / maxRevenue) * 100 : 0;
+                
+                return (
+                  <motion.div
+                    key={hour.hour}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + index * 0.05 }}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50"
+                  >
+                    <span className="text-xs font-bold text-gray-600 w-10">{hour.hour}</span>
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.max(percentage, 5)}%` }}
+                          transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-gray-500 min-w-[50px] text-right">
+                        {hour.orders} order
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-orange-600 w-16 text-right">
+                      Rp {(hour.revenue / 1000).toFixed(0)}k
                     </span>
-                  </div>
-                  <span className="text-xs font-medium text-gray-600 w-20 text-right">
-                    Rp {(hour.revenue / 1000).toFixed(0)}k
-                  </span>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-8 text-gray-400">
               <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Belum ada data penjualan per jam</p>
+              <p className="text-sm">Belum ada data penjualan</p>
             </div>
           )}
         </motion.div>
