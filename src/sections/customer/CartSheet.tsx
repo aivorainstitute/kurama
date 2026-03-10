@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Plus, ArrowRight, Trash2, ImageOff, Loader2 } from 'lucide-react';
+import { Minus, Plus, ArrowRight, Trash2, ImageOff, Loader2, X, Wallet, QrCode, Store, CheckCircle2 } from 'lucide-react';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
+import { supabase } from '@/lib/supabase';
 import type { CartItem, Order } from '@/App';
 
 const PLACEHOLDER_IMAGE = 'https://placehold.co/400x400/orange/white?text=No+Image';
@@ -28,6 +29,10 @@ export default function CartSheet({
   const [noteText, setNoteText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [_errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'CASH' | 'QRIS' | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const _totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
@@ -42,8 +47,8 @@ export default function CartSheet({
     
     try {
       const order = await createOrder(customerName);
-      // Navigate to payment method selection first
-      navigate('/payment-method', { state: { order } });
+      setCreatedOrder(order);
+      setShowPaymentModal(true);
     } catch (error: any) {
       console.error('Checkout error:', error);
       const message = error?.message || 'Gagal membuat pesanan. Silakan coba lagi.';
@@ -51,6 +56,42 @@ export default function CartSheet({
       alert('Error: ' + message);
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleSelectMethod = async (method: 'CASH' | 'QRIS') => {
+    if (!createdOrder) return;
+    
+    setSelectedMethod(method);
+    setIsSaving(true);
+    
+    try {
+      // Update payment_method di database
+      const { error } = await supabase
+        .from('orders')
+        .update({ payment_method: method })
+        .eq('id', createdOrder.id);
+      
+      if (error) throw error;
+      
+      // Simpan ke localStorage untuk recovery
+      localStorage.setItem('lastOrderId', String(createdOrder.id));
+      localStorage.setItem('lastPaymentMethod', method);
+      
+      // Tutup modal dan navigate ke payment screen
+      setShowPaymentModal(false);
+      clearCart();
+      
+      navigate('/payment', { 
+        state: { 
+          order: { ...createdOrder, payment_method: method },
+          paymentMethod: method 
+        } 
+      });
+    } catch (err) {
+      console.error('Error saving payment method:', err);
+      alert('Gagal menyimpan metode pembayaran');
+      setIsSaving(false);
     }
   };
 
@@ -299,6 +340,123 @@ export default function CartSheet({
           <span className="text-xs font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
       </motion.div>
+
+      {/* Modal Pilih Metode Pembayaran */}
+      <AnimatePresence>
+        {showPaymentModal && createdOrder && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => !isSaving && setShowPaymentModal(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            
+            {/* Modal Content */}
+            <motion.div
+              className="relative bg-white w-full max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold text-white">Pilih Metode Pembayaran</h2>
+                    <p className="text-xs text-orange-100">
+                      Order #{createdOrder.order_number} • Rp {createdOrder.total_amount.toLocaleString('id-ID')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => !isSaving && setShowPaymentModal(false)}
+                    className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    disabled={isSaving}
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Payment Options */}
+              <div className="p-5 space-y-3">
+                {/* CASH Option */}
+                <motion.button
+                  onClick={() => handleSelectMethod('CASH')}
+                  disabled={isSaving}
+                  className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${
+                    selectedMethod === 'CASH'
+                      ? 'border-orange-500 bg-orange-50'
+                      : 'border-gray-200 bg-white hover:border-orange-300'
+                  } ${isSaving ? 'opacity-50' : ''}`}
+                  whileHover={!isSaving ? { scale: 1.02 } : {}}
+                  whileTap={!isSaving ? { scale: 0.98 } : {}}
+                >
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                    selectedMethod === 'CASH' ? 'bg-orange-500' : 'bg-amber-100'
+                  }`}>
+                    <Store className={`w-7 h-7 ${selectedMethod === 'CASH' ? 'text-white' : 'text-amber-600'}`} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className={`font-bold ${selectedMethod === 'CASH' ? 'text-orange-600' : 'text-gray-800'}`}>
+                      Bayar di Kasir
+                    </p>
+                    <p className="text-xs text-gray-500">Tunai / Kartu / E-Wallet</p>
+                  </div>
+                  {selectedMethod === 'CASH' && isSaving && (
+                    <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                  )}
+                </motion.button>
+
+                {/* QRIS Option */}
+                <motion.button
+                  onClick={() => handleSelectMethod('QRIS')}
+                  disabled={isSaving}
+                  className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${
+                    selectedMethod === 'QRIS'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 bg-white hover:border-blue-300'
+                  } ${isSaving ? 'opacity-50' : ''}`}
+                  whileHover={!isSaving ? { scale: 1.02 } : {}}
+                  whileTap={!isSaving ? { scale: 0.98 } : {}}
+                >
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                    selectedMethod === 'QRIS' ? 'bg-blue-500' : 'bg-blue-100'
+                  }`}>
+                    <QrCode className={`w-7 h-7 ${selectedMethod === 'QRIS' ? 'text-white' : 'text-blue-600'}`} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className={`font-bold ${selectedMethod === 'QRIS' ? 'text-blue-600' : 'text-gray-800'}`}>
+                      Scan QRIS
+                    </p>
+                    <p className="text-xs text-gray-500">Gopay / OVO / Dana / LinkAja</p>
+                  </div>
+                  {selectedMethod === 'QRIS' && isSaving && (
+                    <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
+                  )}
+                </motion.button>
+              </div>
+
+              {/* Footer Info */}
+              <div className="px-5 pb-5">
+                <div className="bg-gray-50 rounded-xl p-3 text-center">
+                  <p className="text-xs text-gray-500">
+                    Nomor Antrian: <span className="font-bold text-orange-600">#{createdOrder.queue_number}</span>
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
