@@ -12,8 +12,6 @@ import {
   ChevronDown,
   Coffee,
   ShoppingBag,
-  Users,
-  Clock,
   Loader2
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
@@ -66,7 +64,7 @@ export default function AccountingScreen() {
     const fetchOrderItems = async () => {
       setLoadingItems(true);
       try {
-        // Ambil order_items dengan join ke orders
+        // Ambil order_items dengan join ke orders yang SELESAI saja
         const { data, error } = await supabase
           .from('order_items')
           .select(`
@@ -77,6 +75,7 @@ export default function AccountingScreen() {
             created_at,
             orders!inner(status)
           `)
+          .eq('orders.status', 'SELESAI')
           .order('created_at', { ascending: false });
         
         if (error) throw error;
@@ -88,7 +87,7 @@ export default function AccountingScreen() {
           subtotal: item.subtotal,
           order_id: item.order_id,
           created_at: item.created_at,
-          order_status: item.orders?.status || 'BARU'
+          order_status: 'SELESAI' // Sudah difilter di query
         }));
         
         setOrderItems(transformedData);
@@ -127,15 +126,12 @@ export default function AccountingScreen() {
     });
   }, [orderSummaries, period]);
 
-  // Filter order items berdasarkan periode DAN hanya yang SELESAI
+  // Filter order items berdasarkan periode (sudah SELESAI dari query)
   const filteredOrderItems = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
     return orderItems.filter(item => {
-      // Hanya ambil item dari order yang SELESAI
-      if (item.order_status !== 'SELESAI') return false;
-      
       const itemDate = new Date(item.created_at);
       
       switch (period) {
