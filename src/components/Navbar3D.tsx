@@ -7,7 +7,7 @@ function BrandLogo({ small = false }: { small?: boolean }) {
   return (
     <div className="flex items-center gap-2">
       <img 
-        src="/kuramalogo.png" 
+        src="/kuramalogo-white.png" 
         alt="kur𝛂ma" 
         className={`object-contain drop-shadow-md ${small ? 'w-8 h-8' : 'w-10 h-10'}`}
       />
