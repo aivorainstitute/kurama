@@ -258,7 +258,7 @@ export default function EditOrderScreen() {
           <motion.button
             onClick={handleBack}
             className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium"
-            style={{ boxShadow: '0 4px 0 0 #C2410C' }}
+            style={{ boxShadow: '0 4px 0 0 #18181B' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95, y: 2 }}
           >
@@ -297,7 +297,7 @@ export default function EditOrderScreen() {
         {/* Order Info Card */}
         <motion.div 
           className="bg-white rounded-2xl p-4 mb-4 border-l-4 border-blue-500"
-          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -441,7 +441,7 @@ export default function EditOrderScreen() {
         {/* Total Summary */}
         <motion.div 
           className="bg-white rounded-2xl p-4"
-          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -479,7 +479,7 @@ export default function EditOrderScreen() {
             onClick={handleSave}
             disabled={saving || items.length === 0}
             className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50"
-            style={{ boxShadow: '0 6px 0 0 #C2410C' }}
+            style={{ boxShadow: '0 6px 0 0 #18181B' }}
             whileHover={{ scale: saving ? 1 : 1.02 }}
             whileTap={{ scale: saving ? 1 : 0.98, y: 2 }}
           >
@@ -559,3 +559,4 @@ export default function EditOrderScreen() {
     </motion.div>
   );
 }
+

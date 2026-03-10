@@ -125,7 +125,7 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl border border-orange-100 p-5 mb-6"
-          style={{ boxShadow: '0 4px 0 0 #FED7AA, 0 8px 16px rgba(249, 115, 22, 0.1)' }}
+          style={{ boxShadow: '0 4px 0 0 #E4E4E7, 0 8px 16px rgba(0, 0, 0, 0.06)' }}
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center">
@@ -177,7 +177,7 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
                   }}
                   whileHover={!isSaving ? { 
                     scale: 1.02, 
-                    boxShadow: '0 6px 0 0 #FED7AA, 0 8px 20px rgba(249, 115, 22, 0.15)'
+                    boxShadow: '0 6px 0 0 #E4E4E7, 0 8px 20px rgba(0, 0, 0, 0.1)'
                   } : {}}
                   whileTap={!isSaving ? { scale: 0.98 } : {}}
                 >
@@ -209,3 +209,4 @@ export default function PaymentMethodScreen({ activeOrder }: PaymentMethodScreen
     </motion.div>
   );
 }
+

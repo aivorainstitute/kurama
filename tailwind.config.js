@@ -1,4 +1,18 @@
 /** @type {import('tailwindcss').Config} */
+const monochromeScale = {
+  50: '#FAFAFA',
+  100: '#F4F4F5',
+  200: '#E4E4E7',
+  300: '#D4D4D8',
+  400: '#A1A1AA',
+  500: '#71717A',
+  600: '#52525B',
+  700: '#3F3F46',
+  800: '#27272A',
+  900: '#18181B',
+  950: '#09090B',
+}
+
 module.exports = {
   darkMode: ["class"],
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -48,18 +62,39 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Orange Theme Colors
+        // Monochrome palette mapped across semantic color names
         orange: {
-          50: '#FFF7ED',
-          100: '#FFEDD5',
-          200: '#FED7AA',
-          300: '#FDBA74',
-          400: '#FB923C',
-          500: '#F97316',
-          600: '#EA580C',
-          700: '#C2410C',
-          800: '#9A3412',
-          900: '#7C2D12',
+          ...monochromeScale,
+        },
+        amber: {
+          ...monochromeScale,
+        },
+        blue: {
+          ...monochromeScale,
+        },
+        green: {
+          ...monochromeScale,
+        },
+        emerald: {
+          ...monochromeScale,
+        },
+        cyan: {
+          ...monochromeScale,
+        },
+        teal: {
+          ...monochromeScale,
+        },
+        red: {
+          ...monochromeScale,
+        },
+        purple: {
+          ...monochromeScale,
+        },
+        pink: {
+          ...monochromeScale,
+        },
+        indigo: {
+          ...monochromeScale,
         },
       },
       borderRadius: {
@@ -73,14 +108,14 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-        // 3D Effect Shadows
-        '3d': '0 4px 0 0 #C2410C, 0 6px 12px rgba(234, 88, 12, 0.4)',
-        '3d-hover': '0 2px 0 0 #C2410C, 0 4px 8px rgba(234, 88, 12, 0.4)',
-        '3d-active': '0 0 0 0 #C2410C, 0 2px 4px rgba(234, 88, 12, 0.4)',
-        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.15)',
-        'card-hover': '0 8px 12px -2px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.1), 0 12px 24px -6px rgba(249, 115, 22, 0.2)',
-        'float': '0 20px 40px -10px rgba(249, 115, 22, 0.3)',
-        'glow': '0 0 20px rgba(249, 115, 22, 0.5)',
+        // 3D Effect Shadows (monochrome)
+        '3d': '0 4px 0 0 #18181B, 0 6px 12px rgba(0, 0, 0, 0.28)',
+        '3d-hover': '0 2px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.22)',
+        '3d-active': '0 0 0 0 #18181B, 0 2px 4px rgba(0, 0, 0, 0.2)',
+        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 8px 12px -2px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.1), 0 12px 24px -6px rgba(0, 0, 0, 0.12)',
+        'float': '0 20px 40px -10px rgba(0, 0, 0, 0.2)',
+        'glow': '0 0 20px rgba(0, 0, 0, 0.28)',
         'inner-light': 'inset 0 2px 4px rgba(255, 255, 255, 0.3)',
       },
       keyframes: {
@@ -101,8 +136,8 @@ module.exports = {
           "50%": { transform: "translateY(-4px)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(249, 115, 22, 0.4)" },
-          "50%": { boxShadow: "0 0 20px 10px rgba(249, 115, 22, 0.2)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(0, 0, 0, 0.2)" },
+          "50%": { boxShadow: "0 0 20px 10px rgba(0, 0, 0, 0.1)" },
         },
         "slide-up": {
           "0%": { transform: "translateY(20px)", opacity: "0" },

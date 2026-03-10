@@ -372,7 +372,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
         {/* Customer Info Card */}
         <motion.div 
           className="bg-white rounded-2xl p-4 mb-4 border-l-4 border-orange-500"
-          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+          style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -380,7 +380,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
           <div className="flex items-center gap-3">
             <motion.div 
               className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg"
-              style={{ boxShadow: '0 4px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)' }}
+              style={{ boxShadow: '0 4px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)' }}
             >
               <User className="w-6 h-6 text-white" />
             </motion.div>
@@ -400,7 +400,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="bg-white rounded-2xl p-4 mb-4"
-              style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+              style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
             >
               <div className="flex items-center gap-2">
                 <div className="flex-1 relative">
@@ -419,7 +419,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                   onClick={handleSearch}
                   disabled={!searchName.trim()}
                   className="h-12 px-4 bg-orange-500 text-white rounded-xl font-medium disabled:opacity-50"
-                  style={{ boxShadow: '0 4px 0 0 #C2410C' }}
+                  style={{ boxShadow: '0 4px 0 0 #18181B' }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98, y: 4 }}
                 >
@@ -499,7 +499,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                         transition={{ delay: index * 0.1 }}
                         onClick={() => handleOpenDetail(order)}
                         className="bg-white rounded-2xl p-4 cursor-pointer border-l-4 border-blue-500"
-                        style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+                        style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -619,7 +619,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
         <motion.button
           onClick={() => navigate('/menu')}
           className="w-full mt-8 h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-2xl flex items-center justify-center gap-2"
-          style={{ boxShadow: '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)' }}
+          style={{ boxShadow: '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)' }}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98, y: 4 }}
         >
@@ -762,7 +762,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                     <motion.button
                       onClick={handleEditOrder}
                       className="w-full h-12 bg-blue-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
-                      style={{ boxShadow: '0 4px 0 0 #1D4ED8' }}
+                      style={{ boxShadow: '0 4px 0 0 #27272A' }}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98, y: 2 }}
                     >
@@ -776,7 +776,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                     <motion.button
                       onClick={handlePrintReceipt}
                       className="w-full h-12 bg-green-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
-                      style={{ boxShadow: '0 4px 0 0 #16A34A' }}
+                      style={{ boxShadow: '0 4px 0 0 #3F3F46' }}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98, y: 2 }}
                     >
@@ -792,7 +792,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                       navigate('/queue');
                     }}
                     className="w-full h-12 bg-orange-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
-                    style={{ boxShadow: '0 4px 0 0 #C2410C' }}
+                    style={{ boxShadow: '0 4px 0 0 #18181B' }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98, y: 2 }}
                   >
@@ -817,3 +817,4 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
     </motion.div>
   );
 }
+

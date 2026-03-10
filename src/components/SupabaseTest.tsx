@@ -199,8 +199,8 @@ export default function SupabaseTest() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-lg p-6 max-w-lg w-full">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-[#0D7377]/10 rounded-xl flex items-center justify-center">
-            <Database className="w-6 h-6 text-[#0D7377]" />
+          <div className="w-12 h-12 bg-[#27272A]/10 rounded-xl flex items-center justify-center">
+            <Database className="w-6 h-6 text-[#27272A]" />
           </div>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-gray-800">Supabase Test</h1>
@@ -278,7 +278,7 @@ export default function SupabaseTest() {
         <button
           onClick={checkConnection}
           disabled={status === 'checking'}
-          className="w-full py-3 bg-[#0D7377] text-white rounded-xl font-medium hover:bg-[#095C5F] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full py-3 bg-[#27272A] text-white rounded-xl font-medium hover:bg-[#111827] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {status === 'checking' ? 'Memeriksa...' : 'Coba Lagi'}
         </button>
@@ -326,3 +326,4 @@ export default function SupabaseTest() {
     </div>
   );
 }
+

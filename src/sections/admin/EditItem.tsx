@@ -248,7 +248,7 @@ export default function EditItem() {
           <motion.button 
             onClick={() => navigate('/admin/stock')}
             className="mt-4 px-6 py-3 bg-orange-500 text-white rounded-2xl font-medium"
-            style={{ boxShadow: '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)' }}
+            style={{ boxShadow: '0 6px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.24)' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -416,7 +416,7 @@ export default function EditItem() {
                 <motion.button
                   onClick={() => setFormData({ ...formData, stock: Math.max(0, formData.stock - 1) })}
                   className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
-                  style={{ boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4)' }}
+                  style={{ boxShadow: '0 4px 0 0 #18181B, 0 6px 12px rgba(0, 0, 0, 0.24)' }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95, y: 2 }}
                 >
@@ -428,7 +428,7 @@ export default function EditItem() {
                 <motion.button
                   onClick={() => setFormData({ ...formData, stock: formData.stock + 1 })}
                   className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
-                  style={{ boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4)' }}
+                  style={{ boxShadow: '0 4px 0 0 #18181B, 0 6px 12px rgba(0, 0, 0, 0.24)' }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95, y: 2 }}
                 >
@@ -461,7 +461,7 @@ export default function EditItem() {
           disabled={saving || uploadingImage}
           className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-semibold rounded-2xl mb-3 flex items-center justify-center gap-2 disabled:opacity-50"
           style={{
-            boxShadow: saving ? 'none' : '0 6px 0 0 #C2410C, 0 8px 24px rgba(249, 115, 22, 0.4)'
+            boxShadow: saving ? 'none' : '0 6px 0 0 #18181B, 0 8px 24px rgba(0, 0, 0, 0.24)'
           }}
           whileHover={saving ? {} : { scale: 1.02, y: -2 }}
           whileTap={saving ? {} : { scale: 0.98, y: 4 }}
@@ -486,3 +486,4 @@ export default function EditItem() {
     </div>
   );
 }
+

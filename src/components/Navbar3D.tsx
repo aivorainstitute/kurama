@@ -33,7 +33,7 @@ export function Navbar3D({ title, showBack = true, backTo, showHome = true, righ
     <motion.header 
       className="sticky top-0 z-50 bg-gradient-to-r from-orange-500 to-orange-600 rounded-b-3xl mb-6"
       style={{
-        boxShadow: '0 4px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.3)'
+        boxShadow: '0 4px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.18)'
       }}
       initial={{ y: -50 }}
       animate={{ y: 0 }}
@@ -102,7 +102,7 @@ export function CustomerNavbar3D({
       className="sticky top-0 z-50 bg-gradient-to-r from-orange-500 to-orange-600 mb-6"
       style={{
         borderRadius: '0 0 24px 24px',
-        boxShadow: '0 4px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.3)'
+        boxShadow: '0 4px 0 0 #18181B, 0 8px 16px rgba(0, 0, 0, 0.18)'
       }}
       initial={{ y: -50 }}
       animate={{ y: 0 }}
@@ -150,3 +150,4 @@ export function CustomerNavbar3D({
     </motion.header>
   );
 }
+

@@ -10,8 +10,8 @@ import type { Order, OrderSummary } from '@/App';
 import type { PaymentMethod } from '@/lib/supabase';
 
 // 3D Shadow style
-const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.15)';
-const button3D = '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.4)';
+const card3D = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.1)';
+const button3D = '0 4px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.24)';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -172,7 +172,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     if (normalizedStatus === 'BARU') {
       return {
         bg: 'bg-gradient-to-br from-blue-500 to-blue-600',
-        shadow: '0 6px 0 0 #1E40AF',
+        shadow: '0 6px 0 0 #27272A',
         badge: 'bg-blue-400/30 border-blue-300/50',
         text: 'text-blue-100',
         progress: 'bg-white'
@@ -180,7 +180,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     } else if (normalizedStatus === 'DIPROSES') {
       return {
         bg: 'bg-gradient-to-br from-orange-500 to-orange-600',
-        shadow: '0 6px 0 0 #C2410C',
+        shadow: '0 6px 0 0 #18181B',
         badge: 'bg-orange-400/30 border-orange-300/50',
         text: 'text-orange-100',
         progress: 'bg-white'
@@ -188,7 +188,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     } else if (normalizedStatus === 'SIAP' || normalizedStatus?.includes('SIAP')) {
       return {
         bg: 'bg-gradient-to-br from-green-500 to-green-600',
-        shadow: '0 6px 0 0 #15803D',
+        shadow: '0 6px 0 0 #3F3F46',
         badge: 'bg-green-400/30 border-green-300/50',
         text: 'text-green-100',
         progress: 'bg-white'
@@ -298,7 +298,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
           {customerPendingPayment && (
             <motion.div 
               className="bg-gradient-to-br from-red-500 to-red-600 rounded-3xl p-6 text-white mb-6 cursor-pointer"
-              style={{ boxShadow: '0 4px 0 0 #DC2626, 0 8px 24px rgba(239, 68, 68, 0.4)' }}
+              style={{ boxShadow: '0 4px 0 0 #27272A, 0 8px 24px rgba(0, 0, 0, 0.24)' }}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20 }}
@@ -586,7 +586,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center font-bold text-green-600"
-                        style={{ boxShadow: '0 2px 0 0 #16A34A' }}
+                        style={{ boxShadow: '0 2px 0 0 #3F3F46' }}
                       >
                         {order.queue_number}
                       </div>
@@ -594,7 +594,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                         <span className="font-medium text-gray-800">{order.customer_name}</span>
                       </div>
                     </div>
-                    <Badge className="bg-green-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #16A34A' }}>
+                    <Badge className="bg-green-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #3F3F46' }}>
                       READY
                     </Badge>
                   </motion.div>
@@ -631,7 +631,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                               className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                                 order.id === customerActiveOrder?.id ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600'
                               }`}
-                              style={order.id === customerActiveOrder?.id ? { boxShadow: '0 2px 0 0 #C2410C' } : {}}
+                              style={order.id === customerActiveOrder?.id ? { boxShadow: '0 2px 0 0 #18181B' } : {}}
                             >
                               {order.queue_number}
                             </div>
@@ -639,14 +639,14 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                               <div className="flex items-center gap-2">
                                 <span className="font-medium text-gray-800">{order.customer_name}</span>
                                 {order.id === customerActiveOrder?.id && (
-                                  <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
+                                  <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
                                     PESANAN KAMU
                                   </Badge>
                                 )}
                               </div>
                             </div>
                           </div>
-                          <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
+                          <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
                             DIPROSES
                           </Badge>
                         </div>
@@ -679,21 +679,21 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                         <div className="flex items-center gap-3">
                           <div 
                             className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-white"
-                            style={{ boxShadow: '0 2px 0 0 #C2410C' }}
+                            style={{ boxShadow: '0 2px 0 0 #18181B' }}
                           >
                             {customerPendingOrder.queue_number}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-gray-800">{customerPendingOrder.customer_name}</span>
-                              <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
+                              <Badge className="bg-orange-500 text-white text-xs border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
                                 KAMU
                               </Badge>
                             </div>
                             <p className="text-xs text-orange-600 font-medium">Posisi #{pendingOrders.findIndex(o => o.id === customerPendingOrder.id) + 1}</p>
                           </div>
                         </div>
-                        <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #C2410C' }}>
+                        <Badge className="bg-orange-500 text-white border-0" style={{ boxShadow: '0 2px 0 0 #18181B' }}>
                           MENUNGGU
                         </Badge>
                       </motion.div>
@@ -882,3 +882,4 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
     </motion.div>
   );
 }
+

@@ -274,7 +274,7 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
                   onClick={() => navigate(item.path)}
                   className={`bg-white rounded-2xl p-4 cursor-pointer ${item.shadowColor} transition-shadow duration-300`}
                   style={{
-                    boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 8px 16px -4px ${item.id === 'stock' ? 'rgba(249, 115, 22, 0.2)' : 'rgba(0, 0, 0, 0.05)'}`
+                    boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 8px 16px -4px ${item.id === 'stock' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.05)'}`
                   }}
                 >
                   <div className="flex items-center gap-4">
@@ -345,7 +345,7 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
                       <motion.p 
                         className="text-white text-2xl font-bold"
                         key={metrics.activeOrdersCount}
-                        initial={{ scale: 1.5, color: '#FEF3C7' }}
+                        initial={{ scale: 1.5, color: '#F4F4F5' }}
                         animate={{ scale: 1, color: '#FFFFFF' }}
                       >
                         {metrics.activeOrdersCount}
@@ -477,7 +477,7 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
         >
           <motion.div 
             className="bg-white rounded-2xl p-4"
-            style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(34, 197, 94, 0.15)' }}
+            style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.15)' }}
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -500,7 +500,7 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
 
           <motion.div 
             className="bg-white rounded-2xl p-4"
-            style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(168, 85, 247, 0.15)' }}
+            style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.08)' }}
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -591,3 +591,5 @@ export default function DashboardOverview({ onLogout }: DashboardOverviewProps) 
     </div>
   );
 }
+
+

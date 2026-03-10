@@ -40,13 +40,13 @@ const StockItem = ({
   return (
     <motion.div 
       className="bg-white rounded-2xl p-4"
-      style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)' }}
+      style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.06)' }}
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-center gap-4">
         <div className="relative">
           <motion.img 
-            src={item.image_url || 'https://placehold.co/100x100/orange/white?text=Menu'} 
+            src={item.image_url || 'https://placehold.co/100x100/e4e4e7/111827?text=Menu'} 
             alt={item.name}
             loading="lazy"
             className="w-14 h-14 object-cover rounded-xl"
@@ -101,7 +101,7 @@ const StockItem = ({
                 whileHover={item.stock > 0 ? { scale: 1.1 } : {}}
                 whileTap={item.stock > 0 ? { scale: 0.9, y: 2 } : {}}
                 style={item.stock > 0 ? {
-                  boxShadow: '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.3)'
+                  boxShadow: '0 4px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.18)'
                 } : {}}
               >
                 <Minus className="w-4 h-4" />
@@ -110,7 +110,7 @@ const StockItem = ({
               <motion.span 
                 className={`w-8 text-center font-medium ${item.is_available ? 'text-gray-800' : 'text-gray-400'}`}
                 key={item.stock}
-                initial={{ scale: 1.5, color: '#F97316' }}
+                initial={{ scale: 1.5, color: '#3F3F46' }}
                 animate={{ scale: 1, color: item.is_available ? '#1F2937' : '#9CA3AF' }}
               >
                 {item.stock}
@@ -122,7 +122,7 @@ const StockItem = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9, y: 2 }}
                 style={{
-                  boxShadow: '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.4)'
+                  boxShadow: '0 4px 0 0 #18181B, 0 4px 8px rgba(0, 0, 0, 0.24)'
                 }}
               >
                 <Plus className="w-4 h-4" />
@@ -202,7 +202,7 @@ export default function StockManagement() {
           <motion.button 
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg"
-            style={{ boxShadow: '0 4px 0 0 #C2410C' }}
+            style={{ boxShadow: '0 4px 0 0 #18181B' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95, y: 4 }}
           >
@@ -271,7 +271,7 @@ export default function StockManagement() {
                   : 'bg-white text-gray-600 border border-orange-100 hover:border-orange-300'
               }`}
               style={selectedCategory === category ? {
-                boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.3)'
+                boxShadow: '0 4px 0 0 #18181B, 0 6px 12px rgba(0, 0, 0, 0.18)'
               } : {}}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -341,3 +341,4 @@ export default function StockManagement() {
     </div>
   );
 }
+
