@@ -13,7 +13,8 @@ import {
   Power,
   LogOut,
   RefreshCw,
-  DollarSign
+  DollarSign,
+  BarChart3
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { useMemo, useState } from 'react';
@@ -31,6 +32,17 @@ const menuItems = [
     textColor: 'text-blue-600',
     shadowColor: 'shadow-blue-200',
     path: '/admin/orders'
+  },
+  {
+    id: 'accounting',
+    title: 'Akuntansi',
+    description: 'Laporan penjualan & analisis',
+    icon: DollarSign,
+    color: 'bg-green-500',
+    bgColor: 'bg-green-50',
+    textColor: 'text-green-600',
+    shadowColor: 'shadow-green-200',
+    path: '/admin/accounting'
   },
   {
     id: 'stock',

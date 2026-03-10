@@ -28,6 +28,7 @@ import StockManagement from '@/sections/admin/StockManagement';
 import EditItem from '@/sections/admin/EditItem';
 import CategoryManagement from '@/sections/admin/CategoryManagement';
 import OrderManagement from '@/sections/admin/OrderManagement';
+import AccountingScreen from '@/sections/admin/AccountingScreen';
 import SupabaseTest from '@/components/SupabaseTest';
 
 // Types
@@ -683,6 +684,16 @@ function App() {
             element={
               isAdmin ? (
                 <CategoryManagement />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+          <Route 
+            path="/admin/accounting" 
+            element={
+              isAdmin ? (
+                <AccountingScreen />
               ) : (
                 <Navigate to="/login" />
               )
