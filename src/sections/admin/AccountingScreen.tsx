@@ -14,11 +14,10 @@ import {
   ShoppingBag,
   Users,
   Clock,
-  Filter
+  Loader2
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
-import { useMemo, useState } from 'react';
-import { CustomerNavbar3D } from '@/components/Navbar3D';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type PeriodType = 'hari' | 'minggu' | 'bulan';
@@ -45,11 +44,43 @@ interface SalesData {
   }>;
 }
 
+interface OrderItemData {
+  name: string;
+  quantity: number;
+  subtotal: number;
+  order_id: number;
+  created_at: string;
+}
+
 export default function AccountingScreen() {
   const navigate = useNavigate();
   const [period, setPeriod] = useState<PeriodType>('hari');
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
-  const { orderSummaries, loading } = useOrders();
+  const [orderItems, setOrderItems] = useState<OrderItemData[]>([]);
+  const [loadingItems, setLoadingItems] = useState(true);
+  const { orderSummaries, loading: loadingOrders } = useOrders();
+
+  // Fetch order items dari database
+  useEffect(() => {
+    const fetchOrderItems = async () => {
+      setLoadingItems(true);
+      try {
+        const { data, error } = await supabase
+          .from('order_items')
+          .select('name, quantity, subtotal, order_id, created_at')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setOrderItems(data || []);
+      } catch (err) {
+        console.error('Error fetching order items:', err);
+      } finally {
+        setLoadingItems(false);
+      }
+    };
+
+    fetchOrderItems();
+  }, []);
 
   // Filter orders berdasarkan periode
   const filteredOrders = useMemo(() => {
@@ -76,7 +107,32 @@ export default function AccountingScreen() {
     });
   }, [orderSummaries, period]);
 
-  // Hitung data akuntansi
+  // Filter order items berdasarkan periode
+  const filteredOrderItems = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    return orderItems.filter(item => {
+      const itemDate = new Date(item.created_at);
+      
+      switch (period) {
+        case 'hari':
+          return itemDate >= today;
+        case 'minggu':
+          const weekAgo = new Date(today);
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return itemDate >= weekAgo;
+        case 'bulan':
+          const monthAgo = new Date(today);
+          monthAgo.setMonth(monthAgo.getMonth() - 1);
+          return itemDate >= monthAgo;
+        default:
+          return true;
+      }
+    });
+  }, [orderItems, period]);
+
+  // Hitung data akuntansi real
   const salesData: SalesData = useMemo(() => {
     const completedOrders = filteredOrders.filter(o => o.status === 'SELESAI');
     
@@ -86,38 +142,86 @@ export default function AccountingScreen() {
     // Total orders
     const totalOrders = completedOrders.length;
     
-    // Total items
-    const totalItems = completedOrders.reduce((sum, o) => sum + (o.item_count || 0), 0);
+    // Total items dari order items real
+    const totalItems = filteredOrderItems.reduce((sum, item) => sum + item.quantity, 0);
     
     // Average order value
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-    // Top products (dummy data - perlu fetch dari order_items)
-    const topProducts = [
-      { name: 'Iced Caramel Latte', quantity: 45, revenue: 1575000 },
-      { name: 'Iced Vanilla Latte', quantity: 38, revenue: 1710000 },
-      { name: 'Iced Coffee Milk', quantity: 32, revenue: 960000 },
-      { name: 'Iced Hazelnut Latte', quantity: 28, revenue: 1540000 },
-      { name: 'Iced Brown Sugar Latte', quantity: 25, revenue: 550000 },
-    ];
+    // Top products - hitung dari data real
+    const productMap = new Map<string, { quantity: number; revenue: number }>();
+    
+    filteredOrderItems.forEach(item => {
+      const existing = productMap.get(item.name);
+      if (existing) {
+        existing.quantity += item.quantity;
+        existing.revenue += item.subtotal;
+      } else {
+        productMap.set(item.name, { quantity: item.quantity, revenue: item.subtotal });
+      }
+    });
 
-    // Sales by category
-    const salesByCategory = [
-      { category: 'Coffee', revenue: totalRevenue * 0.65, percentage: 65 },
-      { category: 'Non-Coffee', revenue: totalRevenue * 0.25, percentage: 25 },
-      { category: 'Food', revenue: totalRevenue * 0.10, percentage: 10 },
-    ];
+    const topProducts = Array.from(productMap.entries())
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
 
-    // Hourly sales (dummy data)
-    const hourlySales = [
-      { hour: '08:00', orders: 5, revenue: 175000 },
-      { hour: '10:00', orders: 12, revenue: 420000 },
-      { hour: '12:00', orders: 18, revenue: 630000 },
-      { hour: '14:00', orders: 15, revenue: 525000 },
-      { hour: '16:00', orders: 20, revenue: 700000 },
-      { hour: '18:00', orders: 14, revenue: 490000 },
-      { hour: '20:00', orders: 8, revenue: 280000 },
-    ];
+    // Sales by category - estimasi berdasarkan nama produk
+    const categoryMap = new Map<string, number>();
+    
+    filteredOrderItems.forEach(item => {
+      let category = 'Lainnya';
+      const nameLower = item.name.toLowerCase();
+      
+      if (nameLower.includes('coffee') || nameLower.includes('latte') || nameLower.includes('espresso') || nameLower.includes('cappuccino') || nameLower.includes('americano')) {
+        category = 'Coffee';
+      } else if (nameLower.includes('tea') || nameLower.includes('milk') || nameLower.includes('chocolate') || nameLower.includes('matcha')) {
+        category = 'Non-Coffee';
+      } else if (nameLower.includes('cake') || nameLower.includes('pastry') || nameLower.includes('croissant') || nameLower.includes('sandwich') || nameLower.includes('toast')) {
+        category = 'Food';
+      }
+      
+      categoryMap.set(category, (categoryMap.get(category) || 0) + item.subtotal);
+    });
+
+    const totalCategoryRevenue = Array.from(categoryMap.values()).reduce((a, b) => a + b, 0) || 1;
+    
+    const salesByCategory = Array.from(categoryMap.entries())
+      .map(([category, revenue]) => ({
+        category,
+        revenue,
+        percentage: Math.round((revenue / totalCategoryRevenue) * 100)
+      }))
+      .sort((a, b) => b.revenue - a.revenue);
+
+    // Hourly sales - hitung dari data real
+    const hourMap = new Map<string, { orders: Set<number>; revenue: number }>();
+    
+    completedOrders.forEach(order => {
+      const date = new Date(order.created_at);
+      const hour = date.getHours();
+      const hourKey = `${hour.toString().padStart(2, '0')}:00`;
+      
+      const existing = hourMap.get(hourKey);
+      if (existing) {
+        existing.orders.add(order.id);
+        existing.revenue += order.total_amount;
+      } else {
+        hourMap.set(hourKey, { orders: new Set([order.id]), revenue: order.total_amount });
+      }
+    });
+
+    // Isi jam yang kosong
+    for (let i = 8; i <= 22; i++) {
+      const hourKey = `${i.toString().padStart(2, '0')}:00`;
+      if (!hourMap.has(hourKey)) {
+        hourMap.set(hourKey, { orders: new Set(), revenue: 0 });
+      }
+    }
+
+    const hourlySales = Array.from(hourMap.entries())
+      .map(([hour, data]) => ({ hour, orders: data.orders.size, revenue: data.revenue }))
+      .sort((a, b) => a.hour.localeCompare(b.hour));
 
     return {
       totalRevenue,
@@ -128,13 +232,45 @@ export default function AccountingScreen() {
       salesByCategory,
       hourlySales,
     };
-  }, [filteredOrders]);
+  }, [filteredOrders, filteredOrderItems]);
 
   const periodLabels = {
     hari: 'Hari Ini',
     minggu: '7 Hari Terakhir',
     bulan: '30 Hari Terakhir',
   };
+
+  // Export CSV
+  const exportCSV = () => {
+    const csvContent = [
+      ['Laporan Penjualan', periodLabels[period]],
+      [''],
+      ['Ringkasan'],
+      ['Total Penjualan', salesData.totalRevenue],
+      ['Total Pesanan', salesData.totalOrders],
+      ['Item Terjual', salesData.totalItems],
+      ['Rata-rata Pesanan', Math.round(salesData.averageOrderValue)],
+      [''],
+      ['Produk Terlaris'],
+      ['Nama', 'Jumlah', 'Revenue'],
+      ...salesData.topProducts.map(p => [p.name, p.quantity, p.revenue]),
+      [''],
+      ['Penjualan per Kategori'],
+      ['Kategori', 'Revenue', 'Persentase'],
+      ...salesData.salesByCategory.map(c => [c.category, c.revenue, `${c.percentage}%`]),
+    ]
+      .map(row => row.join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `laporan-penjualan-${period}-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
+
+  const loading = loadingOrders || loadingItems;
 
   if (loading) {
     return (
@@ -143,7 +279,7 @@ export default function AccountingScreen() {
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         >
-          <TrendingUp className="w-12 h-12 text-orange-500" />
+          <Loader2 className="w-12 h-12 text-orange-500" />
         </motion.div>
       </div>
     );
@@ -293,37 +429,46 @@ export default function AccountingScreen() {
             </div>
             <div>
               <h2 className="font-bold text-gray-800">Produk Terlaris</h2>
-              <p className="text-xs text-gray-500">5 produk dengan penjualan tertinggi</p>
+              <p className="text-xs text-gray-500">
+                {salesData.topProducts.length > 0 ? '5 produk dengan penjualan tertinggi' : 'Belum ada data penjualan'}
+              </p>
             </div>
           </div>
 
-          <div className="space-y-3">
-            {salesData.topProducts.map((product, index) => (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
-              >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm ${
-                  index === 0 ? 'bg-yellow-500' :
-                  index === 1 ? 'bg-gray-400' :
-                  index === 2 ? 'bg-orange-400' :
-                  'bg-gray-300'
-                }`}>
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-800 text-sm">{product.name}</p>
-                  <p className="text-xs text-gray-500">{product.quantity} terjual</p>
-                </div>
-                <p className="font-bold text-orange-600 text-sm">
-                  Rp {product.revenue.toLocaleString('id-ID')}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          {salesData.topProducts.length > 0 ? (
+            <div className="space-y-3">
+              {salesData.topProducts.map((product, index) => (
+                <motion.div
+                  key={product.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
+                >
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm ${
+                    index === 0 ? 'bg-yellow-500' :
+                    index === 1 ? 'bg-gray-400' :
+                    index === 2 ? 'bg-orange-400' :
+                    'bg-gray-300'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-800 text-sm">{product.name}</p>
+                    <p className="text-xs text-gray-500">{product.quantity} terjual</p>
+                  </div>
+                  <p className="font-bold text-orange-600 text-sm">
+                    Rp {product.revenue.toLocaleString('id-ID')}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-400">
+              <Coffee className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Belum ada produk terjual di periode ini</p>
+            </div>
+          )}
         </motion.div>
 
         {/* Sales by Category */}
@@ -344,36 +489,43 @@ export default function AccountingScreen() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {salesData.salesByCategory.map((category, index) => (
-              <motion.div
-                key={category.category}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-700">{category.category}</span>
-                  <span className="text-sm font-bold text-gray-800">
-                    Rp {category.revenue.toLocaleString('id-ID')}
-                  </span>
-                </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    className={`h-full rounded-full ${
-                      index === 0 ? 'bg-orange-500' :
-                      index === 1 ? 'bg-blue-500' :
-                      'bg-green-500'
-                    }`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${category.percentage}%` }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">{category.percentage}% dari total</p>
-              </motion.div>
-            ))}
-          </div>
+          {salesData.salesByCategory.length > 0 ? (
+            <div className="space-y-4">
+              {salesData.salesByCategory.map((category, index) => (
+                <motion.div
+                  key={category.category}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-700">{category.category}</span>
+                    <span className="text-sm font-bold text-gray-800">
+                      Rp {category.revenue.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full rounded-full ${
+                        index === 0 ? 'bg-orange-500' :
+                        index === 1 ? 'bg-blue-500' :
+                        'bg-green-500'
+                      }`}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${category.percentage}%` }}
+                      transition={{ duration: 0.8, delay: 0.2 }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">{category.percentage}% dari total</p>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-400">
+              <PieChart className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Belum ada data kategori</p>
+            </div>
+          )}
         </motion.div>
 
         {/* Hourly Sales Chart */}
@@ -394,33 +546,40 @@ export default function AccountingScreen() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            {salesData.hourlySales.map((hour, index) => (
-              <motion.div
-                key={hour.hour}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 + index * 0.03 }}
-                className="flex items-center gap-3"
-              >
-                <span className="text-xs font-medium text-gray-500 w-12">{hour.hour}</span>
-                <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden relative">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(hour.revenue / 700000) * 100}%` }}
-                    transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-                  />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-700">
-                    {hour.orders} order
+          {salesData.hourlySales.some(h => h.orders > 0) ? (
+            <div className="space-y-3">
+              {salesData.hourlySales.map((hour, index) => (
+                <motion.div
+                  key={hour.hour}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + index * 0.03 }}
+                  className="flex items-center gap-3"
+                >
+                  <span className="text-xs font-medium text-gray-500 w-12">{hour.hour}</span>
+                  <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden relative">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.max((hour.revenue / (salesData.totalRevenue || 1)) * 100 * 5, hour.orders > 0 ? 5 : 0)}%` }}
+                      transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
+                    />
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-700">
+                      {hour.orders} order
+                    </span>
+                  </div>
+                  <span className="text-xs font-medium text-gray-600 w-20 text-right">
+                    Rp {(hour.revenue / 1000).toFixed(0)}k
                   </span>
-                </div>
-                <span className="text-xs font-medium text-gray-600 w-20 text-right">
-                  Rp {(hour.revenue / 1000).toFixed(0)}k
-                </span>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-400">
+              <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Belum ada data penjualan per jam</p>
+            </div>
+          )}
         </motion.div>
 
         {/* Export Button */}
@@ -428,6 +587,7 @@ export default function AccountingScreen() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
+          onClick={exportCSV}
           className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-2xl p-4 flex items-center justify-center gap-2 font-semibold"
           style={{ boxShadow: '0 4px 0 0 #1F2937, 0 4px 12px rgba(0, 0, 0, 0.2)' }}
           whileHover={{ scale: 1.02 }}
