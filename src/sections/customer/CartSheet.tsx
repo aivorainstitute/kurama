@@ -66,13 +66,21 @@ export default function CartSheet({
     setIsSaving(true);
     
     try {
+      console.log('Updating order:', createdOrder.id, 'with method:', method);
+      
       // Update payment_method di database
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .update({ payment_method: method })
-        .eq('id', createdOrder.id);
+        .eq('id', createdOrder.id)
+        .select();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Update success:', data);
       
       // Simpan ke localStorage untuk recovery
       localStorage.setItem('lastOrderId', String(createdOrder.id));
@@ -88,10 +96,11 @@ export default function CartSheet({
           paymentMethod: method 
         } 
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving payment method:', err);
-      alert('Gagal menyimpan metode pembayaran');
+      alert('Gagal menyimpan metode pembayaran: ' + (err.message || 'Unknown error'));
       setIsSaving(false);
+      setSelectedMethod(null);
     }
   };
 
