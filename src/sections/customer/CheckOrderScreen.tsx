@@ -595,14 +595,16 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
                     Riwayat Pesanan ({completedOrders.length})
                   </h2>
                   <div className="space-y-3">
-                    {completedOrders.slice(0, 3).map((order, index) => (
+                    {completedOrders.map((order, index) => (
                       <motion.div
                         key={order.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="bg-gray-50 rounded-2xl p-4 cursor-pointer opacity-70"
-                        whileHover={{ opacity: 1, scale: 1.01 }}
+                        onClick={() => handleOpenDetail(order)}
+                        className="bg-gray-50 rounded-2xl p-4 cursor-pointer opacity-70 hover:opacity-100"
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         <div className="flex items-center justify-between">
                           <div>
