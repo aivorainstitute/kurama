@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2, Utensils, User } from 'lucide-react';
+import { RefreshCw, Clock, Loader2, Wallet, ArrowRight, QrCode, X, CheckCircle2, Utensils, User, ClipboardList } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { CustomerNavbar3D } from '@/components/Navbar3D';
 import { supabase } from '@/lib/supabase';
@@ -374,13 +374,28 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
                 </div>
               </div>
               
+              {/* Tombol Cek Detail Pesanan */}
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/check-order');
+                }}
+                className="w-full py-3 bg-white rounded-xl flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 mb-3"
+                style={{ boxShadow: '0 4px 0 0 rgba(0,0,0,0.1)' }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98, y: 2 }}
+              >
+                <ClipboardList className="w-4 h-4" />
+                Cek Detail Pesanan
+              </motion.button>
+              
               {/* Tombol Refresh */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
                   refetch();
                 }}
-                className="w-full py-2 bg-white/20 rounded-xl flex items-center justify-center gap-2 text-sm mt-2"
+                className="w-full py-2 bg-white/20 rounded-xl flex items-center justify-center gap-2 text-sm"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
