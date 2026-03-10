@@ -181,9 +181,18 @@ export default function MenuScreen({ customerName, cartItems, addToCart, activeO
                style={{ boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4)' }}>
             <span className="text-white font-bold text-lg">AN</span>
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-sm text-gray-500">Hai {customerName || 'Guest'},</p>
             <h1 className="text-lg font-bold text-gray-800">mau pesan apa?</h1>
+            {/* Tombol Riwayat Pesanan */}
+            <motion.button
+              onClick={() => navigate('/check-order')}
+              className="mt-1 text-xs text-orange-600 font-medium flex items-center gap-1 hover:text-orange-700"
+              whileHover={{ x: 2 }}
+            >
+              <ClipboardList className="w-3 h-3" />
+              Riwayat Pesanan
+            </motion.button>
           </div>
           <div className="ml-auto flex items-center gap-2">
             {/* Tombol Cek Antrian */}
