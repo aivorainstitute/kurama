@@ -175,7 +175,7 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
     }
   };
 
-  // Fungsi untuk cetak struk sebagai PNG (format thermal printer)
+  // Fungsi untuk cetak struk sebagai PNG (font monospace mesin tik)
   const handlePrintReceipt = async () => {
     if (!selectedOrder || orderItems.length === 0) {
       toast.error('Tidak ada data untuk dicetak');
@@ -188,13 +188,16 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
       if (!ctx) return;
 
       // Ukuran struk 80mm thermal printer
-      const width = 320;
-      const padding = 20;
+      const width = 380;
+      const padding = 15;
+      const col1 = padding; // Label
+      const col2 = 200; // Tengah (untuk @ harga)
+      const col3 = width - padding; // Kanan (subtotal)
       
       // Hitung tinggi
-      const lineHeight = 18;
-      const itemSpacing = 35;
-      const height = 600 + (orderItems.length * itemSpacing);
+      const lineHeight = 20;
+      const itemSpacing = 40;
+      const height = 550 + (orderItems.length * itemSpacing);
 
       canvas.width = width;
       canvas.height = height;
@@ -203,109 +206,108 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, width, height);
 
-      let y = 30;
+      let y = 35;
 
       // === HEADER ===
       ctx.fillStyle = '#000000';
       ctx.textAlign = 'center';
-      
-      ctx.font = 'bold 26px Arial';
+      ctx.font = 'bold 24px Courier New';
       ctx.fillText('kur𝛂ma', width / 2, y);
-      y += 26;
+      y += 24;
       
-      ctx.font = '16px Arial';
+      ctx.font = '16px Courier New';
       ctx.fillText('Coffee', width / 2, y);
-      y += 20;
+      y += 18;
       
-      ctx.font = '11px Arial';
+      ctx.font = '11px Courier New';
       ctx.fillText('Brewed with passion, served with love', width / 2, y);
-      y += 25;
+      y += 22;
 
       // Divider
-      ctx.font = '12px Courier';
-      ctx.fillText('----------------------------------------', width / 2, y);
-      y += 25;
+      ctx.font = '12px Courier New';
+      ctx.fillText('------------------------------------------', width / 2, y);
+      y += 22;
 
       // === INFO ORDER ===
       ctx.textAlign = 'left';
-      ctx.font = '12px Arial';
+      ctx.font = '12px Courier New';
       
-      ctx.fillText(`Order    : #${selectedOrder.order_number}`, padding, y);
+      ctx.fillText(`Order    : #${selectedOrder.order_number}`, col1, y);
       y += lineHeight;
-      ctx.fillText(`Antrian  : #${selectedOrder.queue_number}`, padding, y);
+      ctx.fillText(`Antrian  : #${selectedOrder.queue_number}`, col1, y);
       y += lineHeight;
-      ctx.fillText(`Nama     : ${selectedOrder.customer_name}`, padding, y);
+      ctx.fillText(`Nama     : ${selectedOrder.customer_name}`, col1, y);
       y += lineHeight;
       
       const dateStr = new Date(selectedOrder.created_at).toLocaleDateString('id-ID');
       const timeStr = new Date(selectedOrder.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      ctx.fillText(`Tanggal  : ${dateStr} ${timeStr}`, padding, y);
-      y += 28;
+      ctx.fillText(`Tanggal  : ${dateStr} ${timeStr}`, col1, y);
+      y += 26;
 
       // Divider
       ctx.textAlign = 'center';
-      ctx.font = '12px Courier';
-      ctx.fillText('----------------------------------------', width / 2, y);
-      y += 25;
+      ctx.fillText('------------------------------------------', width / 2, y);
+      y += 22;
 
       // === ITEMS ===
       orderItems.forEach((item) => {
-        // Nama item
+        // Baris 1: Nama item (kiri) dan subtotal (kanan)
         ctx.textAlign = 'left';
-        ctx.font = 'bold 12px Arial';
-        const itemName = item.name.length > 28 ? item.name.substring(0, 28) + '...' : item.name;
-        ctx.fillText(`${item.quantity}x ${itemName}`, padding, y);
-        y += 16;
+        ctx.font = 'bold 12px Courier New';
+        const itemText = `${item.quantity}x ${item.name}`;
+        const displayName = itemText.length > 25 ? itemText.substring(0, 25) : itemText;
+        ctx.fillText(displayName, col1, y);
         
-        // Harga per item (kiri) dan subtotal (kanan)
-        ctx.font = '11px Arial';
-        ctx.fillText(`   @ Rp ${item.unit_price.toLocaleString('id-ID')}`, padding, y);
-        
+        // Subtotal di kanan
         ctx.textAlign = 'right';
-        ctx.fillText(`Rp ${item.subtotal.toLocaleString('id-ID')}`, width - padding, y);
+        ctx.font = '12px Courier New';
+        ctx.fillText(`Rp ${item.subtotal.toLocaleString('id-ID')}`, col3, y);
+        y += 18;
         
-        y += 22;
+        // Baris 2: Harga satuan (kiri, sedikit indent)
+        ctx.textAlign = 'left';
+        ctx.font = '11px Courier New';
+        ctx.fillText(`  @ Rp ${item.unit_price.toLocaleString('id-ID')}`, col1, y);
+        
+        y += 24;
       });
 
       // Divider
       ctx.textAlign = 'center';
-      ctx.font = '12px Courier';
-      ctx.fillText('----------------------------------------', width / 2, y);
-      y += 25;
+      ctx.font = '12px Courier New';
+      ctx.fillText('------------------------------------------', width / 2, y);
+      y += 24;
 
       // === TOTAL ===
-      const labelX = padding;
-      const valueX = width - padding;
-      
       ctx.textAlign = 'left';
-      ctx.font = '12px Arial';
-      ctx.fillText('Subtotal', labelX, y);
+      ctx.font = '12px Courier New';
+      ctx.fillText('Subtotal', col1, y);
       ctx.textAlign = 'right';
-      ctx.fillText(`Rp ${(selectedOrder.subtotal || 0).toLocaleString('id-ID')}`, valueX, y);
+      ctx.fillText(`Rp ${(selectedOrder.subtotal || 0).toLocaleString('id-ID')}`, col3, y);
       y += lineHeight;
 
       ctx.textAlign = 'left';
-      ctx.fillText('PPN (10%)', labelX, y);
+      ctx.fillText('PPN (10%)', col1, y);
       ctx.textAlign = 'right';
-      ctx.fillText(`Rp ${(selectedOrder.tax_amount || 0).toLocaleString('id-ID')}`, valueX, y);
-      y += lineHeight + 5;
+      ctx.fillText(`Rp ${(selectedOrder.tax_amount || 0).toLocaleString('id-ID')}`, col3, y);
+      y += lineHeight + 4;
 
-      ctx.font = 'bold 14px Arial';
+      ctx.font = 'bold 13px Courier New';
       ctx.textAlign = 'left';
-      ctx.fillText('TOTAL', labelX, y);
+      ctx.fillText('TOTAL', col1, y);
       ctx.textAlign = 'right';
-      ctx.fillText(`Rp ${selectedOrder.total_amount.toLocaleString('id-ID')}`, valueX, y);
-      y += 28;
+      ctx.fillText(`Rp ${selectedOrder.total_amount.toLocaleString('id-ID')}`, col3, y);
+      y += 26;
 
       // Divider
       ctx.textAlign = 'center';
-      ctx.font = '12px Courier';
-      ctx.fillText('----------------------------------------', width / 2, y);
-      y += 25;
+      ctx.font = '12px Courier New';
+      ctx.fillText('------------------------------------------', width / 2, y);
+      y += 24;
 
       // === PAYMENT INFO ===
       ctx.textAlign = 'center';
-      ctx.font = '12px Arial';
+      ctx.font = '12px Courier New';
       
       const paymentText = selectedOrder.payment_status === 'SUDAH_BAYAR' ? 'SUDAH BAYAR' : 'BELUM BAYAR';
       ctx.fillText(`Status : ${paymentText}`, width / 2, y);
@@ -315,16 +317,16 @@ export default function CheckOrderScreen({ orders: localOrders, customerName }: 
         ctx.fillText(`Metode : ${selectedOrder.payment_method}`, width / 2, y);
         y += lineHeight;
       }
-      y += 20;
+      y += 18;
 
       // === FOOTER ===
-      ctx.font = '11px Arial';
+      ctx.font = '11px Courier New';
       ctx.fillText('Terima kasih telah berkunjung', width / 2, y);
       y += lineHeight;
       ctx.fillText('ke kur𝛂ma Coffee', width / 2, y);
-      y += lineHeight + 5;
+      y += lineHeight + 4;
       
-      ctx.font = '10px Arial';
+      ctx.font = '10px Courier New';
       ctx.fillText('Simpan struk ini sebagai', width / 2, y);
       y += lineHeight - 2;
       ctx.fillText('bukti pembelian anda', width / 2, y);
