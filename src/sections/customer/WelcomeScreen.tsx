@@ -154,7 +154,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
             kur𝛂ma
           </h1>
           <p className="text-xs font-medium text-orange-400/80 tracking-[0.3em] uppercase mt-1">
-            Food & Beverage
+            Coffee
           </p>
         </motion.div>
       </motion.div>
@@ -488,7 +488,7 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
           <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-5 h-5 object-contain" />
           <span className="text-xs font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
-        <p className="text-[10px] text-gray-300 mt-1">Food & Beverage</p>
+        <p className="text-[10px] text-gray-300 mt-1">Coffee</p>
       </motion.div>
 
       <style>{`
