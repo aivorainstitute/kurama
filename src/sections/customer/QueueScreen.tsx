@@ -218,7 +218,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
       if (error) throw error;
       
       // Simpan ke localStorage untuk recovery
-      localStorage.setItem('lastOrderId', selectedOrder.id);
+      localStorage.setItem('lastOrderId', String(selectedOrder.id));
       localStorage.setItem('lastPaymentMethod', method);
       
       // Tutup modal dan navigate ke halaman payment dengan metode yang dipilih
@@ -243,7 +243,7 @@ export default function QueueScreen({ customerName, activeOrder: _localActiveOrd
   const handleGoToPayment = (order: import('@/lib/supabase').OrderSummary) => {
     if (order.payment_method) {
       // Sudah punya metode, langsung ke payment screen
-      localStorage.setItem('lastOrderId', order.id);
+      localStorage.setItem('lastOrderId', String(order.id));
       localStorage.setItem('lastPaymentMethod', order.payment_method);
       
       navigate('/payment', { 
