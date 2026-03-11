@@ -549,7 +549,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
             </div>
           </div>
 
-          {/* Menu List - Card Horizontal */}
+          {/* Menu List - Card Kotak-Kotak Grid */}
           <main className="px-5 py-2 pb-28">
             <p className="text-xs text-gray-400 mb-3">{filteredItems.length} menu tersedia</p>
             
@@ -559,94 +559,74 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                 <p className="text-gray-500 text-sm">Memuat menu...</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 {filteredItems.map((item) => {
                   const quantity = getItemQuantity(item.id);
                   return (
                     <motion.div 
                       key={item.id} 
-                      className="bg-white rounded-2xl p-4"
+                      className="bg-white rounded-2xl overflow-hidden"
                       style={{ boxShadow: cardShadow }}
                       whileHover={{ scale: 1.02 }}
-                      layout
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <div className="flex gap-4">
-                        {/* Image */}
-                        <div className="relative flex-shrink-0">
-                          <motion.img 
-                            src={item.image_url || 'https://placehold.co/100x100/orange/white?text=No+Image'} 
-                            alt={item.name}
-                            className="w-24 h-24 object-cover rounded-xl"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://placehold.co/100x100/orange/white?text=No+Image';
-                            }}
-                            whileHover={{ scale: 1.05 }}
-                          />
-                          {item.is_popular && (
-                            <span className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-1 rounded-full font-medium"
-                                  style={{ boxShadow: '0 2px 4px rgba(249, 115, 22, 0.4)' }}>
-                              Popular
-                            </span>
-                          )}
-                        </div>
+                      {/* Image */}
+                      <div className="relative aspect-square">
+                        <motion.img 
+                          src={item.image_url || 'https://placehold.co/300x300/orange/white?text=No+Image'} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/orange/white?text=No+Image';
+                          }}
+                        />
+                        {item.is_popular && (
+                          <span className="absolute top-2 left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-1 rounded-full font-medium"
+                                style={{ boxShadow: '0 2px 4px rgba(249, 115, 22, 0.4)' }}>
+                            Popular
+                          </span>
+                        )}
+                        
+                        {/* Tombol Tambah di pojok kanan bawah gambar */}
+                        <motion.button
+                          onClick={() => addToCart(item)}
+                          className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          style={{ boxShadow: button3D }}
+                        >
+                          <Plus className="w-5 h-5" />
+                        </motion.button>
+                        
+                        {/* Quantity Badge */}
+                        {quantity > 0 && (
+                          <motion.div 
+                            className="absolute top-2 right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                          >
+                            {quantity}
+                          </motion.div>
+                        )}
+                      </div>
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="min-w-0">
-                              <h3 className="font-bold text-gray-800 truncate">{item.name}</h3>
-                              <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
-                              <p className={`text-xs uppercase font-medium mt-1 ${
-                                item.category_name === 'Minuman' ? 'text-blue-500' : 
-                                item.category_name === 'Coffee' ? 'text-amber-600' :
-                                item.category_name === 'Signatures' ? 'text-pink-500' :
-                                item.category_name === 'Makanan' ? 'text-green-500' : 
-                                item.category_name === 'Camilan' ? 'text-purple-500' : 
-                                'text-orange-500'
-                              }`}>
-                                {item.category_name}
-                              </p>
-                            </div>
-                            <p className="font-bold text-orange-600 text-sm whitespace-nowrap">
-                              Rp {item.price.toLocaleString('id-ID')}
-                            </p>
-                          </div>
-
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-2 mt-3">
-                            <motion.button
-                              onClick={() => updateQuantity(item.id, -1)}
-                              disabled={quantity === 0}
-                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                                quantity > 0 ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-400'
-                              }`}
-                              whileHover={quantity > 0 ? { scale: 1.1 } : {}}
-                              whileTap={quantity > 0 ? { scale: 0.9, y: 2 } : {}}
-                              style={quantity > 0 ? { boxShadow: '0 2px 0 0 #9CA3AF, 0 2px 4px rgba(0,0,0,0.1)' } : {}}
-                            >
-                              <Minus className="w-4 h-4" />
-                            </motion.button>
-                            
-                            <motion.span 
-                              className="w-10 text-center font-bold text-lg"
-                              key={quantity}
-                              initial={{ scale: 1.3, color: '#F97316' }}
-                              animate={{ scale: 1, color: '#1F2937' }}
-                            >
-                              {quantity}
-                            </motion.span>
-                            
-                            <motion.button
-                              onClick={() => addToCart(item)}
-                              className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white hover:bg-orange-600 transition-all"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9, y: 2 }}
-                              style={{ boxShadow: button3D }}
-                            >
-                              <Plus className="w-4 h-4" />
-                            </motion.button>
-                          </div>
-                        </div>
+                      {/* Content */}
+                      <div className="p-3">
+                        <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
+                        <p className={`text-xs uppercase font-medium mt-1 ${
+                          item.category_name === 'Minuman' ? 'text-blue-500' : 
+                          item.category_name === 'Coffee' ? 'text-amber-600' :
+                          item.category_name === 'Signatures' ? 'text-pink-500' :
+                          item.category_name === 'Makanan' ? 'text-green-500' : 
+                          item.category_name === 'Camilan' ? 'text-purple-500' : 
+                          'text-orange-500'
+                        }`}>
+                          {item.category_name}
+                        </p>
+                        <p className="font-bold text-orange-600 text-sm mt-2">
+                          Rp {item.price.toLocaleString('id-ID')}
+                        </p>
                       </div>
                     </motion.div>
                   );
