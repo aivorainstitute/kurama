@@ -550,7 +550,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
           </div>
 
           {/* Menu List - Card Horizontal */}
-          <main className="px-5 py-2">
+          <main className="px-5 py-2 pb-28">
             <p className="text-xs text-gray-400 mb-3">{filteredItems.length} menu tersedia</p>
             
             {menuLoading ? (
