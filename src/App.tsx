@@ -524,7 +524,7 @@ function App() {
               isAdmin ? (
                 <Navigate to="/admin/dashboard" replace />
               ) : (
-                <ModernLogin setIsAdmin={setIsAdmin} />
+                <ModernLogin setIsAdmin={setIsAdmin} setIsCashier={setIsCashier} />
               )
             } 
           />
@@ -653,8 +653,9 @@ function App() {
           />
 
           {/* Admin Routes */}
-          {/* Redirect /admin/login ke /login */}
+          {/* Redirect login lama ke /login */}
           <Route path="/admin/login" element={<Navigate to="/login" replace />} />
+          <Route path="/cashier/login" element={<Navigate to="/login" replace />} />
 
           {/* Cashier Route */}
           <Route 
