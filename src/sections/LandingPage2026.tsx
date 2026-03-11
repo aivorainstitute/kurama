@@ -259,8 +259,8 @@ function InfoSection() {
             <div className="space-y-4 mb-8">
               {[
                 { icon: Clock, text: 'Open Daily: 08:00 - 22:00' },
-                { icon: MapPin, text: 'Jl. Raya No. 123, Jakarta' },
-                { icon: Phone, text: '+62 812-3456-7890' },
+                { icon: MapPin, text: 'Jl. A. Yani No. 45, Tanjung, Tabalong' },
+                { icon: Phone, text: '+62 821-5399-8877' },
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3 text-gray-700">
                   <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
