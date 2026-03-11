@@ -271,7 +271,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
         subtotal: menuItem.price
       }];
     });
-    toast.success(`${menuItem.name} ditambahkan`);
+    // Notifikasi dihapus - tidak perlu toast
   };
 
   const updateQuantity = (id: number, delta: number) => {
