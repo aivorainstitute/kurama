@@ -559,7 +559,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                 <p className="text-gray-500 text-sm">Memuat menu...</p>
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                 {filteredItems.map((item) => {
                   const quantity = getItemQuantity(item.id);
                   return (
@@ -570,18 +570,18 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      {/* Image */}
-                      <div className="relative h-24">
+                      {/* Image - Aspect ratio 1:2 portrait */}
+                      <div className="relative" style={{ paddingBottom: '200%' }}>
                         <motion.img 
-                          src={item.image_url || 'https://placehold.co/300x300/orange/white?text=No+Image'} 
+                          src={item.image_url || 'https://placehold.co/300x600/orange/white?text=No+Image'} 
                           alt={item.name}
-                          className="w-full h-full object-cover"
+                          className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/orange/white?text=No+Image';
                           }}
                         />
                         {item.is_popular && (
-                          <span className="absolute top-1 left-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-medium"
+                          <span className="absolute top-2 left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-1 rounded-full font-medium"
                                 style={{ boxShadow: '0 2px 4px rgba(249, 115, 22, 0.4)' }}>
                             Popular
                           </span>
@@ -590,18 +590,18 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                         {/* Tombol Tambah di pojok kanan bawah gambar */}
                         <motion.button
                           onClick={() => addToCart(item)}
-                          className="absolute bottom-1 right-1 w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center text-white"
+                          className="absolute bottom-2 right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          style={{ boxShadow: '0 2px 0 0 #C2410C' }}
+                          style={{ boxShadow: '0 3px 0 0 #C2410C' }}
                         >
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-5 h-5" />
                         </motion.button>
                         
                         {/* Quantity Badge */}
                         {quantity > 0 && (
                           <motion.div 
-                            className="absolute top-1 right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs"
+                            className="absolute top-2 right-2 w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm"
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
@@ -612,9 +612,9 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                       </div>
 
                       {/* Content */}
-                      <div className="p-2">
-                        <h3 className="font-bold text-gray-800 text-xs truncate">{item.name}</h3>
-                        <p className={`text-[10px] uppercase font-medium mt-0.5 ${
+                      <div className="p-3">
+                        <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
+                        <p className={`text-xs uppercase font-medium mt-1 ${
                           item.category_name === 'Minuman' ? 'text-blue-500' : 
                           item.category_name === 'Coffee' ? 'text-amber-600' :
                           item.category_name === 'Signatures' ? 'text-pink-500' :
@@ -624,7 +624,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                         }`}>
                           {item.category_name}
                         </p>
-                        <p className="font-bold text-orange-600 text-xs mt-1">
+                        <p className="font-bold text-orange-600 text-sm mt-2">
                           Rp {item.price.toLocaleString('id-ID')}
                         </p>
                       </div>
