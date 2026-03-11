@@ -653,6 +653,9 @@ function App() {
           />
 
           {/* Admin Routes */}
+          {/* Redirect /admin/login ke /login */}
+          <Route path="/admin/login" element={<Navigate to="/login" replace />} />
+
           {/* Cashier Route */}
           <Route 
             path="/cashier" 
