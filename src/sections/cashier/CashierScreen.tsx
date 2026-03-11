@@ -944,7 +944,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
       {/* Cart Sidebar - Tema Oranye */}
       <AnimatePresence>
         {showCart && (
-          <motion.div className="fixed inset-0 z-30" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="fixed inset-0 z-[60]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="absolute inset-0 bg-black/50" onClick={() => setShowCart(false)} />
             <motion.div
               className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl flex flex-col"
