@@ -656,6 +656,9 @@ function App() {
           {/* Redirect login lama ke /login */}
           <Route path="/admin/login" element={<Navigate to="/login" replace />} />
           <Route path="/cashier/login" element={<Navigate to="/login" replace />} />
+          
+          {/* Fix typo /cashir ke /cashier */}
+          <Route path="/cashir" element={<Navigate to="/cashier" replace />} />
 
           {/* Cashier Route */}
           <Route 
