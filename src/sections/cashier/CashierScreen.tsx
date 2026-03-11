@@ -5,11 +5,12 @@ import {
   LogOut, ShoppingCart, User, Search, Plus, Minus, 
   Trash2, Receipt, Printer, X, Check, ArrowRight, 
   ClipboardList, CreditCard, ChefHat, Package, CheckCircle,
-  Clock, AlertCircle
+  Clock, AlertCircle, RefreshCw, Loader2, Bell
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import type { MenuItem, CartItem, Order, OrderStatus, PaymentStatus } from '@/App';
+import { Badge } from '@/components/ui/badge';
 
 interface CashierScreenProps {
   onLogout: () => void;
@@ -44,18 +45,55 @@ const generateQueueNumber = async (): Promise<number> => {
   return (data[0].queue_number || 0) + 1;
 };
 
-// Status config
-const statusConfig: Record<OrderStatus, { label: string; color: string; bg: string; icon: any }> = {
-  'BARU': { label: 'Baru', color: 'text-blue-600', bg: 'bg-blue-100', icon: AlertCircle },
-  'DIPROSES': { label: 'Diproses', color: 'text-yellow-600', bg: 'bg-yellow-100', icon: ChefHat },
-  'SIAP': { label: 'Siap', color: 'text-green-600', bg: 'bg-green-100', icon: Package },
-  'SELESAI': { label: 'Selesai', color: 'text-gray-600', bg: 'bg-gray-100', icon: CheckCircle },
-  'DIBATALKAN': { label: 'Dibatalkan', color: 'text-red-600', bg: 'bg-red-100', icon: X },
+// Tabs sama dengan admin
+const tabs = ['Semua', 'Belum Bayar', 'Baru', 'Diproses', 'Siap'];
+
+// Status helpers (sama dengan admin)
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'BARU': return 'bg-blue-500';
+    case 'DIPROSES': return 'bg-orange-500';
+    case 'SIAP': return 'bg-green-500';
+    case 'SELESAI': return 'bg-gray-400';
+    default: return 'bg-gray-400';
+  }
 };
 
-const paymentStatusConfig: Record<PaymentStatus, { label: string; color: string; bg: string }> = {
-  'BELUM_BAYAR': { label: 'Belum Bayar', color: 'text-red-600', bg: 'bg-red-100' },
-  'SUDAH_BAYAR': { label: 'Lunas', color: 'text-green-600', bg: 'bg-green-100' },
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'BARU': return 'BARU';
+    case 'DIPROSES': return 'DIPROSES';
+    case 'SIAP': return 'SIAP';
+    case 'SELESAI': return 'SELESAI';
+    default: return status;
+  }
+};
+
+const getNextStatus = (currentStatus: OrderStatus): OrderStatus | null => {
+  switch (currentStatus) {
+    case 'BARU': return 'DIPROSES';
+    case 'DIPROSES': return 'SIAP';
+    case 'SIAP': return 'SELESAI';
+    default: return null;
+  }
+};
+
+const getActionButtonLabel = (status: string) => {
+  switch (status) {
+    case 'BARU': return 'Proses Pesanan';
+    case 'DIPROSES': return 'Siap Diambil';
+    case 'SIAP': return 'Selesaikan';
+    default: return '-';
+  }
+};
+
+const getActionButtonColor = (status: string) => {
+  switch (status) {
+    case 'BARU': return 'bg-blue-500';
+    case 'DIPROSES': return 'bg-orange-500';
+    case 'SIAP': return 'bg-green-500';
+    default: return 'bg-gray-400';
+  }
 };
 
 export default function CashierScreen({ onLogout }: CashierScreenProps) {
@@ -74,11 +112,13 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   
-  // Orders state
+  // Orders state (sama dengan admin)
   const [orders, setOrders] = useState<Order[]>([]);
-  const [orderFilter, setOrderFilter] = useState<'all' | 'active' | 'completed'>('active');
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [showOrderDetail, setShowOrderDetail] = useState(false);
+  const [activeTab, setActiveTab] = useState('Semua');
+  const [orderItems, setOrderItems] = useState<Record<number, any[]>>({});
+  const [updatingOrders, setUpdatingOrders] = useState<Record<number, boolean>>({});
+  const [confirmingPayment, setConfirmingPayment] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState(false);
 
   // Load data
   useEffect(() => {
@@ -89,8 +129,11 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     // Subscribe to realtime orders
     const subscription = supabase
       .channel('cashier-orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
         loadOrders();
+        if (payload.eventType === 'INSERT') {
+          toast.info('Pesanan baru masuk!', { icon: <Bell className="w-4 h-4" /> });
+        }
       })
       .subscribe();
     
@@ -98,6 +141,19 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Fetch items for visible orders
+  useEffect(() => {
+    const fetchItems = async () => {
+      for (const order of filteredOrders) {
+        if (!orderItems[order.id]) {
+          const items = await getOrderItems(order.id);
+          setOrderItems(prev => ({ ...prev, [order.id]: items }));
+        }
+      }
+    };
+    fetchItems();
+  }, [orders, activeTab]);
 
   const loadMenuItems = async () => {
     const { data, error } = await supabase
@@ -129,6 +185,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   };
 
   const loadOrders = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from('orders')
       .select('*')
@@ -136,10 +193,23 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     
     if (error) {
       toast.error('Gagal memuat pesanan');
+      setLoading(false);
       return;
     }
     
     setOrders(data || []);
+    setLoading(false);
+  };
+
+  // Fetch items for orders
+  const getOrderItems = async (orderId: number) => {
+    const { data, error } = await supabase
+      .from('order_items')
+      .select('*')
+      .eq('order_id', orderId);
+    
+    if (error) return [];
+    return data || [];
   };
 
   const filteredItems = menuItems.filter(item => {
@@ -148,14 +218,27 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     return matchesCategory && matchesSearch;
   });
 
-  const filteredOrders = orders.filter(order => {
-    if (orderFilter === 'active') {
-      return ['BARU', 'DIPROSES', 'SIAP'].includes(order.status);
-    }
-    if (orderFilter === 'completed') {
-      return ['SELESAI', 'DIBATALKAN'].includes(order.status);
-    }
-    return true;
+  // Filter orders sama dengan admin
+  const filteredOrders = (activeTab === 'Semua' 
+    ? orders 
+    : orders.filter(order => {
+        const isPaid = order.payment_status === 'SUDAH_BAYAR';
+        const isUnpaid = order.payment_status === 'BELUM_BAYAR' || 
+                         (order.payment_status === undefined && order.status === 'BARU');
+        switch (activeTab) {
+          case 'Belum Bayar': return isUnpaid && order.status !== 'SELESAI' && order.status !== 'DIBATALKAN';
+          case 'Baru': return order.status === 'BARU' && isPaid;
+          case 'Diproses': return order.status === 'DIPROSES';
+          case 'Siap': return order.status === 'SIAP';
+          default: return true;
+        }
+      })
+  ).sort((a, b) => {
+    const aIsDone = a.status === 'SELESAI' || a.status === 'DIBATALKAN';
+    const bIsDone = b.status === 'SELESAI' || b.status === 'DIBATALKAN';
+    if (aIsDone && !bIsDone) return 1;
+    if (!aIsDone && bIsDone) return -1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
   const addToCart = (menuItem: MenuItem) => {
@@ -294,50 +377,49 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     }
   };
 
-  const updateOrderStatus = async (orderId: number, newStatus: OrderStatus) => {
+  const handleStatusUpdate = async (orderId: number, currentStatus: OrderStatus) => {
+    const nextStatus = getNextStatus(currentStatus);
+    if (!nextStatus) return;
+    
+    setUpdatingOrders(prev => ({ ...prev, [orderId]: true }));
+    
     try {
       const { error } = await supabase
         .from('orders')
-        .update({ status: newStatus })
+        .update({ status: nextStatus })
         .eq('id', orderId);
       
       if (error) throw error;
       
-      toast.success(`Status pesanan diupdate ke ${statusConfig[newStatus].label}`);
+      toast.success(`Status pesanan diupdate ke ${getStatusLabel(nextStatus)}`);
       loadOrders();
-      
-      if (selectedOrder?.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
-      }
     } catch (error: any) {
       toast.error('Gagal update status: ' + error.message);
+    } finally {
+      setUpdatingOrders(prev => ({ ...prev, [orderId]: false }));
     }
   };
 
-  const updatePaymentStatus = async (orderId: number, paymentMethod: 'CASH' | 'QRIS') => {
+  const handlePaymentConfirm = async (orderId: number) => {
+    setConfirmingPayment(prev => ({ ...prev, [orderId]: true }));
+    
     try {
       const { error } = await supabase
         .from('orders')
         .update({ 
           payment_status: 'SUDAH_BAYAR',
-          payment_method: paymentMethod
+          payment_method: 'CASH'
         })
         .eq('id', orderId);
       
       if (error) throw error;
       
-      toast.success('Pembayaran berhasil dicatat!');
+      toast.success('Pembayaran dikonfirmasi!');
       loadOrders();
-      
-      if (selectedOrder?.id === orderId) {
-        setSelectedOrder({ 
-          ...selectedOrder, 
-          payment_status: 'SUDAH_BAYAR',
-          payment_method: paymentMethod
-        });
-      }
     } catch (error: any) {
-      toast.error('Gagal update pembayaran: ' + error.message);
+      toast.error('Gagal konfirmasi pembayaran: ' + error.message);
+    } finally {
+      setConfirmingPayment(prev => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -348,17 +430,6 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   const handleNewOrder = () => {
     setShowReceipt(false);
     setCompletedOrder(null);
-  };
-
-  const viewOrderDetail = async (order: Order) => {
-    // Load order items
-    const { data: items } = await supabase
-      .from('order_items')
-      .select('*')
-      .eq('order_id', order.id);
-    
-    setSelectedOrder({ ...order, items: items || [] });
-    setShowOrderDetail(true);
   };
 
   return (
@@ -519,81 +590,254 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
         </>
       )}
 
-      {/* ORDERS VIEW */}
+      {/* ORDERS VIEW - Sama persis dengan admin OrderManagement */}
       {viewMode === 'orders' && (
-        <div className="flex-1 p-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Filter Tabs */}
-            <div className="flex gap-2 mb-4">
-              {(['active', 'completed', 'all'] as const).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setOrderFilter(filter)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium capitalize ${
-                    orderFilter === filter 
-                      ? 'bg-blue-500 text-white' 
-                      : 'bg-white text-gray-600 border border-gray-200'
-                  }`}
-                >
-                  {filter === 'active' ? 'Aktif' : filter === 'completed' ? 'Selesai' : 'Semua'}
-                </button>
-              ))}
-            </div>
+        <div className="flex-1 bg-gradient-to-br from-blue-50 via-white to-blue-50">
+          {/* Active Orders Badge */}
+          <motion.div 
+            className="flex items-center gap-2 px-4 py-3"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <motion.div 
+              className="w-2 h-2 bg-green-500 rounded-full"
+              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <span className="text-sm text-gray-600">
+              {orders.filter(o => ['BARU', 'DIPROSES', 'SIAP'].includes(o.status)).length} Pesanan Aktif
+            </span>
+            <span className="text-xs text-gray-400">({orders.length} hari ini)</span>
+            
+            {/* Refresh Button */}
+            <motion.button 
+              onClick={loadOrders}
+              disabled={loading}
+              className="ml-auto w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm disabled:opacity-50"
+              whileHover={{ scale: loading ? 1 : 1.1, rotate: loading ? 0 : 180 }}
+              whileTap={{ scale: loading ? 1 : 0.9 }}
+            >
+              <RefreshCw className={`w-4 h-4 text-blue-500 ${loading ? 'animate-spin' : ''}`} />
+            </motion.button>
+          </motion.div>
 
-            {/* Orders List */}
-            <div className="space-y-3">
-              {filteredOrders.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  <ClipboardList className="w-12 h-12 mx-auto mb-3" />
-                  <p>Tidak ada pesanan</p>
+          {/* Filter Tabs - Sama dengan admin */}
+          <motion.div 
+            className="flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            {tabs.map((tab) => (
+              <motion.button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  activeTab === tab
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300'
+                }`}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {tab}
+              </motion.button>
+            ))}
+          </motion.div>
+
+          {/* Orders List - Sama persis dengan admin */}
+          <div className="px-4 py-4 space-y-4 pb-24">
+            {loading ? (
+              // Skeleton loading
+              [1, 2, 3].map(i => (
+                <div key={i} className="bg-white rounded-2xl p-4 shadow-sm">
+                  <div className="h-6 w-32 bg-gray-200 rounded mb-2 animate-pulse" />
+                  <div className="h-4 w-24 bg-gray-200 rounded mb-4 animate-pulse" />
+                  <div className="h-20 w-full bg-gray-100 rounded-xl animate-pulse" />
                 </div>
-              ) : (
-                filteredOrders.map((order) => {
-                  const status = statusConfig[order.status];
-                  const StatusIcon = status.icon;
-                  const payment = paymentStatusConfig[order.payment_status || 'BELUM_BAYAR'];
+              ))
+            ) : filteredOrders.length === 0 ? (
+              <motion.div 
+                className="text-center py-12"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bell className="w-8 h-8 text-blue-400" />
+                </div>
+                <p className="text-gray-400">Tidak ada pesanan</p>
+                <motion.button
+                  onClick={loadOrders}
+                  className="mt-4 text-blue-600 font-medium flex items-center justify-center gap-2 mx-auto"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Refresh Data
+                </motion.button>
+              </motion.div>
+            ) : (
+              filteredOrders.map((order, index) => (
+                <motion.div 
+                  key={order.id}
+                  className="bg-white rounded-2xl overflow-hidden shadow-card"
+                  style={{
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(59, 130, 246, 0.1)'
+                  }}
+                  whileHover={{ scale: 1.01 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  {/* Order Header */}
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 border-b border-blue-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-blue-700">{order.order_number}</span>
+                      <Badge className={`${getStatusColor(order.status)} text-white text-xs px-2 py-0.5`}>
+                        {getStatusLabel(order.status)}
+                      </Badge>
+                    </div>
+                  </div>
                   
-                  return (
-                    <motion.div
-                      key={order.id}
-                      className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer"
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => viewOrderDetail(order)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-gray-800">#{order.queue_number}</span>
-                            <span className="text-sm text-gray-500">{order.order_number}</span>
+                  {/* Customer Info */}
+                  <div className="px-4 pt-3 pb-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-bold text-gray-800 text-lg">{order.customer_name}</h3>
+                        <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{new Date(order.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
-                          <p className="font-medium text-gray-700">{order.customer_name}</p>
-                          <p className="text-sm text-gray-500">
-                            {new Date(order.created_at).toLocaleTimeString('id-ID', { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-gray-800">
-                            Rp {order.total_amount.toLocaleString('id-ID')}
-                          </p>
-                          <div className="flex gap-2 mt-2 justify-end">
-                            <span className={`px-2 py-1 rounded-lg text-xs font-medium ${status.bg} ${status.color}`}>
-                              <StatusIcon className="w-3 h-3 inline mr-1" />
-                              {status.label}
-                            </span>
-                            <span className={`px-2 py-1 rounded-lg text-xs font-medium ${payment.bg} ${payment.color}`}>
-                              {payment.label}
-                            </span>
+                          <div className="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full">
+                            <span className="text-blue-600 font-medium">Antrian #{order.queue_number}</span>
                           </div>
                         </div>
                       </div>
-                    </motion.div>
-                  );
-                })
-              )}
-            </div>
+                    </div>
+                  </div>
+
+                  {/* Order Items */}
+                  <div className="px-4 space-y-2 mb-3">
+                    {orderItems[order.id]?.map((item, idx) => (
+                      <motion.div 
+                        key={idx} 
+                        className="flex items-center justify-between text-sm"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                            {item.quantity}x
+                          </span>
+                          <span className="text-gray-700">{item.name}</span>
+                        </div>
+                        <span className="text-gray-600">
+                          Rp{item.subtotal.toLocaleString('id-ID')}
+                        </span>
+                      </motion.div>
+                    ))}
+                    {!orderItems[order.id] && (
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm">Memuat item...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Total */}
+                  <div className="mx-4 flex items-center justify-between pt-3 border-t border-gray-100 mb-3">
+                    <span className="text-sm text-gray-500">Total ({order.item_count || orderItems[order.id]?.length || 0} item)</span>
+                    <span className="font-semibold text-blue-600">
+                      Rp{order.total_amount.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+
+                  {/* Payment Status Badge */}
+                  {order.payment_status !== undefined && (
+                    <div className="mx-4 flex items-center justify-between mb-3">
+                      <Badge className={`${
+                        order.payment_status === 'SUDAH_BAYAR'
+                          ? 'bg-green-500' 
+                          : 'bg-red-500'
+                      } text-white`}>
+                        {order.payment_status === 'SUDAH_BAYAR' ? '✓ SUDAH BAYAR' : 'BELUM BAYAR'}
+                      </Badge>
+                      {order.payment_method && (
+                        <span className="text-xs text-gray-500">
+                          {order.payment_method}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Action Buttons - Sama dengan admin */}
+                  <div className="px-4 pb-4 space-y-2">
+                    {/* Tombol Konfirmasi Pembayaran */}
+                    {(order.payment_status === 'BELUM_BAYAR' || 
+                      (order.payment_status === undefined && order.status === 'BARU')) && (
+                      <motion.button
+                        onClick={() => handlePaymentConfirm(order.id)}
+                        disabled={confirmingPayment[order.id]}
+                        className="w-full h-12 bg-red-500 text-white rounded-2xl font-semibold shadow-lg disabled:opacity-70 flex items-center justify-center gap-2"
+                        whileHover={{ scale: confirmingPayment[order.id] ? 1 : 1.02, y: confirmingPayment[order.id] ? 0 : -2 }}
+                        whileTap={{ scale: confirmingPayment[order.id] ? 1 : 0.98 }}
+                        style={{
+                          boxShadow: confirmingPayment[order.id]
+                            ? '0 2px 0 0 #DC2626'
+                            : '0 6px 0 0 #DC2626, 0 8px 16px rgba(239, 68, 68, 0.4)'
+                        }}
+                      >
+                        {confirmingPayment[order.id] ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Mengkonfirmasi...</span>
+                          </>
+                        ) : (
+                          '✓ Konfirmasi Pembayaran'
+                        )}
+                      </motion.button>
+                    )}
+                    
+                    {/* Tombol Update Status */}
+                    {order.payment_status === 'SUDAH_BAYAR' && 
+                     order.status !== 'SELESAI' && 
+                     order.status !== 'DIBATALKAN' && (
+                      <motion.button
+                        onClick={() => handleStatusUpdate(order.id, order.status)}
+                        disabled={updatingOrders[order.id]}
+                        className={`w-full h-12 ${getActionButtonColor(order.status)} text-white rounded-2xl font-semibold shadow-lg transition-all disabled:opacity-70 flex items-center justify-center gap-2`}
+                        whileHover={{ scale: updatingOrders[order.id] ? 1 : 1.02, y: updatingOrders[order.id] ? 0 : -2 }}
+                        whileTap={{ scale: updatingOrders[order.id] ? 1 : 0.98 }}
+                        style={{
+                          boxShadow: updatingOrders[order.id]
+                            ? order.status === 'DIPROSES' 
+                              ? '0 2px 0 0 #C2410C'
+                              : order.status === 'BARU'
+                              ? '0 2px 0 0 #1D4ED8'
+                              : '0 2px 0 0 #15803D'
+                            : order.status === 'DIPROSES' 
+                              ? '0 6px 0 0 #C2410C, 0 8px 16px rgba(249, 115, 22, 0.4)'
+                              : order.status === 'BARU'
+                              ? '0 6px 0 0 #1D4ED8, 0 8px 16px rgba(59, 130, 246, 0.4)'
+                              : '0 6px 0 0 #15803D, 0 8px 16px rgba(34, 197, 94, 0.4)'
+                        }}
+                      >
+                        {updatingOrders[order.id] ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Mengupdate...</span>
+                          </>
+                        ) : (
+                          getActionButtonLabel(order.status)
+                        )}
+                      </motion.button>
+                    )}
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -682,137 +926,6 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                   </div>
                 </div>
               )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Order Detail Modal */}
-      <AnimatePresence>
-        {showOrderDetail && selectedOrder && (
-          <motion.div className="fixed inset-0 z-40 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0 bg-black/50" onClick={() => setShowOrderDetail(false)} />
-            <motion.div
-              className="relative bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
-              initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
-            >
-              {/* Header */}
-              <div className="p-4 border-b flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold">Pesanan #{selectedOrder.queue_number}</h2>
-                  <p className="text-sm text-gray-500">{selectedOrder.order_number}</p>
-                </div>
-                <button onClick={() => setShowOrderDetail(false)}><X className="w-5 h-5" /></button>
-              </div>
-
-              <div className="p-4 space-y-4">
-                {/* Customer Info */}
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="font-medium">{selectedOrder.customer_name}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(selectedOrder.created_at).toLocaleString('id-ID')}
-                  </p>
-                </div>
-
-                {/* Status */}
-                <div className="flex gap-2">
-                  {(() => {
-                    const status = statusConfig[selectedOrder.status];
-                    const StatusIcon = status.icon;
-                    return (
-                      <span className={`px-3 py-1 rounded-lg text-sm font-medium ${status.bg} ${status.color}`}>
-                        <StatusIcon className="w-4 h-4 inline mr-1" />
-                        {status.label}
-                      </span>
-                    );
-                  })()}
-                  <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                    paymentStatusConfig[selectedOrder.payment_status || 'BELUM_BAYAR'].bg
-                  } ${paymentStatusConfig[selectedOrder.payment_status || 'BELUM_BAYAR'].color}`}>
-                    {paymentStatusConfig[selectedOrder.payment_status || 'BELUM_BAYAR'].label}
-                  </span>
-                </div>
-
-                {/* Items */}
-                <div className="space-y-2">
-                  <h3 className="font-medium text-gray-700">Item Pesanan</h3>
-                  {selectedOrder.items?.map((item, idx) => (
-                    <div key={idx} className="flex justify-between py-2 border-b border-gray-100">
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-gray-500">{item.quantity} x Rp {item.unit_price.toLocaleString('id-ID')}</p>
-                        {item.notes && <p className="text-xs text-gray-400">*{item.notes}</p>}
-                      </div>
-                      <p className="font-medium">Rp {item.subtotal.toLocaleString('id-ID')}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Total */}
-                <div className="bg-gray-50 rounded-xl p-3 space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Subtotal</span>
-                    <span>Rp {selectedOrder.subtotal.toLocaleString('id-ID')}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">PPN (10%)</span>
-                    <span>Rp {selectedOrder.tax_amount.toLocaleString('id-ID')}</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-lg pt-2 border-t">
-                    <span>Total</span>
-                    <span className="text-blue-600">Rp {selectedOrder.total_amount.toLocaleString('id-ID')}</span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="space-y-3">
-                  {/* Payment Actions */}
-                  {selectedOrder.payment_status === 'BELUM_BAYAR' && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => updatePaymentStatus(selectedOrder.id, 'CASH')}
-                        className="h-12 bg-green-500 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                      >
-                        <Receipt className="w-4 h-4" /> Bayar Cash
-                      </button>
-                      <button
-                        onClick={() => updatePaymentStatus(selectedOrder.id, 'QRIS')}
-                        className="h-12 bg-blue-500 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                      >
-                        <CreditCard className="w-4 h-4" /> Bayar QRIS
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Status Actions */}
-                  <div className="flex gap-2 flex-wrap">
-                    {selectedOrder.status === 'BARU' && (
-                      <button
-                        onClick={() => updateOrderStatus(selectedOrder.id, 'DIPROSES')}
-                        className="flex-1 h-12 bg-yellow-500 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                      >
-                        <ChefHat className="w-4 h-4" /> Proses
-                      </button>
-                    )}
-                    {selectedOrder.status === 'DIPROSES' && (
-                      <button
-                        onClick={() => updateOrderStatus(selectedOrder.id, 'SIAP')}
-                        className="flex-1 h-12 bg-green-500 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                      >
-                        <Package className="w-4 h-4" /> Siap
-                      </button>
-                    )}
-                    {selectedOrder.status === 'SIAP' && (
-                      <button
-                        onClick={() => updateOrderStatus(selectedOrder.id, 'SELESAI')}
-                        className="flex-1 h-12 bg-gray-600 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                      >
-                        <CheckCircle className="w-4 h-4" /> Selesai
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
             </motion.div>
           </motion.div>
         )}
