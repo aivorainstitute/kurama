@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LogOut, ShoppingCart, User, Search, Plus, Minus, 
   Trash2, Receipt, Printer, X, Check, ArrowRight, 
   ClipboardList, CreditCard, ChefHat, Package, CheckCircle,
-  Clock, AlertCircle, RefreshCw, Loader2, Bell
+  Clock, AlertCircle, RefreshCw, Loader2, Bell, ChevronRight, ShoppingBag
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import type { MenuItem, CartItem, Order, OrderStatus, PaymentStatus } from '@/App';
 import { Badge } from '@/components/ui/badge';
+
+// 3D Shadow styles (sama dengan MenuScreen)
+const cardShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(249, 115, 22, 0.1)';
+const button3D = '0 4px 0 0 #C2410C, 0 4px 8px rgba(249, 115, 22, 0.4)';
 
 interface CashierScreenProps {
   onLogout: () => void;
@@ -100,17 +104,17 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<ViewMode>('menu');
   
-  // Menu state
+  // Menu state (sama dengan MenuScreen)
   const [customerName, setCustomerName] = useState('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [categories, setCategories] = useState<{id: number, name: string}[]>([]);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCart, setShowCart] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [menuLoading, setMenuLoading] = useState(false);
   
   // Orders state (sama dengan admin)
   const [orders, setOrders] = useState<Order[]>([]);
@@ -123,7 +127,6 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   // Load data
   useEffect(() => {
     loadMenuItems();
-    loadCategories();
     loadOrders();
     
     // Subscribe to realtime orders
@@ -156,6 +159,7 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
   }, [orders, activeTab]);
 
   const loadMenuItems = async () => {
+    setMenuLoading(true);
     const { data, error } = await supabase
       .from('menu_items')
       .select('*')
@@ -164,25 +168,23 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     
     if (error) {
       toast.error('Gagal memuat menu');
+      setMenuLoading(false);
       return;
     }
     
     setMenuItems(data || []);
+    setMenuLoading(false);
   };
 
-  const loadCategories = async () => {
-    const { data, error } = await supabase
-      .from('categories')
-      .select('id, name')
-      .order('name');
-    
-    if (error) {
-      toast.error('Gagal memuat kategori');
-      return;
-    }
-    
-    setCategories(data || []);
-  };
+  // Categories dari menu items (sama dengan MenuScreen)
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(
+      menuItems
+        .map(item => item.category_name)
+        .filter((cat): cat is string => !!cat)
+    )];
+    return ['Semua', ...uniqueCategories];
+  }, [menuItems]);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -212,11 +214,21 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
     return data || [];
   };
 
-  const filteredItems = menuItems.filter(item => {
-    const matchesCategory = activeCategory === 'all' || item.category_id?.toString() === activeCategory;
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Filter items (sama dengan MenuScreen)
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === 'Semua') {
+      return menuItems.filter(item => item.is_available);
+    }
+    return menuItems.filter(item => 
+      item.is_available && item.category_name === selectedCategory
+    );
+  }, [menuItems, selectedCategory]);
+
+  // Get quantity in cart
+  const getItemQuantity = (itemId: number) => {
+    const cartItem = cartItems.find(item => item.menu_item.id === itemId);
+    return cartItem?.quantity || 0;
+  };
 
   // Filter orders sama dengan admin
   const filteredOrders = (activeTab === 'Semua' 
@@ -494,100 +506,187 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
         </div>
       </header>
 
-      {/* MENU VIEW */}
+      {/* MENU VIEW - Sama persis dengan MenuScreen */}
       {viewMode === 'menu' && (
-        <>
+        <div className="flex-1 bg-gradient-to-br from-orange-50 via-white to-orange-50 pb-24">
           {/* Customer Name Input */}
-          <div className="bg-blue-50 px-4 py-3">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-blue-500" />
+          <div className="px-5 pt-4 pb-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center"
+                   style={{ boxShadow: '0 4px 0 0 #C2410C, 0 6px 12px rgba(249, 115, 22, 0.4)' }}>
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-500">Pesanan untuk:</p>
                 <input
                   type="text"
                   placeholder="Nama Pelanggan"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value.toUpperCase())}
-                  className="flex-1 h-12 px-4 bg-white border-2 border-blue-200 rounded-xl focus:outline-none focus:border-blue-500 text-gray-700 font-medium"
+                  className="w-full h-10 px-3 bg-white border-2 border-orange-200 rounded-xl focus:outline-none focus:border-orange-500 text-gray-800 font-bold"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Search & Categories */}
-          <div className="bg-white px-4 py-3 shadow-sm">
-            <div className="max-w-7xl mx-auto space-y-3">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Cari menu..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-12 pl-12 pr-4 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {/* Categories */}
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+              {categories.map((category) => (
                 <motion.button
-                  onClick={() => setActiveCategory('all')}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm ${
-                    activeCategory === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+                    selectedCategory === category
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-white text-gray-600 border border-orange-100'
                   }`}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95, y: 2 }}
+                  style={selectedCategory === category ? { boxShadow: button3D } : {}}
                 >
-                  Semua
+                  {category}
                 </motion.button>
-                {categories.map(cat => (
-                  <motion.button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id.toString())}
-                    className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm ${
-                      activeCategory === cat.id.toString() ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
-                    }`}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {cat.name}
-                  </motion.button>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Menu Grid */}
-          <div className="flex-1 p-4">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filteredItems.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    className="bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer"
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => addToCart(item)}
-                  >
-                    <div className="aspect-square bg-gray-100 relative">
-                      {item.image_url ? (
-                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          <ShoppingCart className="w-8 h-8" />
-                        </div>
-                      )}
-                      <div className="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                        <Plus className="w-5 h-5" />
-                      </div>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-medium text-gray-800 text-sm truncate">{item.name}</h3>
-                      <p className="text-blue-600 font-bold text-sm">
-                        Rp {item.price.toLocaleString('id-ID')}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+          {/* Menu List - Card Horizontal */}
+          <main className="px-5 py-2">
+            <p className="text-xs text-gray-400 mb-3">{filteredItems.length} menu tersedia</p>
+            
+            {menuLoading ? (
+              <div className="flex flex-col items-center justify-center h-48">
+                <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-4" />
+                <p className="text-gray-500 text-sm">Memuat menu...</p>
               </div>
-            </div>
-          </div>
-        </>
+            ) : (
+              <div className="space-y-3">
+                {filteredItems.map((item) => {
+                  const quantity = getItemQuantity(item.id);
+                  return (
+                    <motion.div 
+                      key={item.id} 
+                      className="bg-white rounded-2xl p-4"
+                      style={{ boxShadow: cardShadow }}
+                      whileHover={{ scale: 1.02 }}
+                      layout
+                    >
+                      <div className="flex gap-4">
+                        {/* Image */}
+                        <div className="relative flex-shrink-0">
+                          <motion.img 
+                            src={item.image_url || 'https://placehold.co/100x100/orange/white?text=No+Image'} 
+                            alt={item.name}
+                            className="w-24 h-24 object-cover rounded-xl"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://placehold.co/100x100/orange/white?text=No+Image';
+                            }}
+                            whileHover={{ scale: 1.05 }}
+                          />
+                          {item.is_popular && (
+                            <span className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-1 rounded-full font-medium"
+                                  style={{ boxShadow: '0 2px 4px rgba(249, 115, 22, 0.4)' }}>
+                              Popular
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="min-w-0">
+                              <h3 className="font-bold text-gray-800 truncate">{item.name}</h3>
+                              <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
+                              <p className={`text-xs uppercase font-medium mt-1 ${
+                                item.category_name === 'Minuman' ? 'text-blue-500' : 
+                                item.category_name === 'Coffee' ? 'text-amber-600' :
+                                item.category_name === 'Signatures' ? 'text-pink-500' :
+                                item.category_name === 'Makanan' ? 'text-green-500' : 
+                                item.category_name === 'Camilan' ? 'text-purple-500' : 
+                                'text-orange-500'
+                              }`}>
+                                {item.category_name}
+                              </p>
+                            </div>
+                            <p className="font-bold text-orange-600 text-sm whitespace-nowrap">
+                              Rp {item.price.toLocaleString('id-ID')}
+                            </p>
+                          </div>
+
+                          {/* Quantity Controls */}
+                          <div className="flex items-center gap-2 mt-3">
+                            <motion.button
+                              onClick={() => updateQuantity(item.id, -1)}
+                              disabled={quantity === 0}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                quantity > 0 ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-400'
+                              }`}
+                              whileHover={quantity > 0 ? { scale: 1.1 } : {}}
+                              whileTap={quantity > 0 ? { scale: 0.9, y: 2 } : {}}
+                              style={quantity > 0 ? { boxShadow: '0 2px 0 0 #9CA3AF, 0 2px 4px rgba(0,0,0,0.1)' } : {}}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </motion.button>
+                            
+                            <motion.span 
+                              className="w-10 text-center font-bold text-lg"
+                              key={quantity}
+                              initial={{ scale: 1.3, color: '#F97316' }}
+                              animate={{ scale: 1, color: '#1F2937' }}
+                            >
+                              {quantity}
+                            </motion.span>
+                            
+                            <motion.button
+                              onClick={() => addToCart(item)}
+                              className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white hover:bg-orange-600 transition-all"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9, y: 2 }}
+                              style={{ boxShadow: button3D }}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </motion.button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+          </main>
+
+          {/* Bottom Cart Bar */}
+          <AnimatePresence>
+            {cartTotal > 0 && (
+              <motion.div 
+                className="fixed bottom-0 left-0 right-0 bg-white border-t border-orange-100 p-4 z-50"
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+                exit={{ y: 100 }}
+              >
+                <motion.button
+                  onClick={() => setShowCart(true)}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl p-4 flex items-center justify-between"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98, y: 2 }}
+                  style={{ boxShadow: button3D }}
+                >
+                  <div className="flex items-center gap-3">
+                    <ShoppingBag className="w-5 h-5" />
+                    <div className="text-left">
+                      <p className="text-xs text-orange-100">{cartItems.reduce((sum, item) => sum + item.quantity, 0)} item</p>
+                      <p className="font-bold">Rp {cartTotal.toLocaleString('id-ID')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Lihat Keranjang</span>
+                    <ChevronRight className="w-6 h-6" />
+                  </div>
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
       {/* ORDERS VIEW - Sama persis dengan admin OrderManagement */}
@@ -842,22 +941,29 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
         </div>
       )}
 
-      {/* Cart Sidebar */}
+      {/* Cart Sidebar - Tema Oranye */}
       <AnimatePresence>
         {showCart && (
           <motion.div className="fixed inset-0 z-30" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="absolute inset-0 bg-black/50" onClick={() => setShowCart(false)} />
             <motion.div
-              className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl"
+              className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl flex flex-col"
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
             >
-              <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-bold text-gray-800">Keranjang</h2>
-                <button onClick={() => setShowCart(false)}><X className="w-5 h-5" /></button>
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-orange-100 bg-gradient-to-r from-orange-50 to-white">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-orange-500" />
+                  <h2 className="text-lg font-bold text-gray-800">Keranjang</h2>
+                </div>
+                <button onClick={() => setShowCart(false)} className="p-2 hover:bg-orange-100 rounded-full">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+              {/* Cart Items */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {cartItems.length === 0 ? (
                   <div className="text-center py-12 text-gray-400">
                     <ShoppingCart className="w-12 h-12 mx-auto mb-3" />
@@ -865,63 +971,104 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                   </div>
                 ) : (
                   cartItems.map((item) => (
-                    <div key={item.id} className="bg-gray-50 rounded-xl p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-800">{item.menu_item.name}</h4>
-                          <p className="text-sm text-gray-500">Rp {item.menu_item.price.toLocaleString('id-ID')}</p>
+                    <motion.div 
+                      key={item.id} 
+                      className="bg-orange-50 rounded-2xl p-4"
+                      layout
+                    >
+                      <div className="flex gap-3">
+                        <img 
+                          src={item.menu_item.image_url || 'https://placehold.co/80x80/orange/white?text=No+Image'} 
+                          alt={item.menu_item.name}
+                          className="w-20 h-20 object-cover rounded-xl flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="font-bold text-gray-800 truncate">{item.menu_item.name}</h4>
+                            <button onClick={() => removeFromCart(item.id)} className="p-1 text-red-500 hover:bg-red-50 rounded-full">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <p className="text-sm text-orange-600 font-medium">Rp {item.menu_item.price.toLocaleString('id-ID')}</p>
+                          
+                          {/* Quantity Controls */}
+                          <div className="flex items-center gap-2 mt-2">
+                            <motion.button
+                              onClick={() => updateQuantity(item.id, -1)}
+                              className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm"
+                              whileTap={{ scale: 0.9 }}
+                              style={{ boxShadow: '0 2px 0 0 #D1D5DB' }}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </motion.button>
+                            <span className="w-8 text-center font-bold">{item.quantity}</span>
+                            <motion.button
+                              onClick={() => updateQuantity(item.id, 1)}
+                              className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center"
+                              whileTap={{ scale: 0.9 }}
+                              style={{ boxShadow: '0 2px 0 0 #C2410C' }}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </motion.button>
+                            <span className="ml-auto font-bold text-orange-600">Rp {item.subtotal.toLocaleString('id-ID')}</span>
+                          </div>
+                          
+                          {/* Notes */}
+                          <input
+                            type="text"
+                            placeholder="Catatan (opsional)"
+                            value={item.notes}
+                            onChange={(e) => updateNotes(item.id, e.target.value)}
+                            className="w-full text-sm px-3 py-2 mt-2 bg-white rounded-lg border border-orange-200 focus:outline-none focus:border-orange-500"
+                          />
                         </div>
-                        <button onClick={() => removeFromCart(item.id)} className="p-1 text-red-500">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <button onClick={() => updateQuantity(item.id, -1)} className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="font-medium w-8 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, 1)} className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                          <Plus className="w-4 h-4" />
-                        </button>
-                        <span className="ml-auto font-bold text-blue-600">Rp {item.subtotal.toLocaleString('id-ID')}</span>
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Catatan (opsional)"
-                        value={item.notes}
-                        onChange={(e) => updateNotes(item.id, e.target.value)}
-                        className="w-full text-sm px-3 py-2 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
+                    </motion.div>
                   ))
                 )}
               </div>
 
+              {/* Footer */}
               {cartItems.length > 0 && (
-                <div className="border-t p-4 space-y-3">
+                <div className="border-t border-orange-100 p-4 space-y-3 bg-gradient-to-t from-orange-50 to-white">
                   <div className="space-y-1 text-sm">
-                    <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>Rp {cartTotal.toLocaleString('id-ID')}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-500">PPN (10%)</span><span>Rp {taxAmount.toLocaleString('id-ID')}</span></div>
-                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                      <span>Total</span><span className="text-blue-600">Rp {finalTotal.toLocaleString('id-ID')}</span>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Subtotal</span>
+                      <span>Rp {cartTotal.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">PPN (10%)</span>
+                      <span>Rp {taxAmount.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t border-orange-200">
+                      <span>Total</span>
+                      <span className="text-orange-600">Rp {finalTotal.toLocaleString('id-ID')}</span>
                     </div>
                   </div>
+                  
+                  {/* Checkout Buttons */}
                   <div className="grid grid-cols-2 gap-3">
                     <motion.button
                       onClick={() => handleCheckout('CASH')}
                       disabled={isProcessing}
-                      className="h-14 bg-green-500 text-white font-bold rounded-xl flex items-center justify-center gap-2"
+                      className="h-14 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
+                      style={{ boxShadow: '0 4px 0 0 #15803D, 0 4px 8px rgba(34, 197, 94, 0.4)' }}
                     >
-                      <Receipt className="w-5 h-5" />CASH
+                      {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Receipt className="w-5 h-5" />}
+                      CASH
                     </motion.button>
                     <motion.button
                       onClick={() => handleCheckout('QRIS')}
                       disabled={isProcessing}
-                      className="h-14 bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2"
+                      className="h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
+                      style={{ boxShadow: '0 4px 0 0 #1E40AF, 0 4px 8px rgba(59, 130, 246, 0.4)' }}
                     >
-                      <Check className="w-5 h-5" />QRIS
+                      {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
+                      QRIS
                     </motion.button>
                   </div>
                 </div>
