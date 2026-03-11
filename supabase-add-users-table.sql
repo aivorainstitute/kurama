@@ -1,36 +1,22 @@
--- Tabel users untuk sistem role management
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'kasir')),
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Fix RLS policy untuk users table
+-- Disable RLS dulu
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 
--- Insert default admin
-INSERT INTO users (username, password_hash, name, role, is_active)
-VALUES ('admin', 'admin123', 'Administrator', 'admin', true)
-ON CONFLICT (username) DO NOTHING;
+-- Hapus policy lama
+DROP POLICY IF EXISTS "Allow all" ON users;
+DROP POLICY IF EXISTS "Admin full access" ON users;
+DROP POLICY IF EXISTS "Users can read own data" ON users;
 
--- Insert default kasir
-INSERT INTO users (username, password_hash, name, role, is_active)
-VALUES ('kasir', 'kasir123', 'Kasir Default', 'kasir', true)
-ON CONFLICT (username) DO NOTHING;
-
--- Enable RLS
+-- Enable RLS lagi
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
--- Policy untuk admin (bisa lihat semua)
-CREATE POLICY "Admin full access" ON users
+-- Buat policy yang benar
+CREATE POLICY "Enable all operations" ON users
   FOR ALL
-  TO authenticated
-  USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'));
+  TO anon, authenticated
+  USING (true)
+  WITH CHECK (true);
 
--- Policy untuk read own data
-CREATE POLICY "Users can read own data" ON users
-  FOR SELECT
-  TO authenticated
-  USING (id = auth.uid());
+-- Pastikan tabel bisa diakses
+GRANT ALL ON users TO anon, authenticated;
+GRANT USAGE ON SEQUENCE users_id_seq TO anon, authenticated;

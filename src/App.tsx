@@ -22,21 +22,17 @@ import CheckOrderScreen from '@/sections/customer/CheckOrderScreen';
 import EditOrderMenu from '@/sections/customer/EditOrderMenu';
 
 // Admin Dashboard Screens
-import AdminLogin from '@/sections/admin/AdminLogin';
 import DashboardOverview from '@/sections/admin/DashboardOverview';
 import StockManagement from '@/sections/admin/StockManagement';
 import EditItem from '@/sections/admin/EditItem';
 import CategoryManagement from '@/sections/admin/CategoryManagement';
 import OrderManagement from '@/sections/admin/OrderManagement';
 import AccountingScreen from '@/sections/admin/AccountingScreen';
+import UserManagement from '@/sections/admin/UserManagement';
 import SupabaseTest from '@/components/SupabaseTest';
 
 // Cashier Screens
-import CashierLogin from '@/sections/cashier/CashierLogin';
 import CashierScreen from '@/sections/cashier/CashierScreen';
-
-// Admin Management
-import UserManagement from '@/sections/admin/UserManagement';
 
 // Types
 export type OrderStatus = 'BARU' | 'DIPROSES' | 'SIAP' | 'SELESAI' | 'DIBATALKAN';
@@ -657,29 +653,14 @@ function App() {
           />
 
           {/* Admin Routes */}
-          <Route 
-            path="/admin/login" 
-            element={<Navigate to="/login" replace />}
-          />
-
-          {/* Cashier Routes */}
-          <Route 
-            path="/cashier/login" 
-            element={
-              isCashier ? (
-                <Navigate to="/cashier" replace />
-              ) : (
-                <CashierLogin setIsCashier={setIsCashier} />
-              )
-            } 
-          />
+          {/* Cashier Route */}
           <Route 
             path="/cashier" 
             element={
               isCashier ? (
                 <CashierScreen onLogout={handleLogout} />
               ) : (
-                <Navigate to="/cashier/login" />
+                <Navigate to="/login" />
               )
             } 
           />
