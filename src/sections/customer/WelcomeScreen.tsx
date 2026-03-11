@@ -482,16 +482,25 @@ export default function WelcomeScreen({ customerName, setCustomerName, orders = 
 
       {/* Brand Footer */}
       <motion.div 
-        className="mt-auto flex flex-col items-center py-6"
+        className="mt-auto flex flex-col items-center py-6 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
       >
-        <div className="flex items-center gap-2 opacity-40">
+        <div className="flex items-center gap-2 opacity-40 mb-2">
           <img src="/kuramalogo.png" alt="kur𝛂ma" className="w-5 h-5 object-contain" />
           <span className="text-xs font-bold tracking-wider text-gray-400">kur𝛂ma</span>
         </div>
-        <p className="text-[10px] text-gray-300 mt-1">Coffee</p>
+        <p className="text-[10px] text-gray-300 mb-3">Coffee</p>
+        
+        {/* Contact Info */}
+        <div className="text-[11px] text-gray-400 space-y-1">
+          <p className="flex items-center justify-center gap-1">
+            <span className="text-orange-400">●</span> Open Daily: 08:00 - 22:00
+          </p>
+          <p>Jl. A. Yani No. 45, Tanjung, Tabalong</p>
+          <p>+62 821-5399-8877</p>
+        </div>
       </motion.div>
 
       <style>{`
