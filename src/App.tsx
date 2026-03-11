@@ -35,6 +35,9 @@ import SupabaseTest from '@/components/SupabaseTest';
 import CashierLogin from '@/sections/cashier/CashierLogin';
 import CashierScreen from '@/sections/cashier/CashierScreen';
 
+// Admin Management
+import UserManagement from '@/sections/admin/UserManagement';
+
 // Types
 export type OrderStatus = 'BARU' | 'DIPROSES' | 'SIAP' | 'SELESAI' | 'DIBATALKAN';
 export type PaymentStatus = 'BELUM_BAYAR' | 'SUDAH_BAYAR';
@@ -735,6 +738,16 @@ function App() {
             element={
               isAdmin ? (
                 <AccountingScreen />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+          <Route 
+            path="/admin/users" 
+            element={
+              isAdmin ? (
+                <UserManagement />
               ) : (
                 <Navigate to="/login" />
               )

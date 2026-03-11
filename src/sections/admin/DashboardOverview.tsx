@@ -45,6 +45,17 @@ const menuItems = [
     path: '/admin/accounting'
   },
   {
+    id: 'users',
+    title: 'Manajemen User',
+    description: 'Atur admin & kasir',
+    icon: Users,
+    color: 'bg-purple-500',
+    bgColor: 'bg-purple-50',
+    textColor: 'text-purple-600',
+    shadowColor: 'shadow-purple-200',
+    path: '/admin/users'
+  },
+  {
     id: 'stock',
     title: 'Pengelolaan Stok',
     description: 'Update stok menu',

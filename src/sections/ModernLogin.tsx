@@ -13,9 +13,11 @@ import {
   Coffee
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
 
 interface ModernLoginProps {
   setIsAdmin: (value: boolean) => void;
+  setIsCashier?: (value: boolean) => void;
 }
 
 // Animated Background - Warm Coffee Colors
@@ -76,7 +78,7 @@ function AnimatedBackground() {
   );
 }
 
-export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
+export default function ModernLogin({ setIsAdmin, setIsCashier }: ModernLoginProps) {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -93,18 +95,41 @@ export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
 
     setIsLoading(true);
     
-    setTimeout(() => {
-      if (username === 'admin' && password === 'admin123') {
+    try {
+      // Cek user dari database
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username.toLowerCase())
+        .eq('password_hash', password)
+        .eq('is_active', true)
+        .single();
+      
+      if (error || !user) {
+        toast.error('Username atau password salah');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Login berdasarkan role
+      if (user.role === 'admin') {
         setIsAdmin(true);
-        toast.success('Login berhasil!', {
+        toast.success('Login admin berhasil!', {
           icon: <Sparkles className="w-4 h-4 text-amber-500" />
         });
         navigate('/admin/dashboard');
-      } else {
-        toast.error('Username atau password salah');
+      } else if (user.role === 'kasir') {
+        setIsCashier?.(true);
+        toast.success('Login kasir berhasil!', {
+          icon: <Sparkles className="w-4 h-4 text-blue-500" />
+        });
+        navigate('/cashier');
       }
+    } catch (err) {
+      toast.error('Terjadi kesalahan saat login');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

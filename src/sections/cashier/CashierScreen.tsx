@@ -570,8 +570,8 @@ export default function CashierScreen({ onLogout }: CashierScreenProps) {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      {/* Image - Aspect ratio 1:2 portrait */}
-                      <div className="relative" style={{ paddingBottom: '200%' }}>
+                      {/* Image - Aspect ratio 1:1.25 portrait */}
+                      <div className="relative" style={{ paddingBottom: '125%' }}>
                         <motion.img 
                           src={item.image_url || 'https://placehold.co/300x600/orange/white?text=No+Image'} 
                           alt={item.name}
