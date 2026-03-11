@@ -254,11 +254,27 @@ export default function ModernLogin({ setIsAdmin }: ModernLoginProps) {
             </div>
           </motion.div>
 
+          {/* Cashier Login Link */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-6"
+          >
+            <button
+              onClick={() => navigate('/cashier/login')}
+              className="w-full h-12 bg-white/50 border border-blue-200 text-blue-600 font-medium rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
+            >
+              <span className="text-lg">🛒</span>
+              Masuk sebagai Kasir
+            </button>
+          </motion.div>
+
           {/* Help Text */}
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.7 }}
             className="text-center text-amber-700/40 text-sm mt-6"
           >
             Butuh bantuan? Hubungi{' '}

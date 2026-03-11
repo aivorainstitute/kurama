@@ -31,6 +31,10 @@ import OrderManagement from '@/sections/admin/OrderManagement';
 import AccountingScreen from '@/sections/admin/AccountingScreen';
 import SupabaseTest from '@/components/SupabaseTest';
 
+// Cashier Screens
+import CashierLogin from '@/sections/cashier/CashierLogin';
+import CashierScreen from '@/sections/cashier/CashierScreen';
+
 // Types
 export type OrderStatus = 'BARU' | 'DIPROSES' | 'SIAP' | 'SELESAI' | 'DIBATALKAN';
 export type PaymentStatus = 'BELUM_BAYAR' | 'SUDAH_BAYAR';
@@ -276,6 +280,14 @@ function App() {
     return false;
   });
 
+  const [isCashier, setIsCashier] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('isCashier');
+      return saved === 'true';
+    }
+    return false;
+  });
+
   // Clear old localStorage data on app start
   useEffect(() => {
     localStorage.removeItem('customerOrders');
@@ -289,6 +301,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('isAdmin', isAdmin.toString());
   }, [isAdmin]);
+
+  useEffect(() => {
+    localStorage.setItem('isCashier', isCashier.toString());
+  }, [isCashier]);
 
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -482,6 +498,9 @@ function App() {
 
   const handleLogout = () => {
     setIsAdmin(false);
+    setIsCashier(false);
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('isCashier');
   };
 
   // Clear customer session (for testing)
@@ -638,6 +657,28 @@ function App() {
           <Route 
             path="/admin/login" 
             element={<Navigate to="/login" replace />}
+          />
+
+          {/* Cashier Routes */}
+          <Route 
+            path="/cashier/login" 
+            element={
+              isCashier ? (
+                <Navigate to="/cashier" replace />
+              ) : (
+                <CashierLogin setIsCashier={setIsCashier} />
+              )
+            } 
+          />
+          <Route 
+            path="/cashier" 
+            element={
+              isCashier ? (
+                <CashierScreen onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/cashier/login" />
+              )
+            } 
           />
           <Route 
             path="/admin/dashboard" 
