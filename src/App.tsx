@@ -34,6 +34,9 @@ import SupabaseTest from '@/components/SupabaseTest';
 // Cashier Screens
 import CashierScreen from '@/sections/cashier/CashierScreen';
 
+// Vending Machine Screen
+import VendingMachineScreen from '@/sections/vending/VendingMachineScreen';
+
 // Types
 export type OrderStatus = 'BARU' | 'DIPROSES' | 'SIAP' | 'SELESAI' | 'DIBATALKAN';
 export type PaymentStatus = 'BELUM_BAYAR' | 'SUDAH_BAYAR';
@@ -544,6 +547,9 @@ function App() {
       <FullscreenManager />
       <div className="min-h-screen bg-gray-50">
         <Routes>
+          {/* Vending Machine (Self Order) */}
+          <Route path="/findingmachine" element={<VendingMachineScreen />} />
+
           {/* Landing Page & Auth */}
           <Route path="/" element={<LandingPage2026 />} />
           <Route 
