@@ -205,9 +205,9 @@ function StepMenu({
       </div>
 
       {/* Menu List */}
-      <main className="px-5 pt-2 space-y-3">
+      <main className="px-5 pt-4 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-8">
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-64">
+          <div className="col-span-full flex flex-col items-center justify-center h-64">
             <Loader2 className="w-10 h-10 text-orange-400 animate-spin mb-3" />
             <p className="text-gray-400 text-sm">Memuat menu...</p>
           </div>
@@ -217,45 +217,48 @@ function StepMenu({
             return (
               <motion.div
                 key={item.id}
-                className="bg-white rounded-2xl p-4 flex gap-4"
+                className="bg-white rounded-2xl p-4 flex flex-col h-full"
                 style={{ boxShadow: shadowCard }}
-                whileHover={{ scale: 1.01 }}
+                whileHover={{ scale: 1.02 }}
                 layout
               >
-                <div className="relative flex-shrink-0">
+                <div className="relative w-full aspect-square mb-3">
                   <img
-                    src={item.image_url || 'https://placehold.co/100x100/FED7AA/C2410C?text=☕'}
+                    src={item.image_url || 'https://placehold.co/400x400/FED7AA/C2410C?text=☕'}
                     alt={item.name}
-                    className="w-24 h-24 object-cover rounded-xl"
-                    onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100/FED7AA/C2410C?text=☕'; }}
+                    className="w-full h-full object-cover rounded-xl"
+                    onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x400/FED7AA/C2410C?text=☕'; }}
                   />
                   {item.is_popular && (
-                    <span className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    <span className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow-md">
                       Popular
                     </span>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-800 truncate">{item.name}</h3>
-                  <p className="text-xs text-gray-400 line-clamp-2 mt-0.5">{item.description}</p>
-                  <p className="font-black text-orange-600 mt-1">Rp {item.price.toLocaleString('id-ID')}</p>
 
-                  <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-col flex-grow">
+                  <h3 className="font-bold text-gray-800 line-clamp-1">{item.name}</h3>
+                  <p className="text-xs text-gray-400 line-clamp-2 mt-1 mb-2 flex-grow">{item.description}</p>
+                  
+                  <div className="flex items-center justify-between mt-auto">
+                    <p className="font-black text-orange-600 text-lg">Rp {item.price.toLocaleString('id-ID')}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-1 mt-3 bg-gray-50 p-1.5 rounded-2xl">
                     <motion.button
                       onClick={() => onRemoveFromCart(item.id)}
                       disabled={qty === 0}
-                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                        qty > 0 ? 'bg-gray-100 text-gray-700' : 'bg-gray-50 text-gray-300'
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0 ${
+                        qty > 0 ? 'bg-white text-gray-700 shadow-sm' : 'text-gray-300'
                       }`}
                       whileTap={qty > 0 ? { scale: 0.9 } : {}}
-                      style={qty > 0 ? { boxShadow: '0 2px 0 0 #9CA3AF' } : {}}
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-5 h-5" />
                     </motion.button>
 
                     <motion.span
                       key={qty}
-                      className="w-8 text-center font-black text-lg"
+                      className="font-black text-lg flex-1 text-center"
                       initial={{ scale: 1.4, color: '#F97316' }}
                       animate={{ scale: 1, color: '#1F2937' }}
                     >
@@ -264,11 +267,11 @@ function StepMenu({
 
                     <motion.button
                       onClick={() => onAddToCart(item)}
-                      className="w-9 h-9 bg-orange-500 text-white rounded-full flex items-center justify-center"
+                      className="w-10 h-10 bg-orange-500 text-white rounded-xl flex items-center justify-center flex-shrink-0"
                       whileTap={{ scale: 0.9, y: 2 }}
                       style={{ boxShadow: '0 3px 0 0 #C2410C' }}
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-5 h-5" />
                     </motion.button>
                   </div>
                 </div>
