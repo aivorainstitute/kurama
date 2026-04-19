@@ -480,20 +480,6 @@ function StepCheckout({
               </div>
             </div>
 
-            {/* QR Preview kecil */}
-            <div className="bg-white rounded-3xl p-5 text-center" style={{ boxShadow: shadowCard }}>
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <QrCode className="w-5 h-5 text-blue-500" />
-                <p className="font-bold text-gray-700">Bayar via QRIS</p>
-              </div>
-              <img
-                src={qrisError ? QRIS_FALLBACK : QRIS_IMAGE_URL}
-                alt="QRIS"
-                className="w-48 h-48 object-contain mx-auto rounded-xl"
-                onError={() => setQrisError(true)}
-              />
-              <p className="text-xs text-gray-400 mt-2">QR besar tampil setelah klik "Buat Pesanan"</p>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
