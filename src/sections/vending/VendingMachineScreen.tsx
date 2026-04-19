@@ -45,7 +45,7 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center min-h-screen px-6 py-12 bg-gradient-to-br from-orange-50 via-white to-amber-50"
+      className="flex flex-col items-center justify-center min-h-[100dvh] w-full px-6 py-8 overflow-y-auto bg-gradient-to-br from-orange-50 via-white to-amber-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
