@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useOrders } from '@/hooks/useOrders';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { supabase } from '@/lib/supabase';
 
@@ -231,12 +231,7 @@ export const mockOrders: Order[] = [
 ];
 
 // ─── Fullscreen Helper ───────────────────────────────────────────────────────
-const CUSTOMER_ROUTES = ['/customer', '/menu', '/cart', '/queue', '/history', '/payment', '/payment-method', '/check-order', '/order', '/edit-order'];
-
 function FullscreenManager() {
-  const location = useLocation();
-  const isCustomerRoute = CUSTOMER_ROUTES.some(r => location.pathname.startsWith(r));
-
   const requestFullscreen = useCallback(() => {
     const el = document.documentElement;
     if (!document.fullscreenElement) {
@@ -247,9 +242,8 @@ function FullscreenManager() {
     }
   }, []);
 
-  // Trigger fullscreen on first interaction (browser requires user gesture)
+  // Aktif dari halaman pertama — trigger saat interaksi pertama user
   useEffect(() => {
-    if (!isCustomerRoute) return;
     const handler = () => requestFullscreen();
     document.addEventListener('click', handler, { once: true });
     document.addEventListener('touchstart', handler, { once: true });
@@ -257,14 +251,7 @@ function FullscreenManager() {
       document.removeEventListener('click', handler);
       document.removeEventListener('touchstart', handler);
     };
-  }, [isCustomerRoute, requestFullscreen]);
-
-  // Exit fullscreen when leaving customer routes
-  useEffect(() => {
-    if (!isCustomerRoute && document.fullscreenElement) {
-      document.exitFullscreen?.();
-    }
-  }, [isCustomerRoute]);
+  }, [requestFullscreen]);
 
   return null;
 }
