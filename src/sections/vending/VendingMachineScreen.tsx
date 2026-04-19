@@ -134,8 +134,6 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
           </motion.button>
         </motion.div>
       </div>
-
-      <p className="mt-8 text-xs text-gray-300 relative z-10">Brewed with passion, served with love ☕</p>
     </motion.div>
   );
 }
