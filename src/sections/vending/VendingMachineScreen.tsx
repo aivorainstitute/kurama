@@ -331,6 +331,7 @@ function StepCheckout({
   orderSuccess,
   orderNumber,
   queueNumber,
+  activeOrderId,
 }: {
   customerName: string;
   cartItems: VMCartItem[];
@@ -341,20 +342,41 @@ function StepCheckout({
   orderSuccess: boolean;
   orderNumber: string;
   queueNumber: number;
+  activeOrderId?: number | null;
 }) {
   const subtotal = cartItems.reduce((s, c) => s + c.subtotal, 0);
   const tax = Math.round(subtotal * TAX_RATE);
   const total = subtotal + tax;
 
   const [qrisError, setQrisError] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<string>('BARU');
 
-  // Auto-reset setelah 60 detik berhasil order
+  // Real-time listener for order status
   useEffect(() => {
-    if (orderSuccess) {
-      const t = setTimeout(onReset, 60000);
-      return () => clearTimeout(t);
-    }
-  }, [orderSuccess, onReset]);
+    if (!orderSuccess || !activeOrderId) return;
+    
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel(`vm_order_${activeOrderId}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${activeOrderId}` },
+        (payload) => {
+          const newStatus = payload.new.status;
+          setOrderStatus(newStatus);
+          
+          // Auto reset IF Admin marks as SELESAI
+          if (newStatus === 'SELESAI') {
+            onReset();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orderSuccess, activeOrderId, onReset]);
 
   return (
     <motion.div
@@ -402,52 +424,57 @@ function StepCheckout({
               <p className="text-3xl font-black text-orange-600">Rp {total.toLocaleString('id-ID')}</p>
             </div>
 
-            {/* QR Code Besar */}
-            <div className="bg-white rounded-3xl p-6 mb-6 w-full max-w-xs" style={{ boxShadow: shadowCard }}>
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <QrCode className="w-5 h-5 text-blue-600" />
-                <p className="font-bold text-gray-800">Scan QRIS untuk Bayar</p>
-              </div>
-              <img
-                src={qrisError ? QRIS_FALLBACK : QRIS_IMAGE_URL}
-                alt="QRIS Payment"
-                className="w-full aspect-square object-contain rounded-2xl"
-                onError={() => setQrisError(true)}
-              />
-              <p className="text-center text-xs text-gray-400 mt-3">
-                Gopay · OVO · Dana · LinkAja · ShopeePay · M-Banking
-              </p>
-            </div>
-            {/* Informasi Dispensing & Animasi Sedang Disiapkan */}
-            <div className="bg-white rounded-3xl p-6 mb-6 w-full max-w-xs text-center border-2 border-orange-100 relative overflow-hidden" style={{ boxShadow: shadowCard }}>
-              {/* Animated Background Pulse */}
-              <div className="absolute inset-0 bg-orange-50/50 flex items-center justify-center pointer-events-none">
-                <motion.div
-                  className="w-full h-full bg-orange-100/30"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            {/* Conditional Display berdasarkan Status */}
+            {orderStatus === 'BARU' || orderStatus === 'BELUM_BAYAR' ? (
+              <div className="bg-white rounded-3xl p-6 mb-6 w-full max-w-xs" style={{ boxShadow: shadowCard }}>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <QrCode className="w-5 h-5 text-blue-600" />
+                  <p className="font-bold text-gray-800">Scan QRIS untuk Bayar</p>
+                </div>
+                <img
+                  src={qrisError ? QRIS_FALLBACK : QRIS_IMAGE_URL}
+                  alt="QRIS Payment"
+                  className="w-full aspect-square object-contain rounded-2xl"
+                  onError={() => setQrisError(true)}
                 />
-              </div>
-              
-              <div className="relative z-10 flex flex-col items-center">
-                <motion.div
-                  className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mb-3 shadow-[0_4px_16px_rgba(249,115,22,0.4)]"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  <Coffee className="w-7 h-7 text-white" />
-                </motion.div>
-                <h3 className="font-black text-gray-800 mb-1">Status Mesin</h3>
-                <p className="text-orange-500 font-bold text-sm mb-3 flex items-center gap-2 justify-center">
-                  <Loader2 className="w-4 h-4 animate-spin" /> Sedang Disiapkan...
+                <p className="text-center text-sm font-bold text-orange-500 animate-pulse mt-4">
+                  Menunggu Pembayaran...
                 </p>
-                <div className="bg-orange-50 rounded-xl p-3 border border-orange-100">
-                  <p className="text-xs text-gray-600 leading-relaxed font-medium">
-                    Keterangan: <span className="text-gray-800 font-bold">Produk akan otomatis keluar</span> segera setelah pembayaran berhasil diverifikasi.
+                <p className="text-center text-xs text-gray-400 mt-2">
+                  Gopay · OVO · Dana · LinkAja · ShopeePay · M-Banking
+                </p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl p-6 mb-6 w-full max-w-xs text-center border-2 border-orange-100 relative overflow-hidden" style={{ boxShadow: shadowCard }}>
+                {/* Animated Background Pulse */}
+                <div className="absolute inset-0 bg-orange-50/50 flex items-center justify-center pointer-events-none">
+                  <motion.div
+                    className="w-full h-full bg-orange-100/30"
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+                
+                <div className="relative z-10 flex flex-col items-center">
+                  <motion.div
+                    className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mb-3 shadow-[0_4px_16px_rgba(249,115,22,0.4)]"
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    <Coffee className="w-7 h-7 text-white" />
+                  </motion.div>
+                  <h3 className="font-black text-gray-800 mb-1">Status Mesin</h3>
+                  <p className="text-orange-500 font-bold text-sm mb-3 flex items-center gap-2 justify-center">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Sedang Disiapkan...
                   </p>
+                  <div className="bg-orange-50 rounded-xl p-3 border border-orange-100">
+                    <p className="text-xs text-gray-600 leading-relaxed font-medium">
+                      Keterangan: <span className="text-gray-800 font-bold">Pembayaran Diterima!</span> Produk otomatis keluar sebentar lagi.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <motion.button
               onClick={onReset}
               className="flex items-center gap-2 text-orange-500 font-semibold text-sm py-3 px-6 rounded-2xl bg-orange-50 border border-orange-200"
@@ -561,6 +588,7 @@ export default function VendingMachineScreen() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [queueNumber, setQueueNumber] = useState(0);
+  const [activeOrderId, setActiveOrderId] = useState<number | null>(null);
 
   // ── Cart Actions
   const addToCart = useCallback((item: MenuItem) => {
@@ -653,6 +681,7 @@ export default function VendingMachineScreen() {
 
       setOrderNumber(orderNum);
       setQueueNumber(qNum);
+      setActiveOrderId(orderData.id);
       setOrderSuccess(true);
     } catch (err) {
       console.error('Order error:', err);
@@ -670,6 +699,7 @@ export default function VendingMachineScreen() {
     setOrderSuccess(false);
     setOrderNumber('');
     setQueueNumber(0);
+    setActiveOrderId(null);
     setIsOrdering(false);
   }, []);
 
@@ -705,6 +735,7 @@ export default function VendingMachineScreen() {
             orderSuccess={orderSuccess}
             orderNumber={orderNumber}
             queueNumber={queueNumber}
+            activeOrderId={activeOrderId}
           />
         </motion.div>
       )}
