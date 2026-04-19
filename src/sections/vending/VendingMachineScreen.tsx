@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useMenuItems } from '@/hooks/useMenuItems';
+import { MOTIVATIONAL_QUOTES } from '@/lib/quotes';
 import type { MenuItem } from '@/App';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -378,6 +379,11 @@ function StepCheckout({
     };
   }, [orderSuccess, activeOrderId, onReset]);
 
+  // Pick a random quote once per checkout session
+  const randomQuote = useMemo(() => {
+    return MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+  }, []);
+
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50"
@@ -444,7 +450,37 @@ function StepCheckout({
                   Gopay · OVO · Dana · LinkAja · ShopeePay · M-Banking
                 </p>
               </div>
+            ) : orderStatus === 'SIAP' ? (
+              /* Status: Silakan Ambil (Makanan Jadi) */
+              <motion.div 
+                className="bg-white rounded-3xl p-6 mb-6 w-full max-w-sm text-center border-4 border-green-400 relative overflow-hidden" 
+                style={{ boxShadow: shadowCard }}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+              >
+                <div className="relative z-10 flex flex-col items-center">
+                  <motion.div
+                    className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-lg"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    <CheckCircle2 className="w-10 h-10 text-green-500" />
+                  </motion.div>
+                  <h3 className="text-3xl font-black text-green-500 mb-1 uppercase tracking-widest">Silahkan Ambil</h3>
+                  <p className="text-gray-500 font-bold text-sm mb-6 uppercase">Pesananmu Sudah Siap!</p>
+                  
+                  <div className="bg-green-50 text-green-900 rounded-2xl p-5 border border-green-100 w-full relative">
+                    <p className="text-sm font-bold uppercase tracking-wider mb-2 text-green-600">Pesan Untukmu Hari Ini:</p>
+                    <p className="text-lg font-serif italic text-gray-700 leading-relaxed">
+                      "{randomQuote}"
+                    </p>
+                  </div>
+                  <p className="text-gray-400 text-[10px] mt-4 uppercase tracking-widest">Foto kutipan ini sebagai kenang-kenangan! 📸</p>
+                </div>
+              </motion.div>
             ) : (
+              /* Status: Sedang Diproses */
               <div className="bg-white rounded-3xl p-6 mb-6 w-full max-w-xs text-center border-2 border-orange-100 relative overflow-hidden" style={{ boxShadow: shadowCard }}>
                 {/* Animated Background Pulse */}
                 <div className="absolute inset-0 bg-orange-50/50 flex items-center justify-center pointer-events-none">
