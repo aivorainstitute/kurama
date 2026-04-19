@@ -163,49 +163,51 @@ function StepMenu({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
     >
-      {/* Navbar */}
-      <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-orange-100 px-5 py-4">
-        <div className="flex items-center gap-3">
-          <motion.button
-            onClick={onBack}
-            className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center"
-            whileTap={{ scale: 0.9 }}
-          >
-            <span className="text-orange-500 font-bold text-lg">←</span>
-          </motion.button>
-          <div className="flex-1">
-            <p className="text-xs text-gray-400">Halo, <span className="font-bold text-orange-500">{customerName}</span></p>
-            <h2 className="font-black text-gray-800 text-lg">Pilih Menu</h2>
-          </div>
-          <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-            <Coffee className="w-5 h-5 text-white" />
+      {/* Sticky Header: Navbar + Categories */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-orange-100 shadow-sm">
+        <div className="px-5 py-4">
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={onBack}
+              className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center"
+              whileTap={{ scale: 0.9 }}
+            >
+              <span className="text-orange-500 font-bold text-lg">←</span>
+            </motion.button>
+            <div className="flex-1">
+              <p className="text-xs text-gray-400">Halo, <span className="font-bold text-orange-500">{customerName}</span></p>
+              <h2 className="font-black text-gray-800 text-lg">Pilih Menu</h2>
+            </div>
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+              <Coffee className="w-5 h-5 text-white" />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Category Tabs */}
-      <div className="px-5 pt-4 pb-2">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {categories.map(cat => (
-            <motion.button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
-                selectedCategory === cat
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white text-gray-500 border border-orange-100'
-              }`}
-              whileTap={{ scale: 0.95 }}
-              style={selectedCategory === cat ? { boxShadow: '0 3px 0 0 #C2410C' } : {}}
-            >
-              {cat}
-            </motion.button>
-          ))}
+        {/* Category Tabs */}
+        <div className="px-5 pb-3">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+            {categories.map(cat => (
+              <motion.button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-white text-gray-500 border border-orange-100'
+                }`}
+                whileTap={{ scale: 0.95 }}
+                style={selectedCategory === cat ? { boxShadow: '0 3px 0 0 #C2410C' } : {}}
+              >
+                {cat}
+              </motion.button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Menu List */}
-      <main className="px-5 pt-4 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-8">
+      <main className="px-5 pt-4 grid grid-cols-3 gap-4 pb-8">
         {loading ? (
           <div className="col-span-full flex flex-col items-center justify-center h-64">
             <Loader2 className="w-10 h-10 text-orange-400 animate-spin mb-3" />
