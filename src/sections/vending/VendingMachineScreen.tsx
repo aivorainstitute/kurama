@@ -37,6 +37,7 @@ const shadowCard = '0 4px 20px rgba(0,0,0,0.08)';
 /** Step 1: Input Nama */
 function StepName({ onNext }: { onNext: (name: string) => void }) {
   const [name, setName] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = () => {
     const trimmed = name.trim();
@@ -45,20 +46,20 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
 
   return (
     <motion.div
-      className="flex flex-col items-center min-h-[100dvh] w-full px-6 py-8 overflow-y-auto bg-gradient-to-br from-orange-50 via-white to-amber-50"
+      className={`flex flex-col items-center min-h-[100dvh] w-full px-6 pt-8 overflow-y-auto bg-gradient-to-br from-orange-50 via-white to-amber-50 relative transition-all duration-300 ${isFocused ? 'pb-[50vh]' : 'pb-8'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
       {/* BG Blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden h-[100dvh]">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden h-full min-h-[100dvh]">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-orange-200/30 rounded-full blur-3xl" />
         <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-200/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="flex flex-col items-center w-full max-w-sm my-auto w-full z-10 py-6">
+      <div className={`flex flex-col items-center w-full max-w-sm my-auto z-10 py-6 transition-transform duration-500 ease-out ${isFocused ? 'translate-y-[-10vh]' : ''}`}>
         {/* Logo */}
         <motion.div
-          className="mb-10 flex flex-col items-center"
+          className="mb-8 flex flex-col items-center"
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
@@ -67,24 +68,24 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <img src="/kuramalogo.png" alt="Kurama" className="w-24 h-24 object-contain drop-shadow-xl" />
+            <img src="/kuramalogo.png" alt="Kurama" className="w-20 h-20 object-contain drop-shadow-xl" />
           </motion.div>
-          <h1 className="text-4xl font-black mt-3 text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
+          <h1 className="text-3xl font-black mt-2 text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
             kur𝛂ma
           </h1>
-          <p className="text-xs tracking-[0.3em] uppercase text-orange-400/80 mt-1">Self Order Machine</p>
+          <p className="text-[10px] tracking-[0.3em] uppercase text-orange-400/80 mt-1">Self Order Machine</p>
         </motion.div>
 
         {/* Card */}
         <motion.div
-          className="w-full bg-white rounded-3xl p-8"
+          className="w-full bg-white rounded-3xl p-6 sm:p-8"
           style={{ boxShadow: shadowCard }}
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-orange-100 rounded-full flex flex-shrink-0 items-center justify-center">
               <User className="w-5 h-5 text-orange-500" />
             </div>
             <div>
@@ -98,12 +99,21 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
             placeholder="Masukkan nama kamu"
             value={name}
             onChange={e => setName(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))}
-            onKeyDown={e => e.key === 'Enter' && name.trim().length >= 2 && handleSubmit()}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                e.currentTarget.blur();
+                if (name.trim().length >= 2) handleSubmit();
+              }
+            }}
             onFocus={(e) => {
-              // Ensure it scrolls into view with a small delay for virtual keyboard animation
+              setIsFocused(true);
               setTimeout(() => {
                 e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }, 300);
+            }}
+            onBlur={() => {
+              setIsFocused(false);
             }}
             className="w-full h-14 text-center text-lg font-bold bg-orange-50 border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 text-gray-700 placeholder:text-orange-300 mb-5"
             style={{ boxShadow: '0 4px 0 0 #FED7AA' }}
