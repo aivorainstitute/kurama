@@ -45,77 +45,85 @@ function StepName({ onNext }: { onNext: (name: string) => void }) {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center min-h-[100dvh] w-full px-6 py-8 overflow-y-auto bg-gradient-to-br from-orange-50 via-white to-amber-50"
+      className="flex flex-col items-center min-h-[100dvh] w-full px-6 py-8 overflow-y-auto bg-gradient-to-br from-orange-50 via-white to-amber-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
       {/* BG Blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden h-[100dvh]">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-orange-200/30 rounded-full blur-3xl" />
         <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-200/20 rounded-full blur-3xl" />
       </div>
 
-      {/* Logo */}
-      <motion.div
-        className="mb-10 flex flex-col items-center relative z-10"
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.1 }}
-      >
+      <div className="flex flex-col items-center w-full max-w-sm my-auto w-full z-10 py-6">
+        {/* Logo */}
         <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          className="mb-10 flex flex-col items-center"
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
         >
-          <img src="/kuramalogo.png" alt="Kurama" className="w-28 h-28 object-contain drop-shadow-xl" />
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <img src="/kuramalogo.png" alt="Kurama" className="w-24 h-24 object-contain drop-shadow-xl" />
+          </motion.div>
+          <h1 className="text-4xl font-black mt-3 text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
+            kur𝛂ma
+          </h1>
+          <p className="text-xs tracking-[0.3em] uppercase text-orange-400/80 mt-1">Self Order Machine</p>
         </motion.div>
-        <h1 className="text-4xl font-black mt-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
-          kur𝛂ma
-        </h1>
-        <p className="text-xs tracking-[0.3em] uppercase text-orange-400/80 mt-1">Self Order Machine</p>
-      </motion.div>
 
-      {/* Card */}
-      <motion.div
-        className="w-full max-w-sm bg-white rounded-3xl p-8 relative z-10"
-        style={{ boxShadow: shadowCard }}
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-orange-500" />
-          </div>
-          <div>
-            <p className="font-bold text-gray-800">Halo! 👋</p>
-            <p className="text-sm text-gray-400">Siapa nama kamu?</p>
-          </div>
-        </div>
-
-        <input
-          type="text"
-          placeholder="Masukkan nama kamu"
-          value={name}
-          onChange={e => setName(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))}
-          onKeyDown={e => e.key === 'Enter' && name.trim().length >= 2 && handleSubmit()}
-          className="w-full h-14 text-center text-lg font-bold bg-orange-50 border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 text-gray-700 placeholder:text-orange-300 mb-5"
-          style={{ boxShadow: '0 4px 0 0 #FED7AA' }}
-          autoCapitalize="characters"
-          autoComplete="off"
-          spellCheck={false}
-        />
-
-        <motion.button
-          onClick={handleSubmit}
-          disabled={name.trim().length < 2}
-          className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{ boxShadow: name.trim().length >= 2 ? shadow3D : '0 2px 0 0 #C2410C' }}
-          whileHover={name.trim().length >= 2 ? { scale: 1.02 } : {}}
-          whileTap={name.trim().length >= 2 ? { scale: 0.97, y: 4 } : {}}
+        {/* Card */}
+        <motion.div
+          className="w-full bg-white rounded-3xl p-8"
+          style={{ boxShadow: shadowCard }}
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
         >
-          Mulai Pesan <ArrowRight className="w-5 h-5" />
-        </motion.button>
-      </motion.div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-orange-500" />
+            </div>
+            <div>
+              <p className="font-bold text-gray-800">Halo! 👋</p>
+              <p className="text-sm text-gray-400">Siapa nama kamu?</p>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Masukkan nama kamu"
+            value={name}
+            onChange={e => setName(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))}
+            onKeyDown={e => e.key === 'Enter' && name.trim().length >= 2 && handleSubmit()}
+            onFocus={(e) => {
+              // Ensure it scrolls into view with a small delay for virtual keyboard animation
+              setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 300);
+            }}
+            className="w-full h-14 text-center text-lg font-bold bg-orange-50 border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 text-gray-700 placeholder:text-orange-300 mb-5"
+            style={{ boxShadow: '0 4px 0 0 #FED7AA' }}
+            autoCapitalize="characters"
+            autoComplete="off"
+            spellCheck={false}
+          />
+
+          <motion.button
+            onClick={handleSubmit}
+            disabled={name.trim().length < 2}
+            className="w-full h-14 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-lg font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ boxShadow: name.trim().length >= 2 ? shadow3D : '0 2px 0 0 #C2410C' }}
+            whileHover={name.trim().length >= 2 ? { scale: 1.02 } : {}}
+            whileTap={name.trim().length >= 2 ? { scale: 0.97, y: 4 } : {}}
+          >
+            Mulai Pesan <ArrowRight className="w-5 h-5" />
+          </motion.button>
+        </motion.div>
+      </div>
 
       <p className="mt-8 text-xs text-gray-300 relative z-10">Brewed with passion, served with love ☕</p>
     </motion.div>
